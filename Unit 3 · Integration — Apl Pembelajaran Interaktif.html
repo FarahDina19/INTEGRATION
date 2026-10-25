@@ -1,0 +1,2459 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unit 3 · Integration — Apl Pembelajaran Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKEN WARNA (ikut design canvas) ============ */
+:root{
+  --ground:#F3F1FF; --card:#FFFFFF; --ink:#1B1A3A; --muted:#5A5878;
+  --line:#E6E2FF; --primary:#4A2FE0; --primary-dark:#2E1A9E;
+  --a:#FF8B7B; --a-tint:#FFF1EE; --a-deep:#E5533F;
+  --b:#B8A6FF; --b-tint:#F2EEFF; --b-deep:#5B3FD6;
+  --c:#6FE3C6; --c-tint:#EAFBF6; --c-deep:#0E9F86;
+  --d:#FFD45C; --d-tint:#FFF8DB; --d-deep:#B07D00;
+  /* kod warna simbol */
+  --pow:#1D5FD6; --op:#C2410C; --res:#15803D; --konst:#7C3AED;
+  --ok-bg:#DDF7E8; --ok-fg:#0F5E2E;
+  --no-bg:#FFE9D6; --no-fg:#8A2E07;
+  --hint-bg:#FFF8DB; --hint-fg:#6B4A00;
+  --panel:#1B1A3A; --panel-fg:#FFFFFF; --panel-soft:#2C2A55;
+  --shadow:0 2px 0 rgba(27,26,58,.08);
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground:#14132B; --card:#1F1D3D; --ink:#F4F3FF; --muted:#A9A6CC;
+  --line:#33305C; --a-tint:#36211E; --b-tint:#272045; --c-tint:#13332C; --d-tint:#3A2F10;
+  --pow:#7FB0FF; --op:#FFA76B; --res:#6FE39B; --konst:#C9B2FF;
+  --ok-bg:#133A26; --ok-fg:#9BE8BE; --no-bg:#3C2412; --no-fg:#FFC08F;
+  --hint-bg:#3A3110; --hint-fg:#FFE9A8;
+  --panel:#262348; --panel-fg:#F4F3FF; --panel-soft:#36325F;
+  --shadow:0 2px 0 rgba(0,0,0,.35);
+} }
+:root[data-theme="dark"]{
+  --ground:#14132B; --card:#1F1D3D; --ink:#F4F3FF; --muted:#A9A6CC;
+  --line:#33305C; --a-tint:#36211E; --b-tint:#272045; --c-tint:#13332C; --d-tint:#3A2F10;
+  --pow:#7FB0FF; --op:#FFA76B; --res:#6FE39B; --konst:#C9B2FF;
+  --ok-bg:#133A26; --ok-fg:#9BE8BE; --no-bg:#3C2412; --no-fg:#FFC08F;
+  --hint-bg:#3A3110; --hint-fg:#FFE9A8;
+  --panel:#262348; --panel-fg:#F4F3FF; --panel-soft:#36325F;
+  --shadow:0 2px 0 rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100%; scroll-padding-top:env(safe-area-inset-top,0px); }
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-weight:600; font-size:16px; line-height:1.45;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+}
+h1,h2,h3,.display{font-family:'Baloo 2',Nunito,sans-serif;font-weight:800;margin:0;line-height:1.1}
+button,input,select{font-family:inherit}
+
+/* ============ RANGKA ============ */
+.shell{max-width:640px;margin:0 auto;padding:0 16px 24px}
+.screen{display:none}
+.screen.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============ HEADER APP ============ */
+.apphead{background:var(--hue);border-radius:0 0 28px 28px;padding:14px 16px 16px;margin:0 -16px 14px;color:#1B1A3A}
+.apphead .row{display:flex;align-items:center;gap:10px}
+.apphead .ttl{flex:1;min-width:0}
+.apphead .kicker{font-size:12px;font-weight:800;letter-spacing:.06em}
+.apphead h2{font-size:22px}
+.iconbtn{width:44px;height:44px;flex:0 0 44px;border:0;border-radius:14px;background:#fff;color:#1B1A3A;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.chip{background:#1B1A3A;color:#fff;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:800;white-space:nowrap}
+
+/* strip CVSA / tab */
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px}
+.strip.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.strip.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.strip.five button{font-size:11px;padding:8px 0}
+.track{display:flex;align-items:center;margin:4px 0 12px}
+.track .node{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:var(--line);color:var(--muted)}
+.track .node.on{background:var(--panel);color:var(--panel-fg)}
+.track .node.done{background:var(--res);color:#fff}
+.track .link{flex:1;height:4px;background:var(--line)}
+.track .link.done{background:var(--res)}
+.stepdone{display:flex;gap:8px;align-items:center;background:var(--ok-bg);color:var(--ok-fg);border-radius:12px;padding:8px 12px;font-weight:800;font-size:14px;margin-bottom:6px}
+.stepdone .num{width:22px;height:22px;flex:0 0 22px;border-radius:50%;background:var(--res);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+.hl-u{background:rgba(29,95,214,.18);border-radius:6px;padding:0 4px}
+.hl-du{background:rgba(194,65,12,.18);border-radius:6px;padding:0 4px}
+.strip button{border:0;border-radius:10px;padding:8px 2px;font-size:12px;font-weight:800;background:rgba(255,255,255,.55);color:#1B1A3A;cursor:pointer;min-height:36px}
+.strip button[aria-current="true"]{background:#1B1A3A;color:#fff}
+.strip button.done{background:#fff}
+
+/* bar mastery */
+.mastery{margin-top:12px;display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:800}
+.mastery .bar{height:12px;border-radius:99px;background:#fff;position:relative;overflow:hidden}
+.mastery .fill{position:absolute;inset:0 auto 0 0;background:#1B1A3A;border-radius:99px;transition:width .3s}
+.mastery .mark{position:absolute;top:0;bottom:0;left:80%;width:3px;background:var(--a-deep)}
+
+/* ============ KAD ============ */
+.card{background:var(--card);border-radius:var(--r-lg);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card.flat{box-shadow:none}
+.card h3{font-size:17px;margin-bottom:8px}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--primary);margin-bottom:4px}
+.muted{color:var(--muted);font-size:13px;font-weight:700}
+.note{background:var(--ground);border-radius:var(--r-sm);padding:10px 12px;font-size:14px;font-weight:700;line-height:1.45}
+
+/* ============ BUTANG ============ */
+.btn{min-height:50px;padding:0 16px;border:0;border-radius:var(--r-md);background:var(--primary);color:#fff;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--ink)}
+.btn.soft{background:var(--ground);color:var(--ink);border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;margin-top:12px}
+.btnrow .grow{flex:1}
+.btnrow .grow2{flex:2}
+
+/* ============ INPUT ============ */
+.inp{width:100%;min-height:50px;border:2px solid var(--line);border-radius:var(--r-sm);background:var(--card);color:var(--ink);padding:8px 12px;font-size:18px;font-weight:800;text-align:center}
+.inp:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 4px rgba(74,47,224,.15)}
+.inp.ok{border-color:var(--res);background:var(--ok-bg)}
+.inp.no{border-color:var(--a-deep);background:var(--no-bg)}
+.box{width:62px;min-height:46px;border:2px dashed var(--pow);border-radius:10px;background:transparent;color:var(--pow);font-size:18px;font-weight:800;text-align:center;padding:2px}
+.box.res{border-color:var(--res);color:var(--res)}
+.box.op{border-color:var(--op);color:var(--op)}
+.box.ok{border-style:solid;background:var(--ok-bg)}
+.box.no{border-style:solid;background:var(--no-bg)}
+
+/* ============ MAKLUM BALAS ============ */
+.fb{border-radius:var(--r-sm);padding:10px 12px;font-size:14px;font-weight:700;line-height:1.45;display:flex;gap:8px;align-items:flex-start;margin-top:10px}
+.fb svg{flex:0 0 20px;margin-top:1px}
+.fb.ok{background:var(--ok-bg);color:var(--ok-fg)}
+.fb.no{background:var(--no-bg);color:var(--no-fg)}
+.fb.hint{background:var(--hint-bg);color:var(--hint-fg)}
+.hidden{display:none !important}
+
+/* ============ MATEMATIK ============ */
+.math{font-family:'Baloo 2',Nunito,sans-serif;font-weight:800;text-align:center;line-height:1.3}
+.math.lg{font-size:30px}
+.math.md{font-size:22px}
+.pow{color:var(--pow)} .op{color:var(--op)} .res{color:var(--res)} .konst{color:var(--konst)}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+.frac .num{padding:0 6px}
+.frac .den{padding:0 6px;border-top:3px solid var(--op)}
+.inline{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:24px;font-weight:800}
+
+/* ============ SVG ============ */
+.plot{width:100%;height:auto;display:block;border-radius:var(--r-sm);background:var(--card)}
+.sliderow{display:flex;align-items:center;gap:10px;margin-top:8px}
+.sliderow input[type=range]{flex:1;height:34px;accent-color:var(--primary)}
+.val{background:var(--ink);color:var(--card);border-radius:10px;padding:4px 10px;font-weight:800;font-size:14px;min-width:60px;text-align:center}
+
+/* ============ GRID & JADUAL ============ */
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.cell{background:var(--ground);border-radius:10px;padding:8px 2px;text-align:center;font-weight:800;font-size:15px}
+.cell.res{background:var(--ok-bg);color:var(--ok-fg)}
+
+/* pilihan jawapan */
+.opt{display:block;width:100%;text-align:left;min-height:48px;padding:10px 12px;border:2px solid var(--line);border-radius:var(--r-sm);background:var(--card);color:var(--ink);font-weight:700;font-size:14px;margin-bottom:6px;cursor:pointer}
+.opt[aria-pressed="true"]{border-color:var(--primary)}
+.opt.ok{border-color:var(--res);background:var(--ok-bg);color:var(--ok-fg);font-weight:800}
+.opt.no{border-color:var(--a-deep);background:var(--no-bg);color:var(--no-fg)}
+
+/* titik hint */
+.dots{display:flex;gap:6px;justify-content:center;margin:8px 0}
+.dots span{width:34px;height:8px;border-radius:99px;background:var(--line)}
+.dots span.on{background:var(--primary)}
+
+/* jalan kerja */
+.jk{counter-reset:s;margin:0;padding:0;list-style:none}
+.jk li{counter-increment:s;background:var(--ground);border-radius:var(--r-sm);padding:10px 12px 10px 42px;position:relative;margin-bottom:6px;font-weight:700;font-size:15px}
+.jk li::before{content:counter(s);position:absolute;left:10px;top:9px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--card);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+/* nav bawah */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:2px solid var(--line);
+     padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;justify-content:center}
+.nav button{flex:1;max-width:200px;min-height:56px;border:0;border-radius:14px;background:transparent;color:var(--muted);font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}
+.nav button[aria-current="true"]{background:var(--ink);color:var(--card)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--ground);z-index:11}
+
+/* kad laluan di hub */
+.path{display:flex;flex-direction:column;gap:10px}
+.pathcard{display:flex;align-items:center;gap:12px;padding:14px;border:0;border-radius:20px;background:var(--hue);color:#1B1A3A;text-align:left;cursor:pointer;width:100%}
+.pathcard .badge{width:48px;height:48px;flex:0 0 48px;border-radius:14px;background:#1B1A3A;color:var(--hue);font-family:'Baloo 2',sans-serif;font-weight:800;font-size:26px;display:flex;align-items:center;justify-content:center}
+.pathcard .pct{background:#fff;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800;color:#1B1A3A}
+.pathcard.lock{background:var(--card);border:2px dashed var(--muted)}
+.pathcard.lock .badge{background:var(--c);color:#1B1A3A}
+
+/* skrol tab */
+.tabscroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.tabscroll button{flex:0 0 auto;border:0;border-radius:14px;padding:10px 14px;font-weight:800;font-size:13px;background:var(--card);color:var(--muted);cursor:pointer;min-height:44px}
+.tabscroll button[aria-current="true"]{background:var(--ink);color:var(--card);box-shadow:0 0 0 3px var(--d)}
+
+table.ref{width:100%;border-collapse:collapse;font-size:15px}
+table.ref th,table.ref td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.ref th{font-size:12px;letter-spacing:.05em;color:var(--muted)}
+.scrollx{overflow-x:auto}
+
+@media (max-width:400px){
+  .strip button{font-size:11px;padding:8px 0}
+  .shell{padding:0 12px 24px}
+}
+@media (min-width:760px){
+  .shell{max-width:720px}
+  .math.lg{font-size:36px}
+}
+@media print{
+  body{background:#fff;padding:0}
+  .nav,.apphead,.btnrow,.noprint{display:none !important}
+  .screen{display:none !important}
+  .screen#s-formula{display:block !important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ================= HUB ================= -->
+<section class="screen on" id="s-home" aria-label="Laman utama">
+  <div style="padding:22px 0 0">
+    <div class="lbl">UNIT 3 · DUM10092</div>
+    <h1 style="font-size:40px">Integration<br><span style="font-size:20px;font-weight:600;color:var(--muted)">Undo the derivative</span></h1>
+  </div>
+
+  <div class="card" style="background:var(--panel);color:var(--panel-fg);display:flex;align-items:center;gap:14px;margin-top:16px">
+    <div id="ring" style="width:58px;height:58px;flex:0 0 58px;border-radius:50%;display:flex;align-items:center;justify-content:center">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px" id="ringpct">0%</div>
+    </div>
+    <div style="flex:1">
+      <div style="font-weight:800;font-size:16px" id="hubmsg">Mula dengan App A — Undo Machine</div>
+      <div style="font-size:13px;color:#CFCDEB" id="hubsub">Jom belajar integration langkah demi langkah</div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 8px">
+    <h2 style="font-size:20px">Laluan belajar</h2>
+    <span class="muted">Ikut A → B → D → C</span>
+  </div>
+
+  <div class="path" id="pathlist"></div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Apa itu integration?</h3>
+    <p style="margin:0 0 8px;font-size:15px;font-weight:700">Differentiation tanya: <i>berapa cepat ia berubah?</i><br>Integration tanya: <i>berapa banyak yang terkumpul?</i></p>
+    <div class="note">Kalau kita tahu <b class="op">laju</b> kereta, integration beri kita <b class="res">jarak</b>. Itu sahaja idea besarnya.</div>
+  </div>
+</section>
+
+<!-- ================= APP A ================= -->
+<section class="screen" id="s-A" aria-label="App A Undo Machine" style="--hue:var(--a)">
+  <div class="apphead">
+    <div class="row">
+      <button class="iconbtn" data-go="home" aria-label="Balik ke laman utama">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="ttl"><div class="kicker">APP A · 3.1</div><h2>Undo Machine</h2></div>
+      <span class="chip">Mudah</span>
+    </div>
+    <div class="strip" id="A-strip" role="tablist"></div>
+  </div>
+  <div id="A-body"></div>
+</section>
+
+<!-- ================= APP B ================= -->
+<section class="screen" id="s-B" aria-label="App B Rule Cards" style="--hue:var(--b)">
+  <div class="apphead">
+    <div class="row">
+      <button class="iconbtn" data-go="home" aria-label="Balik ke laman utama">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="ttl"><div class="kicker">APP B · 3.2</div><h2>Rule Cards</h2></div>
+      <span class="chip" id="B-level">Aras 1</span>
+    </div>
+    <div class="mastery">
+      <div style="display:flex;justify-content:space-between"><span id="B-score">Mastery · 0/0 betul</span><span>Buka pada 80%</span></div>
+      <div class="bar"><div class="fill" id="B-fill" style="width:0%"></div><div class="mark"></div></div>
+    </div>
+  </div>
+  <div id="B-body"></div>
+</section>
+
+<!-- ================= APP D ================= -->
+<section class="screen" id="s-D" aria-label="App D Area Hunter" style="--hue:var(--d)">
+  <div class="apphead">
+    <div class="row">
+      <button class="iconbtn" data-go="home" aria-label="Balik ke laman utama">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="ttl"><div class="kicker">APP D · 3.4</div><h2>Area Hunter</h2></div>
+      <span class="chip">Sederhana</span>
+    </div>
+    <div class="strip" id="D-strip" role="tablist"></div>
+  </div>
+  <div id="D-body"></div>
+</section>
+
+<!-- ================= APP C ================= -->
+<section class="screen" id="s-C" aria-label="App C Technique Toolbox" style="--hue:var(--c)">
+  <div class="apphead">
+    <div class="row">
+      <button class="iconbtn" data-go="home" aria-label="Balik ke laman utama">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="ttl"><div class="kicker">APP C · 3.3</div><h2>Technique Toolbox</h2></div>
+      <span class="chip" id="C-chip">Unit 3.3</span>
+    </div>
+    <div class="strip three" id="C-strip" role="tablist"></div>
+  </div>
+  <div id="C-body"></div>
+</section>
+
+<!-- ================= KAD FORMULA ================= -->
+<section class="screen" id="s-formula" aria-label="Kad formula">
+  <div style="padding:22px 0 10px">
+    <div class="lbl">RUJUKAN</div>
+    <h1 style="font-size:30px">Kad Formula Integration</h1>
+    <p class="muted" style="margin:6px 0 0">Tekan tajuk untuk buka / tutup. Boleh print untuk tampal dalam buku nota.</p>
+  </div>
+  <div id="F-body"></div>
+  <div class="btnrow noprint"><button class="btn ghost grow" onclick="window.print()">Print kad ini</button></div>
+</section>
+
+<!-- ================= PROGRES ================= -->
+<section class="screen" id="s-progress" aria-label="Progres">
+  <div style="padding:22px 0 10px">
+    <div class="lbl">PROGRES</div>
+    <h1 style="font-size:30px">Sejauh mana saya?</h1>
+  </div>
+  <div id="P-body"></div>
+</section>
+
+</div><!-- /shell -->
+
+<nav class="nav" aria-label="Navigasi utama">
+  <button data-go="home" aria-current="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home
+  </button>
+  <button data-go="formula">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Kad Formula
+  </button>
+  <button data-go="progress">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progres
+  </button>
+</nav>
+
+<script>
+/* ======================================================================
+   BAHAGIAN 1 — PENGHURAI EKSPRESI MATEMATIK
+   Pelajar menaip jawapan sebenar (contoh: x^3/3 + C), bukan pilih MCQ.
+   ====================================================================== */
+var FUNCS = {
+  sin:Math.sin, cos:Math.cos, tan:Math.tan, sqrt:Math.sqrt,
+  ln:Math.log, log:Math.log, exp:Math.exp, abs:Math.abs,
+  sec:function(v){return 1/Math.cos(v)}, cosec:function(v){return 1/Math.sin(v)},
+  csc:function(v){return 1/Math.sin(v)}, cot:function(v){return 1/Math.tan(v)}
+};
+var CONSTS = { pi:Math.PI, e:Math.E, c:0, k:0 };
+var VARS = { x:1, u:1, t:1 };
+function barsToAbs(s){
+  var out='',open=false;
+  for(var i=0;i<s.length;i++){
+    if(s[i]==='|'){ out+= open?')':'abs('; open=!open; }
+    else out+=s[i];
+  }
+  return open? out+')' : out;
+}
+
+function normalise(s){
+  var t=String(s||'')
+    .replace(/\u2212/g,'-').replace(/\u00D7/g,'*').replace(/\u22C5/g,'*')
+    .replace(/\u00F7/g,'/').replace(/\u221A/g,'sqrt')
+    .replace(/\u03C0/g,'pi').replace(/\u00B2/g,'^2').replace(/\u00B3/g,'^3')
+    .replace(/\u2074/g,'^4').replace(/\u207B\u00B9/g,'^-1')
+    .replace(/\[/g,'(').replace(/\]/g,')').replace(/\{/g,'(').replace(/\}/g,')')
+    .replace(/\s+/g,' ').trim();
+  return barsToAbs(t);
+}
+
+function splitWord(w){            // "sinx" -> ["sin","x"] ; "xy" -> ["x","y"]
+  var out=[], rest=w;
+  var names=Object.keys(FUNCS).concat(Object.keys(CONSTS)).sort(function(a,b){return b.length-a.length});
+  while(rest.length){
+    var hit=null;
+    for(var i=0;i<names.length;i++){
+      if(rest.toLowerCase().indexOf(names[i])===0){hit=names[i];break;}
+    }
+    if(hit){ out.push(hit); rest=rest.slice(hit.length); }
+    else { out.push(rest[0]); rest=rest.slice(1); }
+  }
+  return out;
+}
+
+function tokenize(src){
+  var t=[], i=0;
+  while(i<src.length){
+    var ch=src[i];
+    if(ch===' '){ i++; continue; }
+    if(/[0-9.]/.test(ch)){
+      var j=i; while(j<src.length && /[0-9.]/.test(src[j])) j++;
+      t.push({t:'num', v:parseFloat(src.slice(i,j))}); i=j; continue;
+    }
+    if(/[A-Za-z]/.test(ch)){
+      var k=i; while(k<src.length && /[A-Za-z]/.test(src[k])) k++;
+      var word=src.slice(i,k);
+      if(FUNCS[word.toLowerCase()] || CONSTS[word.toLowerCase()] || VARS[word.toLowerCase()]){
+        t.push({t:'id', v:word.toLowerCase()});
+      } else {
+        var parts=splitWord(word);
+        for(var p=0;p<parts.length;p++){
+          var q=parts[p];
+          t.push({t:'id', v:(q==='X'?'x':q.toLowerCase())});
+        }
+      }
+      i=k; continue;
+    }
+    if('+-*/^()'.indexOf(ch)>=0){ t.push({t:ch}); i++; continue; }
+    throw new Error('Simbol tidak dikenali: ' + ch);
+  }
+  return t;
+}
+
+function parse(src){
+  var toks=tokenize(normalise(src)), pos=0;
+  function peek(){ return toks[pos]; }
+  function eat(type){ var tk=toks[pos]; if(tk && tk.t===type){pos++; return tk;} return null; }
+  function startsPrimary(){ var tk=peek(); return !!tk && (tk.t==='num'||tk.t==='id'||tk.t==='('); }
+
+  function expr(){
+    var node=term();
+    while(peek() && (peek().t==='+'||peek().t==='-')){
+      var op=toks[pos++].t, rhs=term();
+      node = mk(op, node, rhs);
+    }
+    return node;
+  }
+  function term(){
+    var node=unary();
+    for(;;){
+      if(peek() && (peek().t==='*'||peek().t==='/')){
+        var op=toks[pos++].t; node = mk(op, node, unary());
+      } else if(startsPrimary()){            // darab tersirat: 2x, 3sin x
+        node = mk('*', node, unary());
+      } else break;
+    }
+    return node;
+  }
+  function unary(){
+    if(eat('-')) return mk('neg', unary(), null);
+    if(eat('+')) return unary();
+    return power();
+  }
+  function power(){
+    var base=primary();
+    if(eat('^')) return mk('^', base, unary());
+    return base;
+  }
+  function chain(){                           // hujah fungsi: sin 2x -> sin(2x)
+    var node=power();
+    while(startsPrimary()) node = mk('*', node, power());
+    return node;
+  }
+  function primary(){
+    var tk=peek();
+    if(!tk) throw new Error('Ekspresi belum lengkap');
+    if(tk.t==='num'){ pos++; return {k:'num', v:tk.v}; }
+    if(tk.t==='('){ pos++; var e=expr(); if(!eat(')')) throw new Error('Kurungan tidak ditutup'); return e; }
+    if(tk.t==='id'){
+      pos++;
+      var name=tk.v;
+      if(FUNCS[name]){
+        var arg;
+        if(peek() && peek().t==='('){ pos++; arg=expr(); if(!eat(')')) throw new Error('Kurungan tidak ditutup'); }
+        else arg=chain();
+        return {k:'fn', n:name, a:arg};
+      }
+      if(VARS[name]) return {k:'var'};
+      if(name in CONSTS) return {k:'num', v:CONSTS[name]};
+      throw new Error('Huruf "'+name+'" tidak difahami');
+    }
+    throw new Error('Tidak faham bahagian ini');
+  }
+  function mk(k,a,b){ return {k:k, a:a, b:b}; }
+
+  var tree=expr();
+  if(pos<toks.length) throw new Error('Ada bahagian yang tak dapat dibaca');
+  return tree;
+}
+
+function evalNode(n,x){
+  switch(n.k){
+    case 'num': return n.v;
+    case 'var': return x;
+    case 'neg': return -evalNode(n.a,x);
+    case '+': return evalNode(n.a,x)+evalNode(n.b,x);
+    case '-': return evalNode(n.a,x)-evalNode(n.b,x);
+    case '*': return evalNode(n.a,x)*evalNode(n.b,x);
+    case '/': return evalNode(n.a,x)/evalNode(n.b,x);
+    case '^': return Math.pow(evalNode(n.a,x), evalNode(n.b,x));
+    case 'fn': return FUNCS[n.n](evalNode(n.a,x));
+  }
+  return NaN;
+}
+
+function hasConst(s){ return /(^|[^a-zA-Z])[cCkK]([^a-zA-Z]|$)/.test(normalise(s)); }
+
+/* Semak antiderivative: beza antara jawapan pelajar dan F rujukan
+   mesti PEMALAR pada beberapa titik. Cara ini terima semua bentuk setara. */
+function checkIntegral(input, Fref, pts){
+  var raw=normalise(input);
+  if(!raw) return {ok:false, why:'Tulis jawapan dahulu.'};
+  var tree;
+  try{ tree=parse(raw); }catch(err){ return {ok:false, why:err.message}; }
+  var diffs=[], i, v, r;
+  for(i=0;i<pts.length;i++){
+    v=evalNode(tree, pts[i]); r=Fref(pts[i]);
+    if(!isFinite(v)) return {ok:false, why:'Jawapan tidak sah pada x = '+pts[i]+'.'};
+    diffs.push(v-r);
+  }
+  var mean=diffs.reduce(function(a,b){return a+b},0)/diffs.length;
+  var spread=0;
+  for(i=0;i<diffs.length;i++) spread=Math.max(spread, Math.abs(diffs[i]-mean));
+  var scale=1; for(i=0;i<pts.length;i++) scale=Math.max(scale, Math.abs(Fref(pts[i])));
+  if(spread > 1e-4*scale) return {ok:false, why:'Belum betul. Cuba semak kuasa dan pembahagi.'};
+  if(!hasConst(raw)) return {ok:true, noC:true, why:'Hampir! Jawapan betul tapi tertinggal + C.'};
+  return {ok:true, noC:false};
+}
+
+function checkValue(input, target, tol){
+  var raw=normalise(input);
+  if(!raw) return {ok:false, why:'Tulis jawapan dahulu.'};
+  try{
+    var v=evalNode(parse(raw), 0);
+    if(!isFinite(v)) return {ok:false, why:'Jawapan tidak sah.'};
+    return Math.abs(v-target) <= (tol||1e-6) ? {ok:true} : {ok:false, why:'Belum betul.'};
+  }catch(err){ return {ok:false, why:err.message}; }
+}
+
+/* ======================================================================
+   BAHAGIAN 2 — KEADAAN & SIMPANAN
+   ====================================================================== */
+var S = {
+  A:{stage:0, done:[false,false,false,false], correct:0, total:0},
+  B:{correct:0, total:0, level:1, tab:'power'},
+  C:{tab:'intro', lvl:1, sub:[0,0], parts:[0,0], pf:[0,0], pilih:[0,0], silap:[0,0]},
+  D:{stage:0, done:[false,false,false,false], correct:0, total:0},
+  unlockedC:false
+};
+function save(){ try{ localStorage.setItem('unit3integrasi', JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{
+    var raw=localStorage.getItem('unit3integrasi');
+    if(raw){ var o=JSON.parse(raw); for(var k in o) if(o[k]!==undefined) S[k]=o[k]; }
+    if(!S.C.lvl) S.C.lvl=1;
+    ['sub','parts','pf','pilih','silap'].forEach(function(k){ if(!S.C[k]) S.C[k]=[0,0]; });
+  }catch(e){}
+}
+function pct(a,b){ return b? Math.round(a/b*100):0; }
+function appPct(id){
+  if(id==='A'||id==='D'){
+    var done=S[id].done.filter(Boolean).length;
+    return Math.round(done/4*100);
+  }
+  if(id==='B') return pct(S.B.correct, Math.max(S.B.total,1));
+  var c=S.C, tot=c.sub[1]+c.parts[1]+c.pf[1]+c.pilih[1]+c.silap[1],
+      cor=c.sub[0]+c.parts[0]+c.pf[0]+c.pilih[0]+c.silap[0];
+  return pct(cor, Math.max(tot,1));
+}
+
+/* ======================================================================
+   BAHAGIAN 3 — PEMBANTU UI
+   ====================================================================== */
+function $(id){ return document.getElementById(id); }
+function html(node, s){ node.innerHTML=s; }
+function on(sel, ev, fn){ document.querySelectorAll(sel).forEach(function(n){ n.addEventListener(ev, fn); }); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+var ICON_OK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+var ICON_NO='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></svg>';
+var ICON_HINT='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>';
+
+function feedback(node, type, msg){
+  var icon = type==='ok'?ICON_OK : type==='hint'?ICON_HINT : ICON_NO;
+  node.className='fb '+type;
+  node.innerHTML=icon+'<div>'+msg+'</div>';
+  node.classList.remove('hidden');
+}
+
+function show(screen){
+  ['home','A','B','C','D','formula','progress'].forEach(function(k){
+    var el=$('s-'+k); if(el) el.classList.toggle('on', k===screen);
+  });
+  document.querySelectorAll('.nav button').forEach(function(b){
+    b.setAttribute('aria-current', b.dataset.go===screen ? 'true':'false');
+  });
+  window.scrollTo(0,0);
+  if(screen==='home') renderHome();
+  if(screen==='A') renderA();
+  if(screen==='B') renderB();
+  if(screen==='C') renderC();
+  if(screen==='D') renderD();
+  if(screen==='progress') renderProgress();
+}
+
+/* ======================================================================
+   BAHAGIAN 4 — PELUKIS GRAF (SVG)
+   ====================================================================== */
+function plot(opts){
+  // opts: {w,h,xmin,xmax,ymin,ymax,curves:[{fn,color,width}],shade,extras}
+  var w=opts.w||342, h=opts.h||230, pad=opts.pad||{l:28,r:12,t:12,b:26};
+  var xmin=opts.xmin, xmax=opts.xmax, ymin=opts.ymin, ymax=opts.ymax;
+  function X(x){ return pad.l + (x-xmin)/(xmax-xmin)*(w-pad.l-pad.r); }
+  function Y(y){ return h-pad.b - (y-ymin)/(ymax-ymin)*(h-pad.t-pad.b); }
+  var s='';
+  // paksi
+  s+='<line x1="'+pad.l+'" y1="'+Y(0)+'" x2="'+(w-pad.r)+'" y2="'+Y(0)+'" stroke="var(--ink)" stroke-width="1.8"/>';
+  s+='<line x1="'+X(0)+'" y1="'+pad.t+'" x2="'+X(0)+'" y2="'+(h-pad.b)+'" stroke="var(--ink)" stroke-width="1.8"/>';
+  if(opts.shade){
+    var sh=opts.shade, d='M'+X(sh.a)+','+Y(0);
+    for(var t=0;t<=60;t++){ var xx=sh.a+(sh.b-sh.a)*t/60; d+=' L'+X(xx)+','+Y(sh.fn(xx)); }
+    d+=' L'+X(sh.b)+','+Y(0)+' Z';
+    s+='<path d="'+d+'" fill="'+(sh.color||'var(--a)')+'" opacity="'+(sh.opacity||0.5)+'"/>';
+  }
+  if(opts.bars){
+    opts.bars.forEach(function(b){
+      var y0=Y(0), y1=Y(b.h);
+      s+='<rect x="'+X(b.x0)+'" y="'+Math.min(y0,y1)+'" width="'+(X(b.x1)-X(b.x0))+'" height="'+Math.abs(y1-y0)+'" fill="'+(b.color||'var(--d)')+'" stroke="var(--ink)" stroke-width="'+(b.sw||1)+'"/>';
+    });
+  }
+  (opts.curves||[]).forEach(function(cv){
+    var d='', started=false;
+    for(var i=0;i<=120;i++){
+      var x=xmin+(xmax-xmin)*i/120, y=cv.fn(x);
+      if(!isFinite(y)||y>ymax*2.5||y<ymin*2.5){ started=false; continue; }
+      d+=(started?' L':' M')+X(x)+','+Y(y); started=true;
+    }
+    s+='<path d="'+d+'" fill="none" stroke="'+cv.color+'" stroke-width="'+(cv.width||3)+'" stroke-linecap="round" stroke-linejoin="round"'+(cv.dash?' stroke-dasharray="'+cv.dash+'"':'')+'/>';
+  });
+  (opts.dots||[]).forEach(function(p){
+    s+='<circle cx="'+X(p.x)+'" cy="'+Y(p.y)+'" r="'+(p.r||6)+'" fill="'+p.color+'" stroke="var(--card)" stroke-width="2"/>';
+  });
+  (opts.lines||[]).forEach(function(l){
+    s+='<line x1="'+X(l.x1)+'" y1="'+Y(l.y1)+'" x2="'+X(l.x2)+'" y2="'+Y(l.y2)+'" stroke="'+l.color+'" stroke-width="'+(l.width||2)+'"'+(l.dash?' stroke-dasharray="'+l.dash+'"':'')+'/>';
+  });
+  (opts.labels||[]).forEach(function(t){
+    s+='<text x="'+(t.px!==undefined?t.px:X(t.x))+'" y="'+(t.py!==undefined?t.py:Y(t.y))+'" font-family="Nunito,sans-serif" font-weight="800" font-size="'+(t.size||13)+'" fill="'+(t.color||'var(--ink)')+'"'+(t.anchor?' text-anchor="'+t.anchor+'"':'')+'>'+t.text+'</text>';
+  });
+  return '<svg class="plot" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(opts.alt||'Graf')+'">'+s+'</svg>';
+}
+
+/* ======================================================================
+   BAHAGIAN 5 — HUB
+   ====================================================================== */
+var APPS = [
+  {id:'A', num:'A', hue:'var(--a)', name:'Undo Machine', sub:'3.1 Integration sebagai songsang differentiation'},
+  {id:'B', num:'B', hue:'var(--b)', name:'Rule Cards',  sub:'3.2 Indefinite integral'},
+  {id:'D', num:'D', hue:'var(--d)', name:'Area Hunter', sub:'3.4 Definite integral'},
+  {id:'C', num:'C', hue:'var(--c)', name:'Technique Toolbox', sub:'3.3 Substitution · By parts · Partial fractions'}
+];
+
+function renderHome(){
+  var total = Math.round((appPct('A')+appPct('B')+appPct('D')+appPct('C'))/4);
+  $('ringpct').textContent = total+'%';
+  $('ring').style.background = 'conic-gradient(var(--d) 0 '+total+'%, var(--panel-soft) '+total+'% 100%)';
+  var next = appPct('A')<100 ? 'App A — Undo Machine' : appPct('B')<80 ? 'App B — Rule Cards' : appPct('D')<80 ? 'App D — Area Hunter' : 'App C — Technique Toolbox';
+  $('hubmsg').textContent = total===0 ? 'Mula dengan App A — Undo Machine' : 'Teruskan: '+next;
+  $('hubsub').textContent = total===0 ? 'Jom belajar integration langkah demi langkah' : 'Keseluruhan progres anda '+total+'%';
+
+  var lockC = !(appPct('D')>=80 || S.unlockedC);
+  var out='';
+  APPS.forEach(function(a){
+    var p=appPct(a.id);
+    if(a.id==='C' && lockC){
+      out+='<div class="pathcard lock">'
+        +'<div class="badge">C</div>'
+        +'<div style="flex:1"><div style="font-weight:800;font-size:16px">'+a.name+'</div><div class="muted">'+a.sub+'</div></div>'
+        +'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" role="img" aria-label="Berkunci"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>'
+        +'<button class="btn soft" style="width:100%;min-height:44px;font-size:13px" data-unlock="1">App C buka bila App D cukup 80% — atau tekan sini untuk buka awal</button>';
+    } else {
+      out+='<button class="pathcard" style="--hue:'+a.hue+'" data-go="'+a.id+'">'
+        +'<span class="badge">'+a.num+'</span>'
+        +'<span style="flex:1"><span style="display:block;font-weight:800;font-size:16px">'+a.name+'</span><span style="display:block;font-size:12px;font-weight:700">'+a.sub+'</span></span>'
+        +'<span class="pct">'+p+'%</span></button>';
+    }
+  });
+  html($('pathlist'), out);
+  $('pathlist').querySelectorAll('[data-go]').forEach(function(b){ b.onclick=function(){ show(b.dataset.go); }; });
+  var u=$('pathlist').querySelector('[data-unlock]');
+  if(u) u.onclick=function(){ S.unlockedC=true; save(); renderHome(); };
+}
+
+/* ======================================================================
+   BAHAGIAN 6 — APP A · UNDO MACHINE (3.1)
+   CVSA: Konkrit → Visual → Simbol → Abstrak
+   ====================================================================== */
+var A_STAGES=['Konkrit','Visual','Simbol','Abstrak'];
+
+function renderA(){
+  var strip='';
+  A_STAGES.forEach(function(n,i){
+    strip+='<button role="tab" aria-current="'+(S.A.stage===i)+'" class="'+(S.A.done[i]?'done':'')+'" data-st="'+i+'">'+n+(S.A.done[i]?' \u2713':'')+'</button>';
+  });
+  html($('A-strip'), strip);
+  $('A-strip').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.A.stage=+b.dataset.st; save(); renderA(); };
+  });
+  [A_concrete, A_visual, A_symbol, A_abstract][S.A.stage]();
+}
+
+function A_next(){
+  S.A.done[S.A.stage]=true;
+  if(S.A.stage<3) S.A.stage++;
+  save(); renderA();
+}
+
+/* ---------- A1 KONKRIT: motosikal v = 2t ---------- */
+function A_concrete(){
+  html($('A-body'),
+    '<div class="card">'
+    +'<h3>Motosikal yang makin laju</h3>'
+    +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Laju motosikal ialah <b class="op">v = 2t</b> m/s. Tarik slider untuk lihat <b class="res">jarak</b> yang sudah dilalui.</p>'
+    +'<div id="A1-plot"></div>'
+    +'<div class="sliderow"><label for="A1-t" style="font-weight:800">t</label>'
+    +'<input id="A1-t" type="range" min="0" max="6" step="0.5" value="3" aria-label="Masa dalam saat">'
+    +'<span class="val" id="A1-tv">3 s</span></div>'
+    +'<div class="note" style="margin-top:10px">Luas kawasan berlorek = <b class="res">jarak</b> = <b id="A1-area">9</b> m</div>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<h3>Cari pola</h3>'
+    +'<p class="muted" style="margin:0 0 8px">Isi kotak terakhir. Apa hubungan antara t dan jarak?</p>'
+    +'<div class="g5" style="align-items:center">'
+    +'<div class="muted" style="font-size:12px">t</div>'
+    +'<div class="cell">1</div><div class="cell">2</div><div class="cell">3</div><div class="cell">4</div>'
+    +'<div class="muted" style="font-size:12px">jarak</div>'
+    +'<div class="cell res">1</div><div class="cell res">4</div><div class="cell res">9</div>'
+    +'<input class="box res" id="A1-ans" inputmode="numeric" placeholder="?" aria-label="Jarak apabila t sama dengan 4" style="width:100%">'
+    +'</div>'
+    +'<div class="btnrow"><button class="btn grow" id="A1-check">Semak</button></div>'
+    +'<div class="fb hidden" id="A1-fb"></div>'
+    +'</div>'
+
+    +'<div class="card" id="A1-reveal" style="display:none">'
+    +'<div class="lbl">IDEA BESAR</div>'
+    +'<div class="math md" style="margin:6px 0 10px">jarak = <span class="res">t\u00B2</span> &nbsp;\u2192&nbsp; <span class="op">d/dt</span>(t\u00B2) = <span class="op">2t</span> = laju</div>'
+    +'<div class="note">Laju ialah <b>derivative</b> jarak. Jadi jarak ialah <b>songsang</b> bagi laju. Proses songsang itulah yang kita panggil <b>integration</b>.</div>'
+    +'<div class="btnrow"><button class="btn grow" id="A1-next">Seterusnya: Visual \u2192</button></div>'
+    +'</div>');
+
+  function draw(){
+    var t=parseFloat($('A1-t').value);
+    $('A1-tv').textContent=t+' s';
+    $('A1-area').textContent=(t*t).toFixed(t%1?2:0);
+    html($('A1-plot'), plot({
+      w:342,h:210,xmin:-0.4,xmax:6.4,ymin:-1.2,ymax:13,
+      shade:{a:0,b:t,fn:function(x){return 2*x},color:'var(--a)',opacity:.55},
+      curves:[{fn:function(x){return 2*x}, color:'var(--op)', width:3.5}],
+      lines:[{x1:t,y1:0,x2:t,y2:2*t,color:'var(--ink)',width:2,dash:'5 5'}],
+      dots:[{x:t,y:2*t,color:'var(--ink)',r:6}],
+      labels:[{px:300,py:200,text:'t (s)',size:12,anchor:'end'},{px:34,py:20,text:'v (m/s)',size:12},
+              {x:t/2,y:2*t/3,text:'jarak',size:13,anchor:'middle'}],
+      alt:'Graf laju lawan masa, kawasan di bawah garis v = 2t berlorek sehingga t'
+    }));
+  }
+  $('A1-t').addEventListener('input', draw); draw();
+
+  $('A1-check').onclick=function(){
+    var r=checkValue($('A1-ans').value, 16, 1e-9);
+    var inp=$('A1-ans');
+    if(r.ok){
+      inp.className='box res ok'; feedback($('A1-fb'),'ok','Betul! 4\u00B2 = 16 m. Pola itu ialah jarak = t\u00B2.');
+      $('A1-reveal').style.display='block';
+    } else {
+      inp.className='box res no'; feedback($('A1-fb'),'hint','Cuba lagi. Luas segitiga = \u00BD \u00D7 tapak \u00D7 tinggi = \u00BD \u00D7 4 \u00D7 8.');
+    }
+  };
+  $('A1-next').onclick=A_next;
+}
+
+/* ---------- A2 VISUAL: keluarga lengkung + C ---------- */
+function A_visual(){
+  html($('A-body'),
+    '<div class="card" style="background:var(--panel);color:var(--panel-fg);display:flex;align-items:center;gap:10px;justify-content:center">'
+    +'<span class="math md" style="color:var(--a)">f(x) = 2x</span>'
+    +'<svg width="36" height="20" viewBox="0 0 36 20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M34 10H3M9 4l-6 6 6 6"/></svg>'
+    +'<span class="math md">F(x) = x\u00B2 + <span style="color:#C9B2FF">C</span></span></div>'
+
+    +'<div class="card">'
+    +'<div id="A2-plot"></div>'
+    +'<div class="sliderow"><label for="A2-c" style="font-weight:800;color:var(--konst)">C</label>'
+    +'<input id="A2-c" type="range" min="-3" max="5" step="1" value="2" aria-label="Nilai pemalar C">'
+    +'<span class="val" id="A2-cv" style="background:var(--konst)">+ 2</span></div>'
+    +'<div class="note" style="margin-top:10px">Pada x = 1: <b class="konst">kecerunan F</b> = 2 = <b class="op">tinggi f</b>. Semua lengkung ungu ada kecerunan yang <b>sama</b> — hanya kedudukan naik-turun berbeza.</div>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<h3>Semak cepat</h3>'
+    +'<p style="margin:0 0 8px;font-size:15px;font-weight:700">Kenapa jawapan integral perlu ada &ldquo;+ C&rdquo;?</p>'
+    +'<div id="A2-opts"></div>'
+    +'<div class="fb hidden" id="A2-fb"></div>'
+    +'<div class="btnrow hidden" id="A2-nextrow"><button class="btn grow" id="A2-next">Seterusnya: Simbol \u2192</button></div>'
+    +'</div>');
+
+  function draw(){
+    var C=parseInt($('A2-c').value,10);
+    $('A2-cv').textContent=(C<0?'\u2212 ':'+ ')+Math.abs(C);
+    var fam=[-3,-1,1,3,5].filter(function(v){return v!==C;});
+    var curves=fam.map(function(v){ return {fn:function(x){return x*x+v}, color:'#C9B2FF', width:2}; });
+    curves.push({fn:function(x){return x*x+C}, color:'var(--konst)', width:4});
+    curves.push({fn:function(x){return 2*x}, color:'var(--op)', width:3});
+    html($('A2-plot'), plot({
+      w:342,h:250,xmin:-3,xmax:3,ymin:-4,ymax:12, curves:curves,
+      lines:[{x1:0,y1:1+C-2,x2:2,y2:1+C+2,color:'var(--ink)',width:2.4,dash:'6 5'}],
+      dots:[{x:1,y:1+C,color:'var(--konst)'},{x:1,y:2,color:'var(--op)'}],
+      labels:[{x:2.2,y:4.4,text:'f',color:'var(--op)',size:13},{x:-2.6,y:10,text:'F(x) = x\u00B2 + C',color:'var(--konst)',size:12}],
+      alt:'Keluarga lengkung x kuasa dua tambah C, dengan garis f sama dengan 2x dan tangen pada x sama dengan 1'
+    }));
+  }
+  $('A2-c').addEventListener('input',draw); draw();
+
+  var opts=[
+    {t:'Supaya graf nampak lebih cantik', ok:false, why:'Bukan. C bukan hiasan — ia membawa makna matematik.'},
+    {t:'Banyak F(x) berbeza memberi derivative yang sama', ok:true, why:'Tepat! x\u00B2, x\u00B2+1, x\u00B2\u22123 semuanya ada derivative 2x.'},
+    {t:'Supaya jawapan lebih panjang', ok:false, why:'Bukan. Cuba tengok semula slider C tadi.'}
+  ];
+  html($('A2-opts'), opts.map(function(o,i){ return '<button class="opt" data-i="'+i+'">'+o.t+'</button>'; }).join(''));
+  $('A2-opts').querySelectorAll('.opt').forEach(function(b){
+    b.onclick=function(){
+      var o=opts[+b.dataset.i];
+      b.className='opt '+(o.ok?'ok':'no');
+      feedback($('A2-fb'), o.ok?'ok':'hint', o.why);
+      if(o.ok){ $('A2-nextrow').classList.remove('hidden'); $('A2-opts').querySelectorAll('.opt').forEach(function(x){x.disabled=true;}); }
+    };
+  });
+  $('A2-next').onclick=A_next;
+}
+
+/* ======================================================================
+   BAHAGIAN 7 — KAD PENYELESAI BOLEH GUNA SEMULA
+   Pelajar menaip jawapan sebenar; sistem semak secara berangka.
+   ====================================================================== */
+function solverHTML(p, opts){
+  opts=opts||{};
+  return '<div class="card">'
+    +'<div class="lbl" id="'+p+'-lbl">SOALAN</div>'
+    +'<div class="math lg" id="'+p+'-q" style="margin:8px 0 12px"></div>'
+    +(opts.scaffold?'<div id="'+p+'-scaf"></div>':'')
+    +'<label for="'+p+'-in" style="font-size:13px;font-weight:800;color:var(--muted)">Jawapan anda</label>'
+    +'<input class="inp" id="'+p+'-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(opts.ph||'contoh: x^3/3 + C')+'">'
+    +'<div class="dots" id="'+p+'-dots" aria-label="Tahap hint"><span></span><span></span><span></span></div>'
+    +'<div class="btnrow"><button class="btn ghost grow" id="'+p+'-hint">Hint 1/3</button>'
+    +'<button class="btn grow2" id="'+p+'-check">Semak jawapan</button></div>'
+    +'<div class="fb hidden" id="'+p+'-fb"></div>'
+    +'<div class="btnrow"><button class="btn soft grow" id="'+p+'-show">Tunjuk jalan kerja</button>'
+    +'<button class="btn soft grow" id="'+p+'-new">Soalan baharu</button></div>'
+    +'<ol class="jk hidden" id="'+p+'-jk" style="margin-top:10px"></ol>'
+    +'</div>';
+}
+
+function bindSolver(p, getProblem, onResult){
+  var prob=null, hintLvl=0, answered=false;
+
+  function fresh(){
+    prob=getProblem(); hintLvl=0; answered=false;
+    $(p+'-q').innerHTML=prob.q;
+    if($(p+'-lbl')) $(p+'-lbl').textContent=prob.label||'SOALAN';
+    var i=$(p+'-in'); i.value=''; i.className='inp';
+    i.placeholder = prob.ph || (prob.type==='value'?'contoh: 12':'contoh: x^3/3 + C');
+    $(p+'-fb').classList.add('hidden');
+    $(p+'-jk').classList.add('hidden');
+    $(p+'-hint').textContent='Hint 1/3'; $(p+'-hint').disabled=false;
+    dots();
+    if($(p+'-scaf')) $(p+'-scaf').innerHTML=prob.scaffold||'';
+  }
+  function dots(){
+    $(p+'-dots').querySelectorAll('span').forEach(function(s,i){ s.className = i<hintLvl?'on':''; });
+  }
+  $(p+'-hint').onclick=function(){
+    if(hintLvl>=3) return;
+    hintLvl++; dots();
+    feedback($(p+'-fb'),'hint','<b>Hint '+hintLvl+':</b> '+prob.hints[hintLvl-1]);
+    $(p+'-hint').textContent = hintLvl>=3 ? 'Semua hint dibuka' : 'Hint '+(hintLvl+1)+'/3';
+    if(hintLvl>=3) $(p+'-hint').disabled=true;
+  };
+  $(p+'-check').onclick=function(){
+    var val=$(p+'-in').value;
+    var r = prob.type==='value' ? checkValue(val, prob.target, prob.tol||1e-6)
+                                : checkIntegral(val, prob.Fref, prob.pts);
+    if(r.ok && !r.noC){
+      $(p+'-in').className='inp ok';
+      feedback($(p+'-fb'),'ok','Betul! '+(prob.praise||'Kerja yang kemas.'));
+      if(!answered){ answered=true; if(onResult) onResult(true); }
+    } else if(r.ok && r.noC){
+      $(p+'-in').className='inp no';
+      feedback($(p+'-fb'),'no','Hampir! Bahagian x sudah betul, tapi tertinggal <b class="konst">+ C</b>. Tambah dan semak semula.');
+    } else {
+      $(p+'-in').className='inp no';
+      feedback($(p+'-fb'),'no', r.why+' Tekan <b>Hint</b> kalau perlu bantuan.');
+      if(!answered){ if(onResult) onResult(false); answered=true; }
+    }
+  };
+  $(p+'-show').onclick=function(){
+    var box=$(p+'-jk');
+    box.innerHTML=prob.jk.map(function(s){ return '<li>'+s+'</li>'; }).join('');
+    box.classList.toggle('hidden');
+  };
+  $(p+'-new').onclick=fresh;
+  $(p+'-in').addEventListener('keydown', function(e){ if(e.key==='Enter') $(p+'-check').click(); });
+  fresh();
+  return {refresh:fresh};
+}
+
+/* alat bantu nombor */
+function ri(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function sup(n){ return '<sup class="pow">'+n+'</sup>'; }
+function fracHTML(n,d){ return '<span class="frac"><span class="num res">'+n+'</span><span class="den res">'+d+'</span></span>'; }
+function signTerm(a){ return a<0 ? ' \u2212 '+Math.abs(a) : ' + '+a; }
+
+/* ---------- A3 SIMBOL ---------- */
+function A_symbol(){
+  html($('A-body'),
+    '<div class="card" style="border:3px solid var(--ink)">'
+    +'<div class="lbl">RULE CARD \u00B7 POWER RULE</div>'
+    +'<div class="math md" style="margin:8px 0">\u222B x'+sup('n')+' dx <span class="op">=</span> '
+    +'<span class="frac"><span class="num res">x<sup>n+1</sup></span><span class="den res">n + 1</span></span>'
+    +' <span class="op">+</span> <span class="konst">C</span></div>'
+    +'<p class="muted" style="text-align:center;margin:0">Tambah 1 pada kuasa, kemudian bahagi dengan kuasa baharu.</p>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<h3>Isi tempat kosong</h3>'
+    +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Integratekan <b>\u222B 2x dx</b> menggunakan power rule.</p>'
+    +'<div class="inline" style="margin:10px 0">'
+    +'<span>2 \u00B7</span>'
+    +'<span class="frac"><span class="num">x<input class="box" id="A3-p" inputmode="numeric" placeholder="?" aria-label="Kuasa baharu" style="width:46px;min-height:38px"></span>'
+    +'<span class="den"><input class="box res" id="A3-d" inputmode="numeric" placeholder="?" aria-label="Pembahagi" style="width:46px;min-height:38px"></span></span>'
+    +'<span class="op">+</span><span class="konst">C</span></div>'
+    +'<div class="btnrow"><button class="btn ghost grow" id="A3-hint">Hint</button><button class="btn grow2" id="A3-check">Semak</button></div>'
+    +'<div class="fb hidden" id="A3-fb"></div>'
+    +'</div>'
+
+    +'<div class="card" id="A3-rev" style="display:none">'
+    +'<div class="lbl">UJI SEMULA</div>'
+    +'<div class="math md" style="margin:8px 0">F(x) = x\u00B2 &nbsp;<span class="op">\u2192 d/dx \u2192</span>&nbsp; <span class="op">2x</span> \u2713</div>'
+    +'<div class="note">Sentiasa boleh semak sendiri: <b>differentiate jawapan anda</b>. Kalau dapat balik soalan asal, jawapan betul.</div>'
+    +'<div class="btnrow"><button class="btn grow" id="A3-next">Seterusnya: Abstrak \u2192</button></div>'
+    +'</div>');
+
+  var tries=0;
+  $('A3-hint').onclick=function(){
+    tries++;
+    var msgs=['Kuasa asal ialah 1. Kuasa baharu = 1 + 1 = ?',
+              'Kuasa baharu ialah <b class="pow">2</b>. Pembahagi mesti sama dengan kuasa baharu.',
+              'Jawapan: kuasa = 2, pembahagi = 2. Maka 2 \u00B7 x\u00B2/2 = x\u00B2.'];
+    feedback($('A3-fb'),'hint', msgs[Math.min(tries,3)-1]);
+  };
+  $('A3-check').onclick=function(){
+    var p=$('A3-p'), d=$('A3-d');
+    var okP=parseFloat(p.value)===2, okD=parseFloat(d.value)===2;
+    p.className='box '+(okP?'ok':'no'); d.className='box res '+(okD?'ok':'no');
+    if(okP&&okD){
+      feedback($('A3-fb'),'ok','Betul! \u222B 2x dx = x\u00B2 + C.');
+      $('A3-rev').style.display='block';
+    } else {
+      feedback($('A3-fb'),'no','Belum betul. '+(okP?'Semak pembahagi.':'Semak kuasa baharu dahulu.'));
+    }
+  };
+  $('A3-next').onclick=A_next;
+}
+
+/* ---------- A4 ABSTRAK ---------- */
+function A4gen(){
+  var a=ri(2,6), n=ri(1,4);
+  var coef=a*(n+1);                       // f = coef x^n  ->  F = a x^(n+1)
+  return {
+    label:'CARI F(x)',
+    q:'F\u2032(x) = <span class="op">'+coef+'x'+sup(n)+'</span><br><span style="font-size:18px;color:var(--muted)">Cari F(x)</span>',
+    type:'integral',
+    Fref:function(x){ return a*Math.pow(x,n+1); },
+    pts:[0.4,0.9,1.3,2.1,2.8],
+    hints:[
+      'Integration ialah songsang differentiation. Tambah 1 pada kuasa.',
+      'Kuasa baharu = '+n+' + 1 = <b class="pow">'+(n+1)+'</b>. Kemudian bahagi pekali dengan '+(n+1)+'.',
+      'F(x) = '+coef+'x'+sup(n+1)+'/'+(n+1)+' + C = <b>'+a+'x'+sup(n+1)+' + C</b>'
+    ],
+    jk:[
+      'Kenal pasti: pekali = <b>'+coef+'</b>, kuasa = <b class="pow">'+n+'</b>.',
+      'Tambah 1 pada kuasa: '+n+' + 1 = <b class="pow">'+(n+1)+'</b>.',
+      'Bahagi pekali dengan kuasa baharu: '+coef+' \u00F7 '+(n+1)+' = <b class="res">'+a+'</b>.',
+      'Tulis jawapan dengan pemalar: F(x) = <b class="res">'+a+'x'+sup(n+1)+'</b> <span class="op">+</span> <span class="konst">C</span>.',
+      'Semak: d/dx('+a+'x'+sup(n+1)+') = '+coef+'x'+sup(n)+' \u2713'
+    ],
+    praise:'Anda sudah boleh "undo" differentiation.'
+  };
+}
+
+function A_abstract(){
+  html($('A-body'),
+    '<div class="card flat" style="background:var(--a-tint)">'
+    +'<div class="note" style="background:transparent;padding:0">Sekarang tanpa bantuan graf. Tulis jawapan penuh termasuk <b class="konst">+ C</b>. Taip kuasa guna tanda <b>^</b>, contoh <b>x^3</b>.</div></div>'
+    + solverHTML('A4')
+    +'<div class="card" id="A4-done" style="display:none;background:var(--ok-bg)">'
+    +'<h3 style="color:var(--ok-fg)">App A selesai!</h3>'
+    +'<p style="margin:6px 0 0;font-weight:700;color:var(--ok-fg)">Anda sudah faham integration sebagai songsang differentiation. Teruskan ke App B untuk belajar semua rule.</p>'
+    +'<div class="btnrow"><button class="btn grow" onclick="show(\'B\')">Pergi App B \u2192</button></div></div>');
+
+  var streak=0;
+  var sv=bindSolver('A4', A4gen, function(ok){
+    S.A.total++; if(ok){ S.A.correct++; streak++; } else streak=0;
+    if(streak>=3){ S.A.done[3]=true; $('A4-done').style.display='block'; }
+    save();
+  });
+  if(S.A.done[3]) $('A4-done').style.display='block';
+  return sv;
+}
+
+/* ======================================================================
+   BAHAGIAN 8 — APP B · RULE CARDS (3.2 Indefinite integral)
+   ====================================================================== */
+var B_FAM=[
+  {id:'power', name:'Power Rule',
+   rule:'\u222B x'+sup('n')+' dx <span class="op">=</span> <span class="frac"><span class="num res">x<sup>n+1</sup></span><span class="den res">n + 1</span></span> <span class="op">+</span> <span class="konst">C</span>',
+   note:'Tambah 1 pada kuasa, kemudian bahagi dengan kuasa baharu. (n \u2260 \u22121)'},
+  {id:'trig', name:'Trigonometric',
+   rule:'\u222B sin x dx <span class="op">=</span> <span class="res">\u2212cos x</span> <span class="op">+</span> <span class="konst">C</span><br>\u222B cos x dx <span class="op">=</span> <span class="res">sin x</span> <span class="op">+</span> <span class="konst">C</span>',
+   note:'sin jadi \u2212cos, cos jadi sin. Tanda negatif hanya pada sin.'},
+  {id:'exp', name:'Exponential',
+   rule:'\u222B e'+sup('x')+' dx <span class="op">=</span> <span class="res">e<sup>x</sup></span> <span class="op">+</span> <span class="konst">C</span><br>\u222B e'+sup('ax')+' dx <span class="op">=</span> <span class="frac"><span class="num res">e<sup>ax</sup></span><span class="den res">a</span></span> <span class="op">+</span> <span class="konst">C</span>',
+   note:'e<sup>x</sup> kekal e<sup>x</sup>. Kalau ada a di depan x, bahagi dengan a.'},
+  {id:'recip', name:'1/x (Inverse)',
+   rule:'\u222B <span class="frac"><span class="num">1</span><span class="den">x</span></span> dx <span class="op">=</span> <span class="res">ln |x|</span> <span class="op">+</span> <span class="konst">C</span>',
+   note:'Inilah kes istimewa n = \u22121. Power rule gagal di sini kerana n + 1 = 0.'}
+];
+
+var PTS_POS=[0.5,0.9,1.4,2.2,3.1];
+var PTS_ANY=[-1.3,0.4,0.9,1.7,2.6];
+
+function BGEN(fam, lvl){
+  var a,b,n,m,c;
+  if(fam==='power'){
+    if(lvl===1){
+      n=ri(1,4); a=ri(2,7);
+      return {label:'POWER RULE \u00B7 ARAS 1',
+        q:'\u222B '+a+'x'+sup(n)+' dx',
+        type:'integral', Fref:function(x){return a/(n+1)*Math.pow(x,n+1);}, pts:PTS_ANY,
+        hints:['Kuasa baharu = '+n+' + 1.',
+               'Kuasa baharu ialah <b class="pow">'+(n+1)+'</b>. Sekarang bahagi '+a+' dengan '+(n+1)+'.',
+               'Jawapan: '+a+'x'+sup(n+1)+'/'+(n+1)+' + C'],
+        jk:['Pekali <b>'+a+'</b> kekal di luar: '+a+' \u222B x'+sup(n)+' dx.',
+            'Power rule: kuasa '+n+' + 1 = <b class="pow">'+(n+1)+'</b>.',
+            'Bahagi dengan kuasa baharu: '+fracHTML('x'+sup(n+1),(n+1))+'.',
+            'Jawapan: <b class="res">'+a+'x'+sup(n+1)+'/'+(n+1)+'</b> <span class="konst">+ C</span>.']};
+    }
+    if(lvl===2){
+      a=ri(2,6); n=ri(2,4); b=ri(2,8);
+      return {label:'POWER RULE \u00B7 ARAS 2',
+        q:'\u222B ('+a+'x'+sup(n)+' + '+b+') dx',
+        type:'integral', Fref:function(x){return a/(n+1)*Math.pow(x,n+1)+b*x;}, pts:PTS_ANY,
+        hints:['Integrate setiap sebutan satu per satu.',
+               'Sebutan pertama guna power rule. Sebutan kedua: \u222B '+b+' dx = '+b+'x.',
+               'Jawapan: '+a+'x'+sup(n+1)+'/'+(n+1)+' + '+b+'x + C'],
+        jk:['Pecahkan: \u222B '+a+'x'+sup(n)+' dx + \u222B '+b+' dx.',
+            'Sebutan 1: kuasa '+(n+1)+', jadi '+a+'x'+sup(n+1)+'/'+(n+1)+'.',
+            'Sebutan 2: pemalar '+b+' jadi <b class="res">'+b+'x</b>.',
+            'Gabung dan tambah <span class="konst">C</span> sekali sahaja.']};
+    }
+    a=ri(2,5); b=ri(2,6); n=ri(2,3);
+    return {label:'POWER RULE \u00B7 ARAS 3',
+      q:'\u222B <span class="frac"><span class="num">'+a+'x'+sup(n)+' + '+b+'x</span><span class="den">x</span></span> dx',
+      type:'integral', Fref:function(x){return a/n*Math.pow(x,n)+b*x;}, pts:PTS_POS,
+      hints:['Bahagi setiap sebutan dengan x dahulu, sebelum integrate.',
+             'Selepas bahagi: '+a+'x'+sup(n-1)+' + '+b+'. Baru guna power rule.',
+             'Jawapan: '+a+'x'+sup(n)+'/'+n+' + '+b+'x + C'],
+      jk:['Mudahkan dahulu: ('+a+'x'+sup(n)+' + '+b+'x) \u00F7 x = <b>'+a+'x'+sup(n-1)+' + '+b+'</b>.',
+          'Integrate sebutan 1: kuasa '+(n-1)+' + 1 = '+n+', jadi '+a+'x'+sup(n)+'/'+n+'.',
+          'Integrate sebutan 2: '+b+' jadi '+b+'x.',
+          'Jawapan: <b class="res">'+a+'x'+sup(n)+'/'+n+' + '+b+'x</b> <span class="konst">+ C</span>.']};
+  }
+  if(fam==='trig'){
+    if(lvl===1){
+      a=ri(2,6); var isSin=Math.random()<0.5;
+      return {label:'TRIG \u00B7 ARAS 1',
+        q:'\u222B '+a+' '+(isSin?'sin':'cos')+' x dx',
+        type:'integral',
+        Fref: isSin ? function(x){return -a*Math.cos(x);} : function(x){return a*Math.sin(x);},
+        pts:PTS_ANY, ph:'contoh: -3cos x + C',
+        hints:[isSin?'Integral sin ialah \u2212cos.':'Integral cos ialah sin.',
+               'Pekali '+a+' kekal di depan.',
+               'Jawapan: '+(isSin?('\u2212'+a+' cos x'):(a+' sin x'))+' + C'],
+        jk:['Keluarkan pekali: '+a+' \u222B '+(isSin?'sin':'cos')+' x dx.',
+            isSin?'\u222B sin x dx = <b class="res">\u2212cos x</b>.':'\u222B cos x dx = <b class="res">sin x</b>.',
+            'Jawapan: <b class="res">'+(isSin?('\u2212'+a+' cos x'):(a+' sin x'))+'</b> <span class="konst">+ C</span>.']};
+    }
+    if(lvl===2){
+      a=ri(2,5); b=ri(2,5);
+      return {label:'TRIG \u00B7 ARAS 2',
+        q:'\u222B ('+a+' sin x + '+b+' cos x) dx',
+        type:'integral', Fref:function(x){return -a*Math.cos(x)+b*Math.sin(x);}, pts:PTS_ANY,
+        ph:'contoh: -2cos x + 3sin x + C',
+        hints:['Integrate dua sebutan secara berasingan.',
+               'sin \u2192 \u2212cos, cos \u2192 sin.',
+               'Jawapan: \u2212'+a+' cos x + '+b+' sin x + C'],
+        jk:['Sebutan 1: '+a+' \u222B sin x dx = \u2212'+a+' cos x.',
+            'Sebutan 2: '+b+' \u222B cos x dx = '+b+' sin x.',
+            'Jawapan: <b class="res">\u2212'+a+' cos x + '+b+' sin x</b> <span class="konst">+ C</span>.']};
+    }
+    a=ri(2,6); b=ri(2,4);
+    return {label:'TRIG \u00B7 ARAS 3',
+      q:'\u222B '+a+' cos('+b+'x) dx',
+      type:'integral', Fref:function(x){return a/b*Math.sin(b*x);}, pts:PTS_ANY,
+      ph:'contoh: (3/2)sin(2x) + C',
+      hints:['Dalam kurungan ada '+b+'x. Ini mempengaruhi jawapan.',
+             'Integral cos(ax) = sin(ax)/a. Jadi bahagi dengan <b>'+b+'</b>.',
+             'Jawapan: ('+a+'/'+b+') sin('+b+'x) + C'],
+      jk:['Kenal pasti dalaman: '+b+'x, jadi a = <b class="pow">'+b+'</b>.',
+          'Formula: \u222B cos(ax) dx = sin(ax)/a.',
+          'Masukkan: '+a+' \u00D7 sin('+b+'x)/'+b+'.',
+          'Jawapan: <b class="res">('+a+'/'+b+') sin('+b+'x)</b> <span class="konst">+ C</span>.']};
+  }
+  if(fam==='exp'){
+    if(lvl===1){
+      a=ri(2,7);
+      return {label:'EXPONENTIAL \u00B7 ARAS 1',
+        q:'\u222B '+a+'e'+sup('x')+' dx',
+        type:'integral', Fref:function(x){return a*Math.exp(x);}, pts:[-1,0.3,0.8,1.4,2],
+        ph:'contoh: 4e^x + C',
+        hints:['e<sup>x</sup> ialah fungsi istimewa.','Integral e<sup>x</sup> ialah e<sup>x</sup> sendiri.','Jawapan: '+a+'e^x + C'],
+        jk:['Keluarkan pekali: '+a+' \u222B e'+sup('x')+' dx.',
+            '\u222B e'+sup('x')+' dx = <b class="res">e<sup>x</sup></b> (tidak berubah).',
+            'Jawapan: <b class="res">'+a+'e<sup>x</sup></b> <span class="konst">+ C</span>.']};
+    }
+    if(lvl===2){
+      a=ri(2,6); b=ri(2,4);
+      return {label:'EXPONENTIAL \u00B7 ARAS 2',
+        q:'\u222B '+a+'e'+sup(b+'x')+' dx',
+        type:'integral', Fref:function(x){return a/b*Math.exp(b*x);}, pts:[-0.6,0.2,0.7,1.1,1.5],
+        ph:'contoh: (3/2)e^(2x) + C',
+        hints:['Kuasa e ialah '+b+'x, bukan x sahaja.','Formula: \u222B e<sup>ax</sup> dx = e<sup>ax</sup>/a. Bahagi dengan <b>'+b+'</b>.',
+               'Jawapan: ('+a+'/'+b+')e^('+b+'x) + C'],
+        jk:['Kenal pasti a = <b class="pow">'+b+'</b> daripada e'+sup(b+'x')+'.',
+            'Formula: \u222B e<sup>ax</sup> dx = e<sup>ax</sup>/a.',
+            'Masukkan pekali: '+a+' \u00D7 e'+sup(b+'x')+'/'+b+'.',
+            'Jawapan: <b class="res">('+a+'/'+b+')e<sup>'+b+'x</sup></b> <span class="konst">+ C</span>.']};
+    }
+    a=ri(2,5); b=ri(2,3); c=ri(2,6); n=ri(1,3);
+    return {label:'EXPONENTIAL \u00B7 ARAS 3',
+      q:'\u222B ('+a+'e'+sup(b+'x')+' + '+c+'x'+sup(n)+') dx',
+      type:'integral', Fref:function(x){return a/b*Math.exp(b*x)+c/(n+1)*Math.pow(x,n+1);}, pts:[-0.5,0.3,0.8,1.2,1.6],
+      hints:['Dua sebutan, dua rule berbeza.','Sebutan e guna \u00F7'+b+'. Sebutan x guna power rule.',
+             'Jawapan: ('+a+'/'+b+')e^('+b+'x) + '+c+'x^'+(n+1)+'/'+(n+1)+' + C'],
+      jk:['Asingkan: \u222B '+a+'e'+sup(b+'x')+' dx + \u222B '+c+'x'+sup(n)+' dx.',
+          'Sebutan 1: ('+a+'/'+b+')e'+sup(b+'x')+'.',
+          'Sebutan 2: kuasa '+(n+1)+', jadi '+c+'x'+sup(n+1)+'/'+(n+1)+'.',
+          'Gabung + <span class="konst">C</span>.']};
+  }
+  // recip
+  if(lvl===1){
+    a=ri(2,8);
+    return {label:'1/x \u00B7 ARAS 1',
+      q:'\u222B <span class="frac"><span class="num">'+a+'</span><span class="den">x</span></span> dx',
+      type:'integral', Fref:function(x){return a*Math.log(Math.abs(x));}, pts:PTS_POS,
+      ph:'contoh: 5ln x + C',
+      hints:['Kuasa x di sini ialah \u22121. Power rule tidak boleh guna.',
+             'Integral 1/x ialah ln |x|.','Jawapan: '+a+' ln|x| + C'],
+      jk:['Tulis semula: '+a+' \u222B (1/x) dx.',
+          'Kes istimewa: \u222B (1/x) dx = <b class="res">ln |x|</b>.',
+          'Jawapan: <b class="res">'+a+' ln |x|</b> <span class="konst">+ C</span>.']};
+  }
+  if(lvl===2){
+    a=ri(3,9); b=ri(2,5);
+    return {label:'1/x \u00B7 ARAS 2',
+      q:'\u222B <span class="frac"><span class="num">'+a+'</span><span class="den">'+b+'x</span></span> dx',
+      type:'integral', Fref:function(x){return a/b*Math.log(Math.abs(x));}, pts:PTS_POS,
+      ph:'contoh: (3/2)ln x + C',
+      hints:['Keluarkan pecahan pemalar dahulu: ('+a+'/'+b+') \u00D7 (1/x).',
+             'Kemudian guna \u222B (1/x) dx = ln|x|.',
+             'Jawapan: ('+a+'/'+b+') ln|x| + C'],
+      jk:['Pisahkan pemalar: ('+a+'/'+b+') \u222B (1/x) dx.',
+          '\u222B (1/x) dx = ln |x|.',
+          'Jawapan: <b class="res">('+a+'/'+b+') ln |x|</b> <span class="konst">+ C</span>.']};
+  }
+  a=ri(2,8); b=ri(2,4); c=ri(1,5);
+  return {label:'1/x \u00B7 ARAS 3',
+    q:'\u222B <span class="frac"><span class="num">'+a+'</span><span class="den">'+b+'x + '+c+'</span></span> dx',
+    type:'integral', Fref:function(x){return a/b*Math.log(Math.abs(b*x+c));}, pts:PTS_POS,
+    ph:'contoh: (2/3)ln(3x+1) + C',
+    hints:['Penyebut bukan x sahaja, tapi '+b+'x + '+c+'.',
+           'Formula: \u222B 1/(ax+b) dx = ln|ax+b| / a. Bahagi dengan <b>'+b+'</b>.',
+           'Jawapan: ('+a+'/'+b+') ln|'+b+'x + '+c+'| + C'],
+    jk:['Kenal pasti pekali x dalam penyebut: <b class="pow">'+b+'</b>.',
+        'Formula: \u222B 1/(ax+b) dx = (1/a) ln|ax+b|.',
+        'Masukkan pekali luar: '+a+' \u00D7 (1/'+b+') ln|'+b+'x + '+c+'|.',
+        'Jawapan: <b class="res">('+a+'/'+b+') ln |'+b+'x + '+c+'|</b> <span class="konst">+ C</span>.']};
+}
+
+var KEYPAD=[['x','x'],['x\u207F','^'],['a/b','/'],['\u221A','sqrt('],['e\u02E3','e^x'],['sin','sin('],['ln','ln('],['+C',' + C']];
+
+function renderB(){
+  var fam=B_FAM.filter(function(f){return f.id===S.B.tab;})[0]||B_FAM[0];
+  $('B-level').textContent='Aras '+S.B.level;
+  var mp=pct(S.B.correct,Math.max(S.B.total,1));
+  $('B-score').textContent='Mastery \u00B7 '+S.B.correct+'/'+S.B.total+' betul';
+  $('B-fill').style.width=mp+'%';
+
+  html($('B-body'),
+    '<div class="tabscroll" id="B-tabs">'+B_FAM.map(function(f){
+      return '<button aria-current="'+(f.id===S.B.tab)+'" data-f="'+f.id+'">'+f.name+'</button>';
+    }).join('')+'</div>'
+
+    +'<div class="card" style="border:3px solid var(--ink);margin-top:12px">'
+    +'<div class="lbl">RULE CARD \u00B7 '+fam.name.toUpperCase()+'</div>'
+    +'<div class="math md" style="margin:8px 0">'+fam.rule+'</div>'
+    +'<p class="muted" style="text-align:center;margin:0">'+fam.note+'</p></div>'
+
+    +'<div class="g3" id="B-levels">'
+    +[1,2,3].map(function(l){
+        var nm=['Mudah','Sederhana','Mencabar'][l-1];
+        return '<button class="btn '+(S.B.level===l?'':'soft')+'" data-l="'+l+'" style="min-height:48px;font-size:13px;flex-direction:column;gap:0">Aras '+l+'<span style="font-size:11px;font-weight:700">'+nm+'</span></button>';
+      }).join('')+'</div>'
+
+    + solverHTML('B')
+
+    +'<div class="card">'
+    +'<div class="lbl">PAPAN SIMBOL</div>'
+    +'<div class="g4" id="B-pad">'+KEYPAD.map(function(k){
+        return '<button class="btn soft" data-k="'+k[1]+'" style="min-height:46px;font-size:16px">'+k[0]+'</button>';
+      }).join('')+'</div>'
+    +'<p class="muted" style="margin:8px 0 0">Tekan untuk masukkan simbol. Kuasa guna <b>^</b>, pecahan guna <b>/</b>.</p></div>');
+
+  $('B-tabs').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.B.tab=b.dataset.f; save(); renderB(); };
+  });
+  $('B-levels').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.B.level=+b.dataset.l; save(); renderB(); };
+  });
+
+  bindSolver('B', function(){ return BGEN(S.B.tab, S.B.level); }, function(ok){
+    S.B.total++; if(ok) S.B.correct++;
+    save();
+    var m=pct(S.B.correct,Math.max(S.B.total,1));
+    $('B-score').textContent='Mastery \u00B7 '+S.B.correct+'/'+S.B.total+' betul';
+    $('B-fill').style.width=m+'%';
+  });
+
+  $('B-pad').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){
+      var i=$('B-in'), v=b.dataset.k;
+      var pos=i.selectionStart===null?i.value.length:i.selectionStart;
+      i.value=i.value.slice(0,pos)+v+i.value.slice(i.selectionEnd===null?pos:i.selectionEnd);
+      i.focus(); i.setSelectionRange(pos+v.length,pos+v.length);
+    };
+  });
+}
+
+/* ======================================================================
+   BAHAGIAN 9 — APP D · AREA HUNTER (3.4 Definite integral)
+   ====================================================================== */
+var D_STAGES=['Konkrit','Visual','Simbol','Abstrak'];
+
+function renderD(){
+  var strip='';
+  D_STAGES.forEach(function(n,i){
+    strip+='<button role="tab" aria-current="'+(S.D.stage===i)+'" class="'+(S.D.done[i]?'done':'')+'" data-st="'+i+'">'+n+(S.D.done[i]?' \u2713':'')+'</button>';
+  });
+  html($('D-strip'), strip);
+  $('D-strip').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.D.stage=+b.dataset.st; save(); renderD(); };
+  });
+  [D_concrete, D_visual, D_symbol, D_abstract][S.D.stage]();
+}
+function D_next(){ S.D.done[S.D.stage]=true; if(S.D.stage<3) S.D.stage++; save(); renderD(); }
+
+/* ---------- D1 KONKRIT: tangki air ---------- */
+function D_concrete(){
+  html($('D-body'),
+    '<div class="card">'
+    +'<h3>Tangki air di bengkel</h3>'
+    +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Paip mengisi tangki pada <b class="op">kadar tetap 4 liter/minit</b>. Tarik slider untuk tukar masa.</p>'
+    +'<div id="D1-plot"></div>'
+    +'<div class="sliderow"><label for="D1-t" style="font-weight:800">masa</label>'
+    +'<input id="D1-t" type="range" min="1" max="8" step="1" value="5" aria-label="Masa dalam minit">'
+    +'<span class="val" id="D1-tv">5 min</span></div>'
+    +'<div class="note" style="margin-top:10px">Luas segi empat = <b class="op">4</b> \u00D7 <b class="pow">masa</b> = <b class="res" id="D1-vol">20</b> liter</div>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<h3>Kalau kadar berubah?</h3>'
+    +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Sekarang paip makin laju: kadar = <b class="op">t</b> liter/minit. Luas bukan lagi segi empat tepat.</p>'
+    +'<div id="D1-plot2"></div>'
+    +'<div class="note" style="margin-top:10px">Kita tidak boleh darab terus. Kita perlu cara untuk cari <b class="res">luas di bawah lengkung</b> \u2014 itulah <b>definite integral</b>.</div>'
+    +'<div class="btnrow"><button class="btn grow" id="D1-next">Seterusnya: Visual \u2192</button></div>'
+    +'</div>');
+
+  function draw(){
+    var t=parseInt($('D1-t').value,10);
+    $('D1-tv').textContent=t+' min'; $('D1-vol').textContent=(4*t);
+    html($('D1-plot'), plot({
+      w:342,h:190,xmin:-0.5,xmax:8.5,ymin:-1,ymax:7,
+      bars:[{x0:0,x1:t,h:4,color:'var(--d)'}],
+      curves:[{fn:function(){return 4;}, color:'var(--op)', width:3.5}],
+      labels:[{px:300,py:182,text:'masa (min)',size:11,anchor:'end'},{px:34,py:18,text:'L/min',size:11},
+              {x:t/2,y:2,text:(4*t)+' L',size:14,anchor:'middle'}],
+      alt:'Graf kadar tetap 4 liter per minit dengan luas segi empat tepat berlorek'
+    }));
+  }
+  $('D1-t').addEventListener('input',draw); draw();
+
+  html($('D1-plot2'), plot({
+    w:342,h:190,xmin:-0.5,xmax:8.5,ymin:-1,ymax:9,
+    shade:{a:0,b:6,fn:function(x){return x;},color:'var(--d)',opacity:.6},
+    curves:[{fn:function(x){return x;}, color:'var(--op)', width:3.5}],
+    labels:[{px:300,py:182,text:'masa (min)',size:11,anchor:'end'},{px:34,py:18,text:'L/min',size:11},
+            {x:2.6,y:1.4,text:'luas = ?',size:14}],
+    alt:'Graf kadar menaik dengan kawasan segitiga di bawah garis berlorek'
+  }));
+  $('D1-next').onclick=D_next;
+}
+
+/* ---------- D2 VISUAL: Riemann ---------- */
+var D2n=10;
+function riemann(n){
+  var a=0,b=3,h=(b-a)/n,sum=0,bars=[];
+  for(var i=1;i<=n;i++){
+    var x=a+i*h, y=0.5*x*x+0.5;
+    sum+=y*h;
+    if(n<=50) bars.push({x0:a+(i-1)*h, x1:x, h:y, color:'var(--d)', sw:n>20?0.4:1.2});
+  }
+  if(n>50) for(var j=1;j<=100;j++){ var hh=(b-a)/100, xx=a+j*hh; bars.push({x0:a+(j-1)*hh,x1:xx,h:0.5*xx*xx+0.5,color:'var(--d)',sw:0.3}); }
+  return {sum:sum, bars:bars};
+}
+function D_visual(){
+  html($('D-body'),
+    '<div class="math lg" style="text-align:left;margin:4px 0 12px">\u222B<sub style="font-size:15px">0</sub><sup style="font-size:15px">3</sup> (\u00BDx\u00B2 + \u00BD) dx = ?</div>'
+    +'<div class="card">'
+    +'<div id="D2-plot"></div>'
+    +'<p style="font-size:13px;font-weight:800;margin:10px 0 6px">Bilangan segi empat, n</p>'
+    +'<div class="g4" id="D2-n">'+[4,10,50,200].map(function(n){
+        return '<button class="btn '+(n===D2n?'':'soft')+'" data-n="'+n+'" style="min-height:46px">'+n+'</button>';
+      }).join('')+'</div></div>'
+
+    +'<div class="card" style="background:var(--panel);color:var(--panel-fg)">'
+    +'<div style="display:flex;justify-content:space-between;align-items:baseline">'
+    +'<span style="font-size:13px;font-weight:800;color:var(--d)">JUMLAH LUAS SEGI EMPAT</span>'
+    +'<span class="math md" id="D2-sum">0</span></div>'
+    +'<div class="g4" style="margin-top:10px;text-align:center;font-size:12px;font-weight:800">'
+    +[4,10,50,200].map(function(n){
+        return '<div style="background:'+(n===D2n?'var(--d)':'var(--panel-soft)')+';color:'+(n===D2n?'#1B1A3A':'var(--panel-fg)')+';border-radius:10px;padding:6px 0">n='+n+'<br>'+riemann(n).sum.toFixed(3)+'</div>';
+      }).join('')
+    +'</div>'
+    +'<p style="font-size:14px;font-weight:700;margin:10px 0 0;color:var(--panel-fg);opacity:.85">Makin banyak segi empat, makin hampir nilai sebenar. Teka: berapa nilainya bila n \u2192 \u221E?</p></div>'
+
+    +'<div class="card">'
+    +'<label for="D2-g" style="font-size:13px;font-weight:800;color:var(--muted)">Tekaan anda</label>'
+    +'<input class="inp" id="D2-g" inputmode="decimal" placeholder="contoh: 6">'
+    +'<div class="btnrow"><button class="btn grow" id="D2-check">Semak tekaan</button></div>'
+    +'<div class="fb hidden" id="D2-fb"></div>'
+    +'<div class="btnrow hidden" id="D2-nextrow"><button class="btn grow" id="D2-next">Seterusnya: Simbol \u2192</button></div></div>');
+
+  function draw(){
+    var r=riemann(D2n);
+    $('D2-sum').textContent=r.sum.toFixed(3);
+    html($('D2-plot'), plot({
+      w:342,h:240,xmin:-0.3,xmax:3.4,ymin:-0.6,ymax:5.6, bars:r.bars,
+      curves:[{fn:function(x){return 0.5*x*x+0.5;}, color:'var(--op)', width:3.5}],
+      labels:[{x:0.15,y:5.1,text:'y = \u00BDx\u00B2 + \u00BD',color:'var(--op)',size:13},
+              {x:3,y:-0.35,text:'3',size:12,anchor:'middle'},{x:0,y:-0.35,text:'0',size:12,anchor:'middle'}],
+      alt:D2n+' segi empat Riemann di bawah lengkung dari x sama dengan 0 hingga 3'
+    }));
+  }
+  draw();
+  $('D2-n').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ D2n=+b.dataset.n; renderD(); };
+  });
+  $('D2-check').onclick=function(){
+    var r=checkValue($('D2-g').value, 6, 0.35);
+    $('D2-g').className='inp '+(r.ok?'ok':'no');
+    if(r.ok){
+      feedback($('D2-fb'),'ok','Betul! Nilai sebenar ialah tepat <b>6</b>. Itulah maksud \u222B\u2080\u00B3 (\u00BDx\u00B2 + \u00BD) dx.');
+      $('D2-nextrow').classList.remove('hidden');
+    } else {
+      feedback($('D2-fb'),'hint','Belum tepat. Tengok corak: 7.828 \u2192 6.697 \u2192 6.136 \u2192 6.034. Nombor ini menuju ke mana?');
+    }
+  };
+  $('D2-next').onclick=D_next;
+}
+
+/* ---------- D3 SIMBOL ---------- */
+function D_symbol(){
+  html($('D-body'),
+    '<div class="card" style="border:3px solid var(--ink)">'
+    +'<div class="lbl">FUNDAMENTAL THEOREM</div>'
+    +'<div class="math md" style="margin:8px 0">\u222B<sub style="font-size:14px">a</sub><sup style="font-size:14px">b</sup> f(x) dx <span class="op">=</span> [F(x)]<sub style="font-size:14px">a</sub><sup style="font-size:14px">b</sup> <span class="op">=</span> <span class="res">F(b) \u2212 F(a)</span></div>'
+    +'<p class="muted" style="text-align:center;margin:0">Tak perlu kira segi empat lagi. Cari F, masukkan had atas, tolak had bawah. <b>Tiada + C</b> \u2014 ia hapus sendiri.</p></div>'
+
+    +'<div class="card">'
+    +'<h3>Ikut tiga langkah</h3>'
+    +'<div class="math md" style="margin:10px 0">\u222B<sub style="font-size:14px">0</sub><sup style="font-size:14px">3</sup> (\u00BDx\u00B2 + \u00BD) dx</div>'
+    +'<ol class="jk" style="margin-bottom:10px"><li>Cari F(x): F(x) = <span class="res">x\u00B3/6 + x/2</span></li></ol>'
+    +'<div class="g2">'
+    +'<label style="display:block"><span style="font-size:13px;font-weight:800;color:var(--muted)">F(3) =</span>'
+    +'<input class="inp" id="D3-b" inputmode="decimal" placeholder="?"></label>'
+    +'<label style="display:block"><span style="font-size:13px;font-weight:800;color:var(--muted)">F(0) =</span>'
+    +'<input class="inp" id="D3-a" inputmode="decimal" placeholder="?"></label></div>'
+    +'<label style="display:block;margin-top:10px"><span style="font-size:13px;font-weight:800;color:var(--muted)">Jawapan = F(3) \u2212 F(0) =</span>'
+    +'<input class="inp" id="D3-ans" inputmode="decimal" placeholder="?"></label>'
+    +'<div class="btnrow"><button class="btn ghost grow" id="D3-hint">Hint</button><button class="btn grow2" id="D3-check">Semak</button></div>'
+    +'<div class="fb hidden" id="D3-fb"></div></div>'
+
+    +'<div class="card" id="D3-rev" style="display:none;background:var(--ok-bg)">'
+    +'<p style="margin:0;font-weight:800;color:var(--ok-fg)">Nilai ini sama dengan 6 yang anda teka daripada segi empat tadi. Dua cara, satu jawapan.</p>'
+    +'<div class="btnrow"><button class="btn grow" id="D3-next">Seterusnya: Abstrak \u2192</button></div></div>');
+
+  var tries=0;
+  $('D3-hint').onclick=function(){
+    tries++;
+    var m=['Masukkan x = 3 ke dalam F(x) = x\u00B3/6 + x/2.',
+           'F(3) = 27/6 + 3/2 = 4.5 + 1.5 = <b>6</b>. Sekarang cuba F(0).',
+           'F(0) = 0 + 0 = <b>0</b>. Jadi jawapan = 6 \u2212 0 = 6.'];
+    feedback($('D3-fb'),'hint', m[Math.min(tries,3)-1]);
+  };
+  $('D3-check').onclick=function(){
+    var b=checkValue($('D3-b').value,6,0.01), a=checkValue($('D3-a').value,0,0.01), ans=checkValue($('D3-ans').value,6,0.01);
+    $('D3-b').className='inp '+(b.ok?'ok':'no');
+    $('D3-a').className='inp '+(a.ok?'ok':'no');
+    $('D3-ans').className='inp '+(ans.ok?'ok':'no');
+    if(b.ok&&a.ok&&ans.ok){
+      feedback($('D3-fb'),'ok','Betul semua! \u222B\u2080\u00B3 (\u00BDx\u00B2 + \u00BD) dx = <b>6</b>.');
+      $('D3-rev').style.display='block';
+    } else {
+      feedback($('D3-fb'),'no','Ada yang belum betul. '+(!b.ok?'Mula dengan F(3).':!a.ok?'Semak F(0).':'Tolak: F(3) \u2212 F(0).'));
+    }
+  };
+  $('D3-next').onclick=D_next;
+}
+
+/* ---------- D4 ABSTRAK ---------- */
+function D4gen(){
+  var n=ri(1,3), p=(n+1)*ri(1,3), q=ri(1,5), a=0, b=ri(2,3);
+  var F=function(x){ return p/(n+1)*Math.pow(x,n+1)+q*x; };
+  var val=F(b)-F(a);
+  return {
+    label:'DEFINITE INTEGRAL',
+    q:'\u222B<sub style="font-size:16px">'+a+'</sub><sup style="font-size:16px">'+b+'</sup> ('+p+'x'+sup(n)+' + '+q+') dx',
+    type:'value', target:val, tol:0.02, ph:'contoh: 14',
+    hints:['Cari F(x) dahulu, abaikan + C.',
+           'F(x) = '+(p/(n+1))+'x'+sup(n+1)+' + '+q+'x. Sekarang kira F('+b+').',
+           'F('+b+') = '+F(b).toFixed(2)+', F('+a+') = '+F(a).toFixed(2)+'. Jawapan = '+val.toFixed(2)],
+    jk:['Integrate dahulu: F(x) = <b class="res">'+(p/(n+1))+'x'+sup(n+1)+' + '+q+'x</b>.',
+        'Masukkan had atas: F('+b+') = '+(p/(n+1))+'('+b+')'+sup(n+1)+' + '+q+'('+b+') = <b>'+F(b).toFixed(2)+'</b>.',
+        'Masukkan had bawah: F('+a+') = <b>'+F(a).toFixed(2)+'</b>.',
+        'Tolak: '+F(b).toFixed(2)+' \u2212 '+F(a).toFixed(2)+' = <b class="res">'+val.toFixed(2)+'</b>.',
+        'Definite integral tiada + C kerana ia hapus semasa ditolak.'],
+    praise:'Anda sudah boleh guna Fundamental Theorem.'
+  };
+}
+function D_abstract(){
+  html($('D-body'),
+    '<div class="card flat" style="background:var(--d-tint)">'
+    +'<div class="note" style="background:transparent;padding:0">Jawab sebagai <b>nombor</b> sahaja. Tiada + C untuk definite integral.</div></div>'
+    + solverHTML('D', {ph:'contoh: 14'})
+    +'<div class="card" id="D4-done" style="display:none;background:var(--ok-bg)">'
+    +'<h3 style="color:var(--ok-fg)">App D selesai!</h3>'
+    +'<p style="margin:6px 0 0;font-weight:700;color:var(--ok-fg)">App C kini terbuka. Di sana anda belajar tiga teknik untuk integral yang lebih sukar.</p>'
+    +'<div class="btnrow"><button class="btn grow" onclick="show(\'C\')">Pergi App C \u2192</button></div></div>');
+  var streak=0;
+  bindSolver('D', D4gen, function(ok){
+    S.D.total++; if(ok){ S.D.correct++; streak++; } else streak=0;
+    if(streak>=3){ S.D.done[3]=true; S.unlockedC=true; $('D4-done').style.display='block'; }
+    save();
+  });
+  if(S.D.done[3]) $('D4-done').style.display='block';
+}
+
+/* ======================================================================
+   BAHAGIAN 10 — APP C · TECHNIQUE TOOLBOX (3.3)
+   Lima tab: Mula, Substitution, By parts, Pecahan separa, Nilai.
+   Penyelesai langkah demi langkah — langkah mesti betul sebelum
+   langkah seterusnya terbuka.
+   ====================================================================== */
+var I_OK=ICON_OK, I_NO=ICON_NO, I_HI=ICON_HINT;
+function fb(node,type,msg){ return feedback(node,type,msg); }
+var sameInt=checkIntegral, sameVal=checkValue;
+function sameFn(input, ref, pts){
+  var raw=normalise(input); if(!raw) return {ok:false,why:'Tulis jawapan dahulu.'};
+  var tree; try{ tree=parse(raw); }catch(e){ return {ok:false,why:e.message}; }
+  for(var i=0;i<pts.length;i++){
+    var v=evalNode(tree,pts[i]), r=ref(pts[i]);
+    if(!isFinite(v)) return {ok:false,why:'Jawapan tidak sah pada nilai '+pts[i]+'.'};
+    if(Math.abs(v-r)>1e-6*(1+Math.abs(r))) return {ok:false,why:'Belum betul.'};
+  }
+  return {ok:true};
+}
+
+function stepSolver(mountId, getProb, onDone){
+  var prob, cur, hintLvl, shown;
+
+  function start(){ prob=getProb(); cur=0; hintLvl=0; shown=false; draw(); }
+
+  function track(){
+    var s='<div class="track" aria-label="Kemajuan langkah">';
+    for(var i=0;i<prob.steps.length;i++){
+      if(i) s+='<div class="link '+(i<=cur?'done':'')+'"></div>';
+      s+='<div class="node '+(i<cur?'done':i===cur?'on':'')+'">'+(i<cur?'\u2713':(i+1))+'</div>';
+    }
+    return s+'</div>';
+  }
+  function doneList(){
+    var s='';
+    for(var i=0;i<cur;i++) s+='<div class="stepdone"><span class="num">'+(i+1)+'</span><span>'+prob.steps[i].done+'</span></div>';
+    return s;
+  }
+  function draw(){
+    var finished = cur>=prob.steps.length;
+    var st = finished? null : prob.steps[cur];
+    var h='<div class="card">'
+      +'<div class="lbl">'+prob.title+'</div>'
+      +'<div class="math lg" style="margin:8px 0 12px">'+prob.expr+'</div>'
+      + track() + doneList();
+    if(finished){
+      h+='<div class="fb ok">'+I_OK+'<div><b>Selesai!</b> Semua '+prob.steps.length+' langkah betul. '+(prob.praise||'')+'</div></div>'
+        +'<div class="btnrow"><button class="btn soft grow" id="SS-jk">Lihat jalan kerja penuh</button>'
+        +'<button class="btn grow" id="SS-new">Soalan baharu</button></div>'
+        +'<ol class="jk hidden" id="SS-jkbox" style="margin-top:10px"></ol>';
+    } else {
+      h+='<div style="font-weight:800;font-size:15px;margin:10px 0 6px">Langkah '+(cur+1)+' \u00B7 '+st.q+'</div>';
+      if(st.extra) h+=st.extra;
+      if(st.kind==='choice'){
+        h+='<div id="SS-opts">'+st.opts.map(function(o,i){return '<button class="opt" data-i="'+i+'">'+o.t+'</button>';}).join('')+'</div>';
+      } else {
+        h+='<input class="inp" id="SS-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(st.ph||'')+'">';
+      }
+      h+='<div class="dots" id="SS-dots"><span></span><span></span><span></span></div>'
+        +'<div class="btnrow"><button class="btn ghost grow" id="SS-hint">Hint 1/3</button>'
+        + (st.kind==='choice'?'':'<button class="btn grow2" id="SS-check">Semak langkah</button>')
+        +'</div>'
+        +'<div class="fb hidden" id="SS-fb"></div>'
+        +'<div class="btnrow"><button class="btn soft grow" id="SS-reveal">Tunjuk jawapan langkah ini</button>'
+        +'<button class="btn soft grow" id="SS-new">Soalan baharu</button></div>';
+    }
+    h+='</div>';
+    $(mountId).innerHTML=h;
+    bind(finished);
+  }
+  function dots(){ var d=$('SS-dots'); if(!d) return;
+    d.querySelectorAll('span').forEach(function(s,i){ s.className=i<hintLvl?'on':''; }); }
+  function advance(msg){
+    fb($('SS-fb'),'ok',msg||'Betul! Teruskan ke langkah seterusnya.');
+    setTimeout(function(){ cur++; hintLvl=0; shown=false;
+      if(cur>=prob.steps.length && onDone) onDone(true);
+      draw(); }, 700);
+  }
+  function bind(finished){
+    var nb=$('SS-new'); if(nb) nb.onclick=start;
+    if(finished){
+      $('SS-jk').onclick=function(){
+        var b=$('SS-jkbox');
+        b.innerHTML=prob.jk.map(function(s){return '<li>'+s+'</li>';}).join('');
+        b.classList.toggle('hidden');
+      };
+      return;
+    }
+    var st=prob.steps[cur];
+    $('SS-hint').onclick=function(){
+      if(hintLvl>=3) return;
+      hintLvl++; dots();
+      fb($('SS-fb'),'hint','<b>Hint '+hintLvl+':</b> '+st.hint[hintLvl-1]);
+      $('SS-hint').textContent = hintLvl>=3?'Semua hint dibuka':'Hint '+(hintLvl+1)+'/3';
+      if(hintLvl>=3) $('SS-hint').disabled=true;
+    };
+    $('SS-reveal').onclick=function(){
+      shown=true;
+      fb($('SS-fb'),'hint','Jawapan langkah ini: <b>'+st.ans+'</b>. Taip semula sendiri supaya anda ingat.');
+    };
+    if(st.kind==='choice'){
+      $('SS-opts').querySelectorAll('.opt').forEach(function(b){
+        b.onclick=function(){
+          var o=st.opts[+b.dataset.i];
+          b.className='opt '+(o.ok?'ok':'no');
+          if(o.ok) advance(o.why||'Betul!');
+          else fb($('SS-fb'),'no',o.why||'Belum betul. Cuba yang lain.');
+        };
+      });
+    } else {
+      var inp=$('SS-in');
+      $('SS-check').onclick=function(){
+        var r=st.check(inp.value);
+        if(r.ok && !r.noC){ inp.className='inp ok'; advance(r.why); }
+        else if(r.ok && r.noC){ inp.className='inp no'; fb($('SS-fb'),'no','Hampir! Tertinggal <b class="konst">+ C</b>.'); }
+        else { inp.className='inp no'; fb($('SS-fb'),'no',r.why+' Tekan Hint kalau perlu.'); if(onDone) onDone(false); }
+      };
+      inp.addEventListener('keydown',function(e){ if(e.key==='Enter') $('SS-check').click(); });
+      inp.focus();
+    }
+  }
+  start();
+}
+
+/* penyelesai bebas (satu kotak jawapan sahaja) */
+function freeSolver(mountId, getProb, onResult){
+  var prob,h=0,counted=false;
+  function start(){ prob=getProb(); h=0; counted=false; draw(); }
+  function draw(){
+    $(mountId).innerHTML='<div class="card">'
+      +'<div class="lbl">LATIHAN BEBAS</div>'
+      +'<div class="math lg" style="margin:8px 0 12px">'+prob.expr+'</div>'
+      +'<input class="inp" id="FS-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(prob.ph||'contoh: (x+1)^4/4 + C')+'">'
+      +'<div class="dots" id="FS-dots"><span></span><span></span><span></span></div>'
+      +'<div class="btnrow"><button class="btn ghost grow" id="FS-hint">Hint 1/3</button>'
+      +'<button class="btn grow2" id="FS-check">Semak jawapan</button></div>'
+      +'<div class="fb hidden" id="FS-fb"></div>'
+      +'<div class="btnrow"><button class="btn soft grow" id="FS-jk">Tunjuk jalan kerja</button>'
+      +'<button class="btn soft grow" id="FS-new">Soalan baharu</button></div>'
+      +'<ol class="jk hidden" id="FS-jkbox" style="margin-top:10px"></ol></div>';
+    $('FS-hint').onclick=function(){
+      if(h>=3) return; h++;
+      $('FS-dots').querySelectorAll('span').forEach(function(s,i){s.className=i<h?'on':'';});
+      fb($('FS-fb'),'hint','<b>Hint '+h+':</b> '+prob.hints[h-1]);
+      $('FS-hint').textContent=h>=3?'Semua hint dibuka':'Hint '+(h+1)+'/3';
+      if(h>=3) $('FS-hint').disabled=true;
+    };
+    $('FS-check').onclick=function(){
+      var i=$('FS-in'), r=sameInt(i.value, prob.Fref, prob.pts);
+      if(r.ok&&!r.noC){ i.className='inp ok'; fb($('FS-fb'),'ok','Betul! '+(prob.praise||'')); if(!counted){counted=true; if(onResult) onResult(true);} }
+      else if(r.ok&&r.noC){ i.className='inp no'; fb($('FS-fb'),'no','Hampir! Bahagian x betul tapi tertinggal <b class="konst">+ C</b>.'); }
+      else { i.className='inp no'; fb($('FS-fb'),'no',r.why); if(!counted){counted=true; if(onResult) onResult(false);} }
+    };
+    $('FS-jk').onclick=function(){ var b=$('FS-jkbox'); b.innerHTML=prob.jk.map(function(s){return '<li>'+s+'</li>';}).join(''); b.classList.toggle('hidden'); };
+    $('FS-new').onclick=start;
+    $('FS-in').addEventListener('keydown',function(e){ if(e.key==='Enter') $('FS-check').click(); });
+  }
+  start();
+}
+
+/* ======================================================================
+   4 — PEMBANTU SEMAKAN
+   ====================================================================== */
+var P_POS=[0.5,0.9,1.4,2.2,3.1], P_ANY=[-1.2,0.4,0.9,1.6,2.5], P_SML=[-0.5,0.3,0.8,1.2,1.6];
+function intNoC(ref,pts){ return function(s){ var r=sameInt(s,ref,pts); return r.ok?{ok:true}:r; }; }
+function intC(ref,pts){ return function(s){ return sameInt(s,ref,pts); }; }
+function fnEq(ref,pts){ return function(s){ return sameFn(s,ref,pts); }; }
+function valEq(t,tol){ return function(s){ return sameVal(s,t,tol||1e-6); }; }
+
+/* ======================================================================
+   5 — SUBSTITUTION
+   ====================================================================== */
+function genSub(lvl){
+  if(lvl===1){
+    var a=ri(2,5), b=ri(2,4), c=ri(1,5), n=ri(2,4);
+    var F=function(x){ return a*Math.pow(b*x+c,n+1)/(b*(n+1)); };
+    var Fu=function(u){ return a/b*Math.pow(u,n+1)/(n+1); };
+    return {
+      title:'SUBSTITUTION \u00B7 ARAS 1', Fx:F, ptsX:P_POS,
+      expr:'\u222B '+a+'('+b+'x + '+c+')'+sup(n)+' dx',
+      praise:'Anda sudah boleh guna substitution asas.',
+      steps:[
+        {q:'Pilih u. Bahagian mana yang paling sesuai?', kind:'choice',
+         opts:[{t:'u = '+b+'x + '+c,ok:true,why:'Betul! Pilih bahagian <b>di dalam kurungan</b>.'},
+               {t:'u = ('+b+'x + '+c+')'+sup(n),ok:false,why:'Terlalu banyak. Ambil isi kurungan sahaja, tanpa kuasa.'},
+               {t:'u = '+a,ok:false,why:'Itu pemalar di luar. Pemalar tidak perlu disubstitusi.'}],
+         hint:['Cari bahagian "di dalam" yang berkuasa.','Isi kurungan ialah '+b+'x + '+c+'.','Pilih u = '+b+'x + '+c+'.'],
+         ans:'u = '+b+'x + '+c, done:'u = '+b+'x + '+c},
+        {q:'Cari du/dx.', kind:'text', ph:'contoh: 3',
+         check:fnEq(function(){return b;},P_ANY),
+         hint:['Differentiate u = '+b+'x + '+c+' terhadap x.','Derivative '+b+'x ialah '+b+', derivative '+c+' ialah 0.','du/dx = '+b],
+         ans:'du/dx = '+b, done:'du/dx = '+b+' \u2192 dx = du/'+b},
+        {q:'Tukar integral kepada bentuk u.', kind:'choice',
+         opts:[{t:'('+a+'/'+b+') \u222B u'+sup(n)+' du',ok:true,why:'Betul! dx = du/'+b+', jadi '+a+' dibahagi '+b+'.'},
+               {t:a+' \u222B u'+sup(n)+' du',ok:false,why:'Anda terlupa dx = du/'+b+'. Perlu bahagi dengan '+b+'.'},
+               {t:'('+(a*b)+') \u222B u'+sup(n)+' du',ok:false,why:'Darab, bukan bahagi. dx = du/'+b+' bermakna <b>bahagi</b>.'}],
+         hint:['Ganti ('+b+'x + '+c+')'+sup(n)+' dengan u'+sup(n)+', dan dx dengan du/'+b+'.',
+               'Pemalar '+a+' dan 1/'+b+' boleh digabung di luar.','Jawapan: ('+a+'/'+b+') \u222B u'+sup(n)+' du'],
+         ans:'('+a+'/'+b+') \u222B u'+sup(n)+' du', done:'('+a+'/'+b+') \u222B u'+sup(n)+' du'},
+        {q:'Integratekan dalam bentuk u. (tulis guna huruf u)', kind:'text', ph:'contoh: u^4/4',
+         check:intNoC(Fu,P_POS),
+         hint:['Guna power rule pada u'+sup(n)+'.','Kuasa baharu '+(n+1)+', bahagi dengan '+(n+1)+'.',
+               '('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1)],
+         ans:'('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1), done:'('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1)},
+        {q:'Tukar balik kepada x dan tambah pemalar.', kind:'text', ph:'contoh: (x+2)^4/4 + C',
+         check:intC(F,P_POS),
+         hint:['Ganti semula u dengan '+b+'x + '+c+'.','Jangan lupa + C.',
+               a+'('+b+'x + '+c+')'+sup(n+1)+' / '+(b*(n+1))+' + C'],
+         ans:a+'('+b+'x + '+c+')'+sup(n+1)+'/'+(b*(n+1))+' + C', done:'Jawapan akhir diperoleh'}
+      ],
+      jk:['Pilih <b class="pow">u = '+b+'x + '+c+'</b>.',
+          'du/dx = '+b+' \u2192 dx = du/'+b+'.',
+          'Ganti: '+a+' \u222B u'+sup(n)+' \u00B7 du/'+b+' = ('+a+'/'+b+') \u222B u'+sup(n)+' du.',
+          'Power rule: ('+a+'/'+b+') \u00B7 u'+sup(n+1)+'/'+(n+1)+'.',
+          'Tukar balik: <b class="res">'+a+'('+b+'x + '+c+')'+sup(n+1)+' / '+(b*(n+1))+'</b> <span class="konst">+ C</span>.']
+    };
+  }
+  if(lvl===2){
+    var p=ri(2,6), k=ri(1,5), m=ri(2,4);
+    var F2=function(x){ return p/2*Math.pow(x*x+k,m+1)/(m+1); };
+    var Fu2=function(u){ return p/2*Math.pow(u,m+1)/(m+1); };
+    return {
+      title:'SUBSTITUTION \u00B7 ARAS 2', Fx:F2, ptsX:P_POS,
+      expr:'\u222B '+p+'x(x\u00B2 + '+k+')'+sup(m)+' dx',
+      praise:'Anda nampak du tersembunyi dalam soalan.',
+      steps:[
+        {q:'Pilih u.', kind:'choice',
+         opts:[{t:'u = x\u00B2 + '+k,ok:true,why:'Betul! Isi kurungan yang berkuasa.'},
+               {t:'u = '+p+'x',ok:false,why:'Bukan. Bahagian '+p+'x ialah yang akan jadi du.'},
+               {t:'u = (x\u00B2 + '+k+')'+sup(m),ok:false,why:'Jangan ambil kuasa sekali.'}],
+         hint:['Cari fungsi dalam fungsi.','Isi kurungan: x\u00B2 + '+k+'.','u = x\u00B2 + '+k],
+         ans:'u = x\u00B2 + '+k, done:'u = x\u00B2 + '+k},
+        {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x',
+         check:fnEq(function(x){return 2*x;},P_ANY),
+         hint:['Differentiate x\u00B2 + '+k+'.','Derivative x\u00B2 ialah 2x; pemalar jadi 0.','du/dx = 2x'],
+         ans:'du/dx = 2x', done:'du/dx = 2x \u2192 x dx = du/2'},
+        {q:'Soalan ada '+p+'x dx. Tukar kepada du.', kind:'choice',
+         opts:[{t:'('+p+'/2) du',ok:true,why:'Betul! 2x dx = du, jadi x dx = du/2.'},
+               {t:p+' du',ok:false,why:'Anda terlupa faktor 2 daripada du = 2x dx.'},
+               {t:'('+(2*p)+') du',ok:false,why:'Terbalik. x dx = du/2, jadi perlu <b>bahagi</b> 2.'}],
+         hint:['du = 2x dx, jadi x dx = du/2.','Darab dengan '+p+': '+p+'x dx = ('+p+'/2) du.','Jawapan: ('+p+'/2) du'],
+         ans:'('+p+'/2) du', done:p+'x dx = ('+p+'/2) du'},
+        {q:'Integratekan ('+p+'/2) \u222B u'+sup(m)+' du. (guna huruf u)', kind:'text', ph:'contoh: u^4/4',
+         check:intNoC(Fu2,P_POS),
+         hint:['Power rule pada u'+sup(m)+'.','Kuasa baharu '+(m+1)+'.','('+p+'/2)u'+sup(m+1)+'/'+(m+1)],
+         ans:'('+p+'/2)u'+sup(m+1)+'/'+(m+1), done:'('+p+'/2)u'+sup(m+1)+'/'+(m+1)},
+        {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: (x^2+1)^4/4 + C',
+         check:intC(F2,P_POS),
+         hint:['Ganti u dengan x\u00B2 + '+k+'.','Jangan lupa + C.',
+               p+'(x\u00B2 + '+k+')'+sup(m+1)+' / '+(2*(m+1))+' + C'],
+         ans:p+'(x\u00B2 + '+k+')'+sup(m+1)+'/'+(2*(m+1))+' + C', done:'Jawapan akhir diperoleh'}
+      ],
+      jk:['<b class="pow">u = x\u00B2 + '+k+'</b>, du = 2x dx.',
+          'Maka x dx = du/2, jadi '+p+'x dx = ('+p+'/2) du.',
+          'Integral jadi ('+p+'/2) \u222B u'+sup(m)+' du.',
+          'Power rule: ('+p+'/2) u'+sup(m+1)+'/'+(m+1)+'.',
+          'Tukar balik: <b class="res">'+p+'(x\u00B2 + '+k+')'+sup(m+1)+' / '+(2*(m+1))+'</b> <span class="konst">+ C</span>.']
+    };
+  }
+  // Aras 3
+  if(Math.random()<0.5){
+    var q3=ri(2,6);
+    var F3=function(x){ return q3/2*Math.exp(x*x); };
+    return {
+      title:'SUBSTITUTION \u00B7 ARAS 3', Fx:F3, ptsX:P_SML,
+      expr:'\u222B '+q3+'x e'+sup('x\u00B2')+' dx',
+      praise:'Substitusi dalam eksponen pun anda boleh.',
+      steps:[
+        {q:'Pilih u.', kind:'choice',
+         opts:[{t:'u = x\u00B2',ok:true,why:'Betul! Ambil kuasa e sebagai u.'},
+               {t:'u = e'+sup('x\u00B2'),ok:false,why:'Terlalu besar. Ambil bahagian dalam kuasa sahaja.'},
+               {t:'u = '+q3+'x',ok:false,why:'Itu bakal jadi du, bukan u.'}],
+         hint:['Apa yang berada "di dalam" fungsi e?','Kuasa e ialah x\u00B2.','u = x\u00B2'],
+         ans:'u = x\u00B2', done:'u = x\u00B2'},
+        {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x',
+         check:fnEq(function(x){return 2*x;},P_ANY),
+         hint:['Differentiate x\u00B2.','Power rule turun: 2x.','du/dx = 2x'],
+         ans:'du/dx = 2x', done:'du = 2x dx \u2192 x dx = du/2'},
+        {q:'Integral dalam bentuk u ialah?', kind:'choice',
+         opts:[{t:'('+q3+'/2) \u222B e'+sup('u')+' du',ok:true,why:'Betul! x dx = du/2.'},
+               {t:q3+' \u222B e'+sup('u')+' du',ok:false,why:'Terlupa bahagi 2.'},
+               {t:'('+q3+'/2) \u222B u e'+sup('u')+' du',ok:false,why:'x sudah habis digunakan untuk du. Tiada u berlebihan.'}],
+         hint:['Ganti e'+sup('x\u00B2')+' dengan e'+sup('u')+' dan x dx dengan du/2.',
+               'Pemalar '+q3+' dan 1/2 bergabung.','('+q3+'/2) \u222B e'+sup('u')+' du'],
+         ans:'('+q3+'/2) \u222B e'+sup('u')+' du', done:'('+q3+'/2) \u222B e'+sup('u')+' du'},
+        {q:'Integratekan dalam bentuk u. (guna huruf u)', kind:'text', ph:'contoh: 3e^u',
+         check:intNoC(function(u){return q3/2*Math.exp(u);},P_SML),
+         hint:['Integral e'+sup('u')+' ialah e'+sup('u')+'.','Pemalar '+q3+'/2 kekal.','('+q3+'/2)e^u'],
+         ans:'('+q3+'/2)e'+sup('u'), done:'('+q3+'/2)e'+sup('u')},
+        {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: 3e^(x^2) + C',
+         check:intC(F3,P_SML),
+         hint:['Ganti u dengan x\u00B2.','Tulis e^(x^2) dengan kurungan.','('+q3+'/2)e^(x\u00B2) + C'],
+         ans:'('+q3+'/2)e^(x\u00B2) + C', done:'Jawapan akhir diperoleh'}
+      ],
+      jk:['<b class="pow">u = x\u00B2</b>, du = 2x dx \u2192 x dx = du/2.',
+          'Integral jadi ('+q3+'/2) \u222B e'+sup('u')+' du.',
+          '\u222B e'+sup('u')+' du = e'+sup('u')+'.',
+          'Tukar balik: <b class="res">('+q3+'/2)e'+sup('x\u00B2')+'</b> <span class="konst">+ C</span>.']
+    };
+  }
+  var cc=ri(2,6), aa=ri(2,5);
+  var F4=function(x){ return aa*Math.log(Math.abs(x*x+x+cc)); };
+  return {
+    title:'SUBSTITUTION \u00B7 ARAS 3', Fx:F4, ptsX:P_POS,
+    expr:'\u222B <span class="frac"><span class="num">'+aa+'(2x + 1)</span><span class="den">x\u00B2 + x + '+cc+'</span></span> dx',
+    praise:'Anda kenal corak f\u2032(x)/f(x).',
+    steps:[
+      {q:'Pilih u.', kind:'choice',
+       opts:[{t:'u = x\u00B2 + x + '+cc,ok:true,why:'Betul! Ambil penyebut sebagai u.'},
+             {t:'u = 2x + 1',ok:false,why:'Itu pengangka, iaitu du. Ambil penyebut.'},
+             {t:'u = x\u00B2',ok:false,why:'Tidak lengkap. Ambil seluruh penyebut.'}],
+       hint:['Dalam pecahan, cuba u = penyebut.','Penyebut: x\u00B2 + x + '+cc+'.','u = x\u00B2 + x + '+cc],
+       ans:'u = x\u00B2 + x + '+cc, done:'u = x\u00B2 + x + '+cc},
+      {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x + 1',
+       check:fnEq(function(x){return 2*x+1;},P_ANY),
+       hint:['Differentiate x\u00B2 + x + '+cc+'.','2x daripada x\u00B2, 1 daripada x, 0 daripada '+cc+'.','du/dx = 2x + 1'],
+       ans:'du/dx = 2x + 1', done:'du = (2x + 1) dx \u2014 sama dengan pengangka'},
+      {q:'Integral dalam bentuk u ialah?', kind:'choice',
+       opts:[{t:aa+' \u222B (1/u) du',ok:true,why:'Betul! Pengangka ialah tepat du.'},
+             {t:aa+' \u222B u du',ok:false,why:'u berada di penyebut, jadi 1/u.'},
+             {t:'('+aa+'/2) \u222B (1/u) du',ok:false,why:'Tiada bahagi 2 di sini \u2014 du sudah padan tepat.'}],
+       hint:['Penyebut jadi u, pengangka jadi du.','Bentuknya '+aa+' \u222B du/u.',aa+' \u222B (1/u) du'],
+       ans:aa+' \u222B (1/u) du', done:aa+' \u222B (1/u) du'},
+      {q:'Integratekan dalam bentuk u. (guna huruf u)', kind:'text', ph:'contoh: 3ln u',
+       check:intNoC(function(u){return aa*Math.log(Math.abs(u));},P_POS),
+       hint:['\u222B (1/u) du ialah kes istimewa.','Jawapannya ln |u|.',aa+' ln|u|'],
+       ans:aa+' ln|u|', done:aa+' ln|u|'},
+      {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: 3ln(x^2+x+2) + C',
+       check:intC(F4,P_POS),
+       hint:['Ganti u dengan x\u00B2 + x + '+cc+'.','Guna kurungan dalam ln.',aa+' ln|x\u00B2 + x + '+cc+'| + C'],
+       ans:aa+' ln|x\u00B2 + x + '+cc+'| + C', done:'Jawapan akhir diperoleh'}
+    ],
+    jk:['<b class="pow">u = x\u00B2 + x + '+cc+'</b>, du = (2x + 1) dx.',
+        'Pengangka ialah tepat du, jadi integral jadi '+aa+' \u222B du/u.',
+        '\u222B du/u = ln |u|.',
+        'Tukar balik: <b class="res">'+aa+' ln |x\u00B2 + x + '+cc+'|</b> <span class="konst">+ C</span>.']
+  };
+}
+
+function freeFromSteps(p){
+  var last=p.steps[p.steps.length-1];
+  return {expr:p.expr, Fref:p.Fx, pts:p.ptsX, ph:last.ph, praise:p.praise, jk:p.jk,
+    hints:[p.steps[0].ans, p.steps[2].ans, last.ans]};
+}
+function freeSub(lvl){ return freeFromSteps(genSub(lvl)); }
+
+/* ======================================================================
+   6 — INTEGRATION BY PARTS
+   ====================================================================== */
+function genParts(lvl){
+  var a,F,Fu;
+  if(lvl===1){
+    a=1;
+    F=function(x){ return x*Math.exp(x)-Math.exp(x); };
+    return {
+      title:'BY PARTS \u00B7 ARAS 1', Fx:F, ptsX:P_SML,
+      expr:'\u222B x e'+sup('x')+' dx',
+      praise:'Formula uv \u2212 \u222Bv du sudah anda kuasai.',
+      steps:[
+        {q:'Guna LIATE. Pilih u.', kind:'choice',
+         extra:'<div class="g5" style="margin:8px 0">'+[['L','Log'],['I','Inv trig'],['A','Algebra'],['T','Trig'],['E','Exp']].map(function(l){
+            return '<div class="cell"><span class="display" style="font-size:19px;display:block">'+l[0]+'</span><span style="font-size:10px;color:var(--muted)">'+l[1]+'</span></div>';}).join('')+'</div>',
+         opts:[{t:'u = x',ok:true,why:'Betul! x ialah <b>A</b>lgebra, datang sebelum <b>E</b>xponential.'},
+               {t:'u = e'+sup('x'),ok:false,why:'E berada paling akhir dalam LIATE. Pilih yang lebih awal.'}],
+         hint:['Susun ikut LIATE: L, I, A, T, E.','x = Algebra (A), e'+sup('x')+' = Exponential (E). A dahulu.','u = x'],
+         ans:'u = x', done:'u = x, dv = e'+sup('x')+' dx'},
+        {q:'Cari du/dx.', kind:'text', ph:'contoh: 1',
+         check:fnEq(function(){return 1;},P_ANY),
+         hint:['Differentiate u = x.','Derivative x ialah 1.','du/dx = 1, jadi du = dx'],
+         ans:'du/dx = 1', done:'du = dx'},
+        {q:'Cari v dengan integrate dv = e'+sup('x')+' dx.', kind:'text', ph:'contoh: e^x',
+         check:intNoC(Math.exp,P_SML),
+         hint:['v = \u222B dv.','\u222B e'+sup('x')+' dx = e'+sup('x')+'.','v = e^x'],
+         ans:'v = e'+sup('x'), done:'v = e'+sup('x')},
+        {q:'Masukkan ke dalam uv \u2212 \u222Bv du.', kind:'choice',
+         opts:[{t:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx',ok:true,why:'Betul! uv = x e'+sup('x')+', dan v du = e'+sup('x')+' dx.'},
+               {t:'x e'+sup('x')+' + \u222B e'+sup('x')+' dx',ok:false,why:'Tanda salah. Formula ada <b>tolak</b>.'},
+               {t:'e'+sup('x')+' \u2212 \u222B x e'+sup('x')+' dx',ok:false,why:'u dan v tertukar.'}],
+         hint:['uv = u \u00D7 v = x \u00D7 e'+sup('x')+'.','v du = e'+sup('x')+' \u00D7 dx.','x e^x \u2212 \u222B e^x dx'],
+         ans:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx', done:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx'},
+        {q:'Selesaikan integral yang tinggal dan tambah + C.', kind:'text', ph:'contoh: x e^x - e^x + C',
+         check:intC(F,P_SML),
+         hint:['\u222B e'+sup('x')+' dx = e'+sup('x')+'.','Tolakkan daripada x e'+sup('x')+'.','x e^x \u2212 e^x + C'],
+         ans:'x e'+sup('x')+' \u2212 e'+sup('x')+' + C', done:'Jawapan akhir diperoleh'}
+      ],
+      jk:['LIATE \u2192 <b class="pow">u = x</b>, <b class="res">dv = e'+sup('x')+' dx</b>.',
+          'du = dx, v = e'+sup('x')+'.',
+          'Formula: uv \u2212 \u222Bv du = x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx.',
+          '\u222B e'+sup('x')+' dx = e'+sup('x')+'.',
+          'Jawapan: <b class="res">x e'+sup('x')+' \u2212 e'+sup('x')+'</b> <span class="konst">+ C</span>.']
+    };
+  }
+  if(lvl===2){
+    a=ri(2,4);
+    var kind=pick(['sin','cos','e']);
+    if(kind==='e'){
+      F=function(x){ return x*Math.exp(a*x)/a - Math.exp(a*x)/(a*a); };
+      return partsTemplate({a:a, dvTxt:'e'+sup(a+'x')+' dx', vTxt:'e'+sup(a+'x')+'/'+a,
+        vFn:function(x){return Math.exp(a*x)/a;}, vPts:P_SML,
+        expr:'\u222B x e'+sup(a+'x')+' dx', F:F, pts:P_SML,
+        uvTxt:'x e'+sup(a+'x')+'/'+a, remTxt:'\u222B e'+sup(a+'x')+'/'+a+' dx',
+        ansTxt:'x e'+sup(a+'x')+'/'+a+' \u2212 e'+sup(a+'x')+'/'+(a*a),
+        ph:'contoh: x e^(2x)/2 - e^(2x)/4 + C', other:'e'+sup(a+'x')});
+    }
+    if(kind==='sin'){
+      F=function(x){ return -x*Math.cos(a*x)/a + Math.sin(a*x)/(a*a); };
+      return partsTemplate({a:a, dvTxt:'sin('+a+'x) dx', vTxt:'\u2212cos('+a+'x)/'+a,
+        vFn:function(x){return -Math.cos(a*x)/a;}, vPts:P_ANY,
+        expr:'\u222B x sin('+a+'x) dx', F:F, pts:P_ANY,
+        uvTxt:'\u2212x cos('+a+'x)/'+a, remTxt:'\u222B \u2212cos('+a+'x)/'+a+' dx',
+        ansTxt:'\u2212x cos('+a+'x)/'+a+' + sin('+a+'x)/'+(a*a),
+        ph:'contoh: -x cos(2x)/2 + sin(2x)/4 + C', other:'sin('+a+'x)'});
+    }
+    F=function(x){ return x*Math.sin(a*x)/a + Math.cos(a*x)/(a*a); };
+    return partsTemplate({a:a, dvTxt:'cos('+a+'x) dx', vTxt:'sin('+a+'x)/'+a,
+      vFn:function(x){return Math.sin(a*x)/a;}, vPts:P_ANY,
+      expr:'\u222B x cos('+a+'x) dx', F:F, pts:P_ANY,
+      uvTxt:'x sin('+a+'x)/'+a, remTxt:'\u222B sin('+a+'x)/'+a+' dx',
+      ansTxt:'x sin('+a+'x)/'+a+' + cos('+a+'x)/'+(a*a),
+      ph:'contoh: x sin(2x)/2 + cos(2x)/4 + C', other:'cos('+a+'x)'});
+  }
+  // Aras 3 — u = ln x (L datang sebelum A)
+  var n3=ri(1,3);
+  F=function(x){ return Math.pow(x,n3+1)/(n3+1)*Math.log(x) - Math.pow(x,n3+1)/Math.pow(n3+1,2); };
+  return {
+    title:'BY PARTS \u00B7 ARAS 3', Fx:F, ptsX:P_POS,
+    expr:'\u222B x'+sup(n3)+' ln x dx',
+    praise:'Kes ln ialah yang paling kerap keluar dalam exam.',
+    steps:[
+      {q:'Guna LIATE. Pilih u.', kind:'choice',
+       opts:[{t:'u = ln x',ok:true,why:'Betul! <b>L</b>og datang paling awal dalam LIATE.'},
+             {t:'u = x'+sup(n3),ok:false,why:'Algebra datang selepas Log. Pilih ln x.'}],
+       hint:['Susunan LIATE: L dahulu.','ln x ialah Log, x'+sup(n3)+' ialah Algebra.','u = ln x'],
+       ans:'u = ln x', done:'u = ln x, dv = x'+sup(n3)+' dx'},
+      {q:'Cari du/dx.', kind:'text', ph:'contoh: 1/x',
+       check:fnEq(function(x){return 1/x;},P_POS),
+       hint:['Differentiate ln x.','Derivative ln x ialah 1/x.','du/dx = 1/x'],
+       ans:'du/dx = 1/x', done:'du = dx/x'},
+      {q:'Cari v dengan integrate dv = x'+sup(n3)+' dx.', kind:'text', ph:'contoh: x^2/2',
+       check:intNoC(function(x){return Math.pow(x,n3+1)/(n3+1);},P_POS),
+       hint:['Power rule pada x'+sup(n3)+'.','Kuasa baharu '+(n3+1)+'.','v = x^'+(n3+1)+'/'+(n3+1)],
+       ans:'v = x'+sup(n3+1)+'/'+(n3+1), done:'v = x'+sup(n3+1)+'/'+(n3+1)},
+      {q:'Integral yang tinggal, \u222Bv du, jadi apa?', kind:'choice',
+       opts:[{t:'\u222B x'+sup(n3)+'/'+(n3+1)+' dx',ok:true,why:'Betul! v \u00D7 (1/x) memendekkan satu kuasa.'},
+             {t:'\u222B x'+sup(n3+1)+'/'+(n3+1)+' dx',ok:false,why:'Anda terlupa darab dengan du = dx/x.'},
+             {t:'\u222B ln x dx',ok:false,why:'ln x ialah u, bukan v.'}],
+       hint:['v du = (x'+sup(n3+1)+'/'+(n3+1)+') \u00D7 (1/x) dx.','Bahagi x menurunkan kuasa satu tingkat.',
+             '\u222B x'+sup(n3)+'/'+(n3+1)+' dx'],
+       ans:'\u222B x'+sup(n3)+'/'+(n3+1)+' dx', done:'\u222Bv du = \u222B x'+sup(n3)+'/'+(n3+1)+' dx'},
+      {q:'Siapkan jawapan penuh dengan + C.', kind:'text', ph:'contoh: x^2 ln x/2 - x^2/4 + C',
+       check:intC(F,P_POS),
+       hint:['uv = x'+sup(n3+1)+' ln x/'+(n3+1)+'.',
+             '\u222Bv du = x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'.',
+             'x^'+(n3+1)+' ln x/'+(n3+1)+' \u2212 x^'+(n3+1)+'/'+((n3+1)*(n3+1))+' + C'],
+       ans:'x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+' + C', done:'Jawapan akhir diperoleh'}
+    ],
+    jk:['LIATE \u2192 <b class="pow">u = ln x</b>, <b class="res">dv = x'+sup(n3)+' dx</b>.',
+        'du = dx/x, v = x'+sup(n3+1)+'/'+(n3+1)+'.',
+        'uv \u2212 \u222Bv du = x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 \u222B x'+sup(n3)+'/'+(n3+1)+' dx.',
+        'Integral baki = x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'.',
+        'Jawapan: <b class="res">x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'</b> <span class="konst">+ C</span>.']
+  };
+}
+
+function partsTemplate(o){
+  return {
+    title:'BY PARTS \u00B7 ARAS 2', Fx:o.F, ptsX:o.pts,
+    expr:o.expr,
+    praise:'Pekali dalaman pun anda jaga dengan betul.',
+    steps:[
+      {q:'Guna LIATE. Pilih u.', kind:'choice',
+       opts:[{t:'u = x',ok:true,why:'Betul! Algebra datang dahulu.'},
+             {t:'u = '+o.other,ok:false,why:'Dalam LIATE, Algebra (x) datang lebih awal.'}],
+       hint:['LIATE: L, I, A, T, E.','x ialah Algebra.','u = x'],
+       ans:'u = x', done:'u = x, dv = '+o.dvTxt},
+      {q:'Cari du/dx.', kind:'text', ph:'contoh: 1',
+       check:fnEq(function(){return 1;},P_ANY),
+       hint:['Differentiate x.','Jawapannya 1.','du/dx = 1'],
+       ans:'du/dx = 1', done:'du = dx'},
+      {q:'Cari v dengan integrate dv = '+o.dvTxt+'.', kind:'text', ph:'tulis v',
+       check:intNoC(o.vFn,o.vPts),
+       hint:['v = \u222B dv. Jangan lupa pekali dalaman '+o.a+'.',
+             'Bahagi dengan '+o.a+' kerana dalaman ialah '+o.a+'x.','v = '+o.vTxt],
+       ans:'v = '+o.vTxt, done:'v = '+o.vTxt},
+      {q:'Tulis uv \u2212 \u222Bv du.', kind:'choice',
+       opts:[{t:o.uvTxt+' \u2212 '+o.remTxt,ok:true,why:'Betul!'},
+             {t:o.uvTxt+' + '+o.remTxt,ok:false,why:'Formula menggunakan <b>tolak</b>, bukan tambah.'},
+             {t:o.vTxt+' \u2212 \u222B x dx',ok:false,why:'u dan v tertukar.'}],
+       hint:['uv = x \u00D7 v.','v du = v \u00D7 dx.',o.uvTxt+' \u2212 '+o.remTxt],
+       ans:o.uvTxt+' \u2212 '+o.remTxt, done:o.uvTxt+' \u2212 '+o.remTxt},
+      {q:'Siapkan jawapan penuh dengan + C.', kind:'text', ph:o.ph,
+       check:intC(o.F,o.pts),
+       hint:['Integratekan baki sekali lagi.','Ingat bahagi '+o.a+' sekali lagi \u2192 penyebut '+(o.a*o.a)+'.',o.ansTxt+' + C'],
+       ans:o.ansTxt+' + C', done:'Jawapan akhir diperoleh'}
+    ],
+    jk:['LIATE \u2192 <b class="pow">u = x</b>, <b class="res">dv = '+o.dvTxt+'</b>.',
+        'du = dx, v = '+o.vTxt+'.',
+        'uv \u2212 \u222Bv du = '+o.uvTxt+' \u2212 '+o.remTxt+'.',
+        'Selesaikan integral baki.',
+        'Jawapan: <b class="res">'+o.ansTxt+'</b> <span class="konst">+ C</span>.']
+  };
+}
+function freeParts(lvl){ return freeFromSteps(genParts(lvl)); }
+
+/* ======================================================================
+   7 — PARTIAL FRACTIONS
+   ====================================================================== */
+function genPF(lvl){
+  var A,B,a,b,p,q,F;
+  if(lvl===3){
+    var kk=ri(2,8); a=ri(1,3); b=a+ri(1,3);
+    A=kk/(b-a); B=-A; p=0; q=kk;
+    F=function(x){ return A*Math.log(Math.abs(x+a))+B*Math.log(Math.abs(x+b)); };
+    return pfTemplate({A:A,B:B,a:a,b:b,numTxt:String(kk),F:F,lvl:3,
+      numAt:function(v){return kk;}});
+  }
+  A=ri(1,4); B=ri(1,4); a=ri(1,3); b=a+ri(1,3);
+  if(lvl===2) b=a+ri(1,3);
+  p=A+B; q=A*b+B*a;
+  F=function(x){ return A*Math.log(Math.abs(x+a))+B*Math.log(Math.abs(x+b)); };
+  return pfTemplate({A:A,B:B,a:a,b:b,numTxt:p+'x + '+q,F:F,lvl:lvl,
+    numAt:function(v){return p*v+q;}});
+}
+function pfTemplate(o){
+  var a=o.a,b=o.b,A=o.A,B=o.B;
+  var nA=o.numAt(-a), nB=o.numAt(-b);
+  return {
+    title:'PARTIAL FRACTION \u00B7 ARAS '+o.lvl, Fx:o.F, ptsX:P_POS,
+    expr:'\u222B <span class="frac"><span class="num">'+o.numTxt+'</span><span class="den">(x + '+a+')(x + '+b+')</span></span> dx',
+    praise:'Kaedah tutup memang cepat.',
+    steps:[
+      {q:'Tulis bentuk pecahan separa yang betul.', kind:'choice',
+       opts:[{t:'A/(x + '+a+') + B/(x + '+b+')',ok:true,why:'Betul! Setiap faktor linear dapat satu pemalar.'},
+             {t:'(Ax + B)/(x + '+a+')',ok:false,why:'Setiap faktor perlu pecahan sendiri.'},
+             {t:'A/(x + '+a+') \u00D7 B/(x + '+b+')',ok:false,why:'Tambah, bukan darab.'}],
+       hint:['Penyebut ada dua faktor linear.','Setiap faktor linear dapat satu pemalar di atasnya.',
+             'A/(x + '+a+') + B/(x + '+b+')'],
+       ans:'A/(x + '+a+') + B/(x + '+b+')', done:'Bentuk: A/(x + '+a+') + B/(x + '+b+')'},
+      {q:'Darab silang, kemudian letak x = \u2212'+a+'. Berapa nilai A?', kind:'text', ph:'contoh: 2',
+       extra:'<div class="note" style="margin-bottom:8px">'+o.numTxt+' = A(x + '+b+') + B(x + '+a+')</div>',
+       check:valEq(A,1e-6),
+       hint:['Letak x = \u2212'+a+' supaya sebutan B hilang.',
+             'Sebelah kiri jadi '+nA+'; sebelah kanan jadi A('+(b-a)+').',
+             'A = '+nA+' \u00F7 '+(b-a)+' = '+A],
+       ans:'A = '+A, done:'A = '+A},
+      {q:'Sekarang letak x = \u2212'+b+'. Berapa nilai B?', kind:'text', ph:'contoh: 3',
+       check:valEq(B,1e-6),
+       hint:['Letak x = \u2212'+b+' supaya sebutan A pula hilang.',
+             'Sebelah kiri jadi '+nB+'; sebelah kanan jadi B('+(a-b)+').',
+             'B = '+nB+' \u00F7 '+(a-b)+' = '+B],
+       ans:'B = '+B, done:'B = '+B},
+      {q:'Integratekan kedua-dua pecahan. Bentuk hasilnya apa?', kind:'choice',
+       opts:[{t:'A ln|x + '+a+'| + B ln|x + '+b+'|',ok:true,why:'Betul! Setiap 1/(x + k) jadi ln|x + k|.'},
+             {t:'A/(x + '+a+')\u00B2 + B/(x + '+b+')\u00B2',ok:false,why:'Itu kalau kita differentiate, bukan integrate.'},
+             {t:'A(x + '+a+') + B(x + '+b+')',ok:false,why:'Itu bentuk sebelum dipecahkan.'}],
+       hint:['\u222B 1/(x + k) dx ialah kes ln.','Setiap pecahan jadi satu ln.',
+             'A ln|x + '+a+'| + B ln|x + '+b+'|'],
+       ans:'A ln|x + '+a+'| + B ln|x + '+b+'|', done:'Hasil berbentuk ln'},
+      {q:'Tulis jawapan penuh dengan nilai A dan B, serta + C.', kind:'text',
+       ph:'contoh: 2ln(x+1) + 3ln(x+2) + C',
+       check:intC(o.F,P_POS),
+       hint:['Masukkan A = '+A+' dan B = '+B+'.','Guna kurungan: ln(x+'+a+').',
+             A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'| + C'],
+       ans:A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'| + C',
+       done:'Jawapan akhir diperoleh'}
+    ],
+    jk:['Bentuk: ('+o.numTxt+')/((x+'+a+')(x+'+b+')) = A/(x+'+a+') + B/(x+'+b+').',
+        'Darab silang: '+o.numTxt+' = A(x + '+b+') + B(x + '+a+').',
+        'x = \u2212'+a+': '+nA+' = A('+(b-a)+') \u2192 <b class="pow">A = '+A+'</b>.',
+        'x = \u2212'+b+': '+nB+' = B('+(a-b)+') \u2192 <b class="pow">B = '+B+'</b>.',
+        'Integrate: <b class="res">'+A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'|</b> <span class="konst">+ C</span>.']
+  };
+}
+function freePF(lvl){ return freeFromSteps(genPF(lvl)); }
+
+function levelPicker(id){
+  return '<div class="g3" id="'+id+'">'+[1,2,3].map(function(l){
+    var nm=['Mudah','Sederhana','Mencabar'][l-1];
+    return '<button class="btn '+(S.C.lvl===l?'':'soft')+'" data-l="'+l+'" style="min-height:52px;flex-direction:column;gap:0;font-size:13px">Aras '+l+'<span style="font-size:11px;font-weight:700">'+nm+'</span></button>';
+  }).join('')+'</div>';
+}
+function bindLevel(id, redraw){
+  document.getElementById(id).querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.C.lvl=+b.dataset.l; save(); redraw(); };
+  });
+}
+function scoreLine(key){
+  var s=S.C[key];
+  return '<p class="muted" style="margin:0">Latihan bebas: '+s[0]+'/'+s[1]+' betul</p>';
+}
+
+/* ---------- TAB MULA ---------- */
+function viewIntro(){
+  $('C-body').innerHTML=
+   '<div class="card">'
+   +'<div class="lbl">KENAPA PERLU TEKNIK?</div>'
+   +'<h2>Tiga rule asas tidak cukup</h2>'
+   +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Power rule, ln dan trig hanya berfungsi untuk bentuk <b>mudah</b>. Cuba tengok dua integral ini:</p>'
+   +'<div class="g2">'
+   +'<div class="cell" style="background:var(--ok-bg);color:var(--ok-fg);padding:12px"><span style="display:block;font-size:12px">BOLEH TERUS</span>\u222B x\u00B3 dx</div>'
+   +'<div class="cell" style="background:var(--no-bg);color:var(--no-fg);padding:12px"><span style="display:block;font-size:12px">TIDAK BOLEH</span>\u222B x e'+sup('x')+' dx</div>'
+   +'</div>'
+   +'<div class="note" style="margin-top:10px">Yang kedua ada <b>dua fungsi didarab</b>. Power rule tidak tahu nak buat apa. Kita perlu alat lain \u2014 itulah tiga teknik dalam 3.3.</div></div>'
+
+   +'<div class="card">'
+   +'<h2>Peta keputusan</h2>'
+   +'<p class="muted" style="margin:0 0 10px">Tanya empat soalan ini mengikut turutan. Berhenti pada yang pertama menjawab "ya".</p>'
+   +'<ol class="jk">'
+   +'<li>Boleh guna rule asas terus? \u2192 <b>buat terus</b></li>'
+   +'<li>Ada fungsi dalam fungsi, dan derivative bahagian dalam ada di luar? \u2192 <b class="pow">Substitution</b></li>'
+   +'<li>Dua jenis fungsi berbeza didarab? \u2192 <b class="op">By parts</b></li>'
+   +'<li>Pecahan, penyebut boleh difaktorkan? \u2192 <b class="res">Partial fraction</b></li></ol></div>'
+
+   +'<div class="card">'
+   +'<h2>Tiga teknik, tiga cerita harian</h2>'
+   +'<div class="scrollx"><table class="ref"><thead><tr><th>Teknik</th><th>Cerita</th><th>Tanda kenal</th></tr></thead><tbody>'
+   +'<tr><td><b class="pow">Substitution</b></td><td>Tukar duit asing kepada ringgit supaya senang kira, lepas siap tukar balik</td><td>kurungan berkuasa, e<sup>sesuatu</sup>, pecahan f\u2032/f</td></tr>'
+   +'<tr><td><b class="op">By parts</b></td><td>Satu kerja dibuat berdua \u2014 seorang buat separuh, seorang habiskan baki</td><td>x \u00D7 e<sup>x</sup>, x \u00D7 sin x, x \u00D7 ln x</td></tr>'
+   +'<tr><td><b class="res">Partial fraction</b></td><td>Satu bil besar dipecahkan ikut bahagian setiap penyewa</td><td>pecahan, penyebut berfaktor</td></tr>'
+   +'</tbody></table></div></div>'
+
+   +'<div class="card" style="background:var(--hint-bg)">'
+   +'<h3 style="color:var(--hint-fg)">Cara guna apl ini</h3>'
+   +'<ol class="jk" style="margin-top:8px">'
+   +'<li>Pilih tab teknik, kemudian pilih Aras 1, 2 atau 3</li>'
+   +'<li>Siapkan penyelesai langkah demi langkah \u2014 setiap langkah mesti betul sebelum langkah seterusnya terbuka</li>'
+   +'<li>Buntu? Tekan Hint. Ada tiga tahap, makin jelas setiap kali</li>'
+   +'<li>Lepas itu cuba Latihan Bebas tanpa langkah berpandu</li>'
+   +'<li>Tab Nilai menguji anda <b>memilih</b> teknik dan <b>mengesan silap</b> orang lain</li></ol>'
+   +'<p class="muted" style="margin:8px 0 0;color:var(--hint-fg)">Taip kuasa guna <b>^</b> (x^3), pecahan guna <b>/</b> (x^3/3). Semua bentuk setara diterima.</p></div>';
+}
+
+/* ---------- TAB SUBSTITUTION ---------- */
+function viewSub(){
+  $('C-body').innerHTML=
+   '<div class="card">'
+   +'<div class="lbl">KONKRIT \u2192 VISUAL</div>'
+   +'<h2>Tukar duit, kira, tukar balik</h2>'
+   +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Susah nak kira harga dalam Yen? Tukar kepada Ringgit dahulu, kira, kemudian tukar balik. Substitution buat benda yang sama kepada integral.</p>'
+   +'<div class="g3" style="text-align:center">'
+   +'<div class="cell" style="background:var(--b-tint);padding:12px"><span style="font-size:11px;display:block;color:var(--muted)">1. TUKAR</span>x \u2192 u</div>'
+   +'<div class="cell" style="background:var(--c-tint);padding:12px"><span style="font-size:11px;display:block;color:var(--muted)">2. KIRA</span>senang</div>'
+   +'<div class="cell" style="background:var(--d-tint);padding:12px"><span style="font-size:11px;display:block;color:var(--muted)">3. TUKAR BALIK</span>u \u2192 x</div>'
+   +'</div></div>'
+
+   +'<div class="card">'
+   +'<h3>Kenal pasti dengan warna</h3>'
+   +'<div class="math md" style="margin:12px 0">\u222B <span class="hl-du op">2x</span>(<span class="hl-u pow">x\u00B2 + 1</span>)\u00B3 dx</div>'
+   +'<div class="g2">'
+   +'<div class="cell" style="background:var(--card);border:2px solid var(--pow);text-align:left;padding:10px"><span style="font-size:11px;color:var(--muted);display:block">BIRU \u00B7 ambil jadi u</span><b class="pow">u = x\u00B2 + 1</b></div>'
+   +'<div class="cell" style="background:var(--card);border:2px solid var(--op);text-align:left;padding:10px"><span style="font-size:11px;color:var(--muted);display:block">JINGGA \u00B7 ini du</span><b class="op">du = 2x dx</b></div>'
+   +'</div>'
+   +'<div class="note" style="margin-top:10px">Substitution berjaya hanya apabila bahagian <b class="op">jingga</b> ialah derivative bahagian <b class="pow">biru</b> (atau beza pemalar sahaja).</div></div>'
+
+   +'<div class="card flat" style="background:var(--c-tint);box-shadow:none"><div class="lbl">PILIH ARAS</div>'+levelPicker('L-sub')+'</div>'
+   +'<div id="mount-step"></div>'
+   +'<div class="card" style="background:var(--ground);box-shadow:none;padding:10px 14px"><b style="font-size:15px">Sekarang tanpa langkah berpandu</b> '+scoreLine('sub')+'</div>'
+   +'<div id="mount-free"></div>'
+   +'<div class="card" style="background:var(--no-bg)"><h3 style="color:var(--no-fg)">Silap biasa</h3>'
+   +'<ul style="margin:0;padding-left:20px;color:var(--no-fg);font-weight:700;font-size:14px;line-height:1.6">'
+   +'<li>Lupa tukar dx kepada du \u2014 jawapan tercicir pembahagi</li>'
+   +'<li>Lupa tukar balik u kepada x di akhir</li>'
+   +'<li>Pilih u sampai termasuk kuasa, contoh u = (x\u00B2+1)\u00B3</li></ul></div>';
+  bindLevel('L-sub', viewSub);
+  stepSolver('mount-step', function(){ return genSub(S.C.lvl); });
+  freeSolver('mount-free', function(){ return freeSub(S.C.lvl); }, function(ok){
+    S.C.sub[1]++; if(ok) S.C.sub[0]++; save();
+  });
+}
+
+/* ---------- TAB BY PARTS ---------- */
+function viewParts(){
+  $('C-body').innerHTML=
+   '<div class="card">'
+   +'<div class="lbl">KONKRIT \u2192 VISUAL</div>'
+   +'<h2>Satu kerja dibuat berdua</h2>'
+   +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Dua kawan cat sebuah bilik. Seorang siapkan sebahagian, seorang lagi habiskan baki. By parts pecahkan integral yang susah kepada satu bahagian siap (uv) dan satu bahagian baki (\u222Bv du) yang lebih senang.</p>'
+   +'<div style="display:flex;gap:14px;align-items:center;margin-top:8px">'
+   +'<svg width="130" height="112" viewBox="0 0 120 104" role="img" aria-label="Segi empat uv dibahagi kepada dua kawasan, integral u dv dan integral v du">'
+   +'<rect x="2" y="2" width="116" height="100" rx="10" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5"/>'
+   +'<path d="M12,102 C40,92 70,60 118,12 L118,102 Z" fill="var(--c)"/>'
+   +'<path d="M2,2 L118,2 L118,12 C70,60 40,92 12,102 L2,102 Z" fill="var(--d)"/>'
+   +'<path d="M12,102 C40,92 70,60 118,12" fill="none" stroke="var(--ink)" stroke-width="2.5"/>'
+   +'<text x="24" y="40" font-family="Nunito,sans-serif" font-weight="800" font-size="13" fill="#1B1A3A">\u222Bv du</text>'
+   +'<text x="70" y="88" font-family="Nunito,sans-serif" font-weight="800" font-size="13" fill="#1B1A3A">\u222Bu dv</text></svg>'
+   +'<div><p class="muted" style="margin:0 0 6px">Seluruh kotak = uv</p>'
+   +'<p class="math md" style="margin:0 0 6px;text-align:left">\u222Bu dv = <span class="res">uv</span> <span class="op">\u2212</span> \u222Bv du</p>'
+   +'<p class="muted" style="margin:0">Hijau = kotak tolak kuning</p></div></div></div>'
+
+   +'<div class="card">'
+   +'<h3>LIATE \u2014 urutan memilih u</h3>'
+   +'<div class="g5" style="margin:10px 0">'+[['L','Log'],['I','Inv trig'],['A','Algebra'],['T','Trig'],['E','Exp']].map(function(l,i){
+      return '<div class="cell" style="padding:10px 2px"><span class="display" style="font-size:22px;display:block">'+l[0]+'</span><span style="font-size:10px;color:var(--muted)">'+l[1]+'</span></div>';}).join('')+'</div>'
+   +'<div class="note">Yang datang <b>lebih awal</b> dalam LIATE dipilih sebagai <b class="pow">u</b>. Yang tinggal jadi <b class="res">dv</b>. Sebabnya: u akan di-differentiate, jadi kita mahu u yang jadi lebih ringkas bila dibezakan.</div></div>'
+
+   +'<div class="card flat" style="background:var(--c-tint);box-shadow:none"><div class="lbl">PILIH ARAS</div>'+levelPicker('L-parts')+'</div>'
+   +'<div id="mount-step"></div>'
+   +'<div class="card" style="background:var(--ground);box-shadow:none;padding:10px 14px"><b style="font-size:15px">Sekarang tanpa langkah berpandu</b> '+scoreLine('parts')+'</div>'
+   +'<div id="mount-free"></div>'
+   +'<div class="card" style="background:var(--no-bg)"><h3 style="color:var(--no-fg)">Silap biasa</h3>'
+   +'<ul style="margin:0;padding-left:20px;color:var(--no-fg);font-weight:700;font-size:14px;line-height:1.6">'
+   +'<li>Tanda tambah sedangkan formula guna tolak</li>'
+   +'<li>Pilih u yang salah sehingga integral baki jadi lebih susah</li>'
+   +'<li>Lupa bahagi pekali dalaman semasa cari v</li></ul></div>';
+  bindLevel('L-parts', viewParts);
+  stepSolver('mount-step', function(){ return genParts(S.C.lvl); });
+  freeSolver('mount-free', function(){ return freeParts(S.C.lvl); }, function(ok){
+    S.C.parts[1]++; if(ok) S.C.parts[0]++; save();
+  });
+}
+
+/* ---------- TAB PARTIAL FRACTION ---------- */
+function viewPF(){
+  $('C-body').innerHTML=
+   '<div class="card">'
+   +'<div class="lbl">KONKRIT \u2192 VISUAL</div>'
+   +'<h2>Satu bil, dua penyewa</h2>'
+   +'<p style="margin:0 0 10px;font-size:15px;font-weight:700">Bil elektrik RM120 untuk dua bilik. Susah nak bayar sekaligus, senang kalau dipecahkan ikut bahagian. Pecahan besar pun sama \u2014 pecahkan jadi dua pecahan kecil yang senang diintegrate.</p>'
+   +'<div class="math md" style="margin:14px 0">'
+   +'<span class="frac"><span class="num">5x + 7</span><span class="den">(x + 1)(x + 2)</span></span>'
+   +' <span class="op">=</span> <span class="frac"><span class="num pow">A</span><span class="den">x + 1</span></span>'
+   +' <span class="op">+</span> <span class="frac"><span class="num pow">B</span><span class="den">x + 2</span></span></div>'
+   +'<div class="note">Setiap pecahan kecil berbentuk 1/(x + k), dan kita sudah tahu \u222B 1/(x + k) dx = <b class="res">ln|x + k|</b>.</div></div>'
+
+   +'<div class="card">'
+   +'<h3>Kaedah tutup (cover-up)</h3>'
+   +'<ol class="jk">'
+   +'<li>Darab silang: 5x + 7 = A(x + 2) + B(x + 1)</li>'
+   +'<li>Letak x = \u22121 supaya sebutan B hilang: 2 = A(1) \u2192 <b class="pow">A = 2</b></li>'
+   +'<li>Letak x = \u22122 supaya sebutan A hilang: \u22123 = B(\u22121) \u2192 <b class="pow">B = 3</b></li>'
+   +'<li>Integrate: <b class="res">2 ln|x + 1| + 3 ln|x + 2|</b> <span class="konst">+ C</span></li></ol>'
+   +'<div class="note" style="margin-top:8px">Trik: pilih nilai x yang menjadikan satu kurungan sifar. Satu sebutan terus lenyap.</div></div>'
+
+   +'<div class="card flat" style="background:var(--c-tint);box-shadow:none"><div class="lbl">PILIH ARAS</div>'+levelPicker('L-pf')+'</div>'
+   +'<div id="mount-step"></div>'
+   +'<div class="card" style="background:var(--ground);box-shadow:none;padding:10px 14px"><b style="font-size:15px">Sekarang tanpa langkah berpandu</b> '+scoreLine('pf')+'</div>'
+   +'<div id="mount-free"></div>'
+   +'<div class="card" style="background:var(--no-bg)"><h3 style="color:var(--no-fg)">Silap biasa</h3>'
+   +'<ul style="margin:0;padding-left:20px;color:var(--no-fg);font-weight:700;font-size:14px;line-height:1.6">'
+   +'<li>Silap tanda semasa letak nilai negatif, contoh x = \u22122</li>'
+   +'<li>Tukar A dan B antara satu sama lain</li>'
+   +'<li>Lupa penyebut perlu difaktorkan dahulu sebelum dipecahkan</li></ul></div>';
+  bindLevel('L-pf', viewPF);
+  stepSolver('mount-step', function(){ return genPF(S.C.lvl); });
+  freeSolver('mount-free', function(){ return freePF(S.C.lvl); }, function(ok){
+    S.C.pf[1]++; if(ok) S.C.pf[0]++; save();
+  });
+}
+
+var C_PILIH=[
+  {q:'\u222B 5x\u2074 dx', a:0, why:'Satu kuasa x sahaja. Power rule terus.'},
+  {q:'\u222B 2x(x\u00B2 + 3)\u2075 dx', a:1, why:'Fungsi dalam fungsi, dan 2x ialah derivative x\u00B2 + 3.'},
+  {q:'\u222B x cos x dx', a:2, why:'Algebra \u00D7 Trig \u2014 dua jenis fungsi didarab.'},
+  {q:'\u222B (3x + 5)/((x + 1)(x + 2)) dx', a:3, why:'Pecahan dengan penyebut berfaktor.'},
+  {q:'\u222B (4x + 1)\u00B3 dx', a:1, why:'Kurungan berkuasa \u2014 biar u = 4x + 1.'},
+  {q:'\u222B x e'+sup('x')+' dx', a:2, why:'Algebra \u00D7 Exponential. Guna LIATE.'},
+  {q:'\u222B (7/x) dx', a:0, why:'Kes 1/x, terus jadi ln. Tiada teknik khas.'},
+  {q:'\u222B x\u00B2 ln x dx', a:2, why:'Log \u00D7 Algebra. LIATE kata u = ln x.'},
+  {q:'\u222B (2x + 1)/(x\u00B2 + x + 5) dx', a:1, why:'Pengangka ialah derivative penyebut \u2014 corak f\u2032/f.'},
+  {q:'\u222B 6/((x + 2)(x \u2212 1)) dx', a:3, why:'Pecahan, penyebut sudah berfaktor.'},
+  {q:'\u222B sin x dx', a:0, why:'Rule trig asas: \u2212cos x + C.'},
+  {q:'\u222B x sin(3x) dx', a:2, why:'Algebra \u00D7 Trig. By parts dengan u = x.'}
+];
+var C_POPT=['Rule terus (power / ln / trig)','Substitution','By parts','Partial fraction'];
+
+var C_SALAH=[
+  {expr:'\u222B (3x + 1)\u2074 dx',
+   lines:['u = 3x + 1','du/dx = 3, jadi dx = du/3','\u222B u\u2074 du = u\u2075/5','Jawapan: (3x + 1)\u2075/5 + C'],
+   bad:2, why:'Langkah 2 sudah betul kata dx = du/3, tetapi faktor 1/3 itu tidak dibawa masuk. Sepatutnya (1/3)\u222B u\u2074 du = u\u2075/15. Jawapan betul: (3x + 1)\u2075/15 + C.'},
+  {expr:'\u222B x e'+sup('x')+' dx',
+   lines:['LIATE: u = e'+sup('x')+', dv = x dx','du = e'+sup('x')+' dx, v = x\u00B2/2','uv \u2212 \u222Bv du = x\u00B2e'+sup('x')+'/2 \u2212 \u222B x\u00B2e'+sup('x')+'/2 dx','Integral jadi lebih susah'],
+   bad:0, why:'Langkah 1 salah pilih u. Dalam LIATE, A (Algebra) datang sebelum E (Exponential), jadi u = x. Pilihan yang salah menjadikan integral baki lebih sukar daripada asal \u2014 itu petanda u tersilap.'},
+  {expr:'\u222B x sin x dx',
+   lines:['u = x, dv = sin x dx','du = dx, v = \u2212cos x','uv + \u222Bv du = \u2212x cos x + \u222B(\u2212cos x) dx','Jawapan: \u2212x cos x \u2212 sin x + C'],
+   bad:2, why:'Langkah 3 guna tanda tambah. Formula ialah uv <b>\u2212</b> \u222Bv du. Dengan tanda betul: \u2212x cos x + \u222B cos x dx = \u2212x cos x + sin x + C.'},
+  {expr:'\u222B 4/((x + 1)(x + 3)) dx',
+   lines:['4 = A(x + 3) + B(x + 1)','x = \u22121: 4 = A(2) \u2192 A = 2','x = \u22123: 4 = B(\u22122) \u2192 B = 2','Jawapan: 2ln|x + 1| + 2ln|x + 3| + C'],
+   bad:2, why:'Langkah 3 tercicir tanda negatif. 4 = B(\u22122) memberi B = \u22122, bukan +2. Jawapan betul: 2ln|x + 1| \u2212 2ln|x + 3| + C.'},
+  {expr:'\u222B 2x(x\u00B2 + 5)\u00B3 dx',
+   lines:['u = x\u00B2 + 5','du = 2x dx','\u222B u\u00B3 du = u\u2074/4','Jawapan: (x\u00B2 + 5)\u2074/4'],
+   bad:3, why:'Semua pengiraan betul, tetapi langkah 4 tertinggal <b>+ C</b>. Setiap indefinite integral mesti ada pemalar kamiran.'},
+  {expr:'\u222B x ln x dx',
+   lines:['LIATE: u = ln x, dv = x dx','du = 1/x dx, v = x\u00B2/2','uv \u2212 \u222Bv du = (x\u00B2/2)ln x \u2212 \u222B (x\u00B2/2) dx','Jawapan: (x\u00B2/2)ln x \u2212 x\u00B3/6 + C'],
+   bad:2, why:'Langkah 3 terlupa darab du = (1/x) dx. Sepatutnya \u222B (x\u00B2/2)(1/x) dx = \u222B (x/2) dx = x\u00B2/4. Jawapan betul: (x\u00B2/2)ln x \u2212 x\u00B2/4 + C.'}
+];
+
+function viewNilai(){
+  $('C-body').innerHTML=
+   '<div class="card flat" style="background:var(--c-tint);box-shadow:none">'
+   +'<div class="note" style="background:transparent;padding:0">Dua kemahiran aras tinggi: <b>memilih</b> teknik sebelum mengira, dan <b>menilai</b> penyelesaian orang lain untuk mengesan silap.</div></div>'
+   +'<div id="mount-pilih"></div>'
+   +'<div id="mount-silap"></div>'
+   +'<div class="card"><h3>Skor anda</h3>'
+   +'<div class="g2" style="margin-top:8px">'
+   +'<div class="cell" style="padding:12px"><span style="display:block;font-size:11px;color:var(--muted)">Pilih teknik</span>'+S.C.pilih[0]+'/'+S.C.pilih[1]+'</div>'
+   +'<div class="cell" style="padding:12px"><span style="display:block;font-size:11px;color:var(--muted)">Cari silap</span>'+S.C.silap[0]+'/'+S.C.silap[1]+'</div>'
+   +'</div>'
+   +'<div class="btnrow"><button class="btn soft grow" id="N-reset">Set semula semua skor</button></div></div>';
+  drawPilih(); drawSilap();
+  $('N-reset').onclick=function(){
+    if(!confirm('Set semula semua skor?')) return;
+    S.C.sub=[0,0];S.C.parts=[0,0];S.C.pf=[0,0];S.C.pilih=[0,0];S.C.silap=[0,0]; save(); viewNilai();
+  };
+}
+
+function drawPilih(){
+  var it=C_PILIH[ri(0,C_PILIH.length-1)], answered=false;
+  $('mount-pilih').innerHTML='<div class="card">'
+    +'<div class="lbl">PILIH TEKNIK YANG SESUAI</div>'
+    +'<div class="math lg" style="margin:10px 0">'+it.q+'</div>'
+    +'<div id="P-opts">'+C_POPT.map(function(o,i){return '<button class="opt" data-i="'+i+'">'+o+'</button>';}).join('')+'</div>'
+    +'<div class="fb hidden" id="P-fb"></div>'
+    +'<div class="btnrow"><button class="btn soft grow" id="P-new">Soalan baharu</button></div></div>';
+  $('mount-pilih').querySelectorAll('.opt').forEach(function(b){
+    b.onclick=function(){
+      if(answered) return; answered=true;
+      var ok=(+b.dataset.i===it.a);
+      b.className='opt '+(ok?'ok':'no');
+      if(!ok) $('P-opts').querySelectorAll('.opt')[it.a].className='opt ok';
+      fb($('P-fb'), ok?'ok':'hint', (ok?'Betul! ':'Jawapan: <b>'+C_POPT[it.a]+'</b>. ')+it.why);
+      S.C.pilih[1]++; if(ok) S.C.pilih[0]++; save();
+    };
+  });
+  $('P-new').onclick=drawPilih;
+}
+
+function drawSilap(){
+  var it=C_SALAH[ri(0,C_SALAH.length-1)], answered=false;
+  $('mount-silap').innerHTML='<div class="card">'
+    +'<div class="lbl">CARI SILAP</div>'
+    +'<p style="margin:4px 0 8px;font-size:15px;font-weight:700">Seorang pelajar menyelesaikan integral ini. Satu langkah ada silap. Langkah yang mana?</p>'
+    +'<div class="math md" style="margin:10px 0">'+it.expr+'</div>'
+    +'<ol class="jk">'+it.lines.map(function(l){return '<li>'+l+'</li>';}).join('')+'</ol>'
+    +'<div id="S-opts" class="g2" style="margin-top:10px">'
+    + it.lines.map(function(l,i){return '<button class="btn soft" data-i="'+i+'" style="min-height:48px">Langkah '+(i+1)+'</button>';}).join('')
+    +'</div>'
+    +'<div class="fb hidden" id="S-fb"></div>'
+    +'<div class="btnrow"><button class="btn soft grow" id="S-new">Soalan baharu</button></div></div>';
+  $('mount-silap').querySelectorAll('#S-opts button').forEach(function(b){
+    b.onclick=function(){
+      if(answered) return; answered=true;
+      var ok=(+b.dataset.i===it.bad);
+      b.style.background = ok?'var(--ok-bg)':'var(--no-bg)';
+      b.style.borderColor = ok?'var(--res)':'var(--op)';
+      if(!ok){ var r=$('S-opts').querySelectorAll('button')[it.bad];
+        r.style.background='var(--ok-bg)'; r.style.borderColor='var(--res)'; }
+      fb($('S-fb'), ok?'ok':'hint', (ok?'Betul! ':'Silap sebenarnya pada <b>Langkah '+(it.bad+1)+'</b>. ')+it.why);
+      S.C.silap[1]++; if(ok) S.C.silap[0]++; save();
+    };
+  });
+  $('S-new').onclick=drawSilap;
+}
+
+
+/* ---------- ROUTER APP C ---------- */
+var C_TABS=[{id:'intro',n:'Mula'},{id:'sub',n:'Subst.'},{id:'parts',n:'By parts'},
+            {id:'pf',n:'Pecahan'},{id:'nilai',n:'Nilai'}];
+function renderC(){
+  if(!S.C.tab) S.C.tab='intro';
+  var strip=$('C-strip'); strip.className='strip five';
+  html(strip, C_TABS.map(function(t){
+    return '<button role="tab" aria-current="'+(S.C.tab===t.id)+'" data-t="'+t.id+'">'+t.n+'</button>';
+  }).join(''));
+  strip.querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){ S.C.tab=b.dataset.t; save(); renderC(); };
+  });
+  var chip=$('C-chip');
+  if(chip) chip.textContent=(S.C.tab==='intro'||S.C.tab==='nilai')?'Unit 3.3':'Aras '+S.C.lvl;
+  ({intro:viewIntro,sub:viewSub,parts:viewParts,pf:viewPF,nilai:viewNilai})[S.C.tab]();
+}
+
+/* ======================================================================
+   BAHAGIAN 11 — KAD FORMULA, TIPS & PANDUAN
+   ====================================================================== */
+var REF=[
+  ['Rule asas (3.2)', [
+    ['\u222B x'+sup('n')+' dx', 'x<sup>n+1</sup>/(n + 1) + C', 'n \u2260 \u22121'],
+    ['\u222B (1/x) dx', 'ln |x| + C', 'kes n = \u22121'],
+    ['\u222B e'+sup('x')+' dx', 'e<sup>x</sup> + C', '\u2014'],
+    ['\u222B e'+sup('ax')+' dx', 'e<sup>ax</sup>/a + C', 'bahagi dengan a'],
+    ['\u222B sin x dx', '\u2212cos x + C', 'ada tanda negatif'],
+    ['\u222B cos x dx', 'sin x + C', '\u2014'],
+    ['\u222B sec\u00B2 x dx', 'tan x + C', '\u2014'],
+    ['\u222B k dx', 'kx + C', 'k pemalar']
+  ]],
+  ['Teknik (3.3)', [
+    ['Substitution', '\u222B f(g(x))g\u2032(x) dx = \u222B f(u) du', 'fungsi dalam fungsi'],
+    ['By parts', '\u222B u dv = uv \u2212 \u222B v du', 'dua fungsi didarab, pilih u ikut LIATE'],
+    ['Partial fraction', 'P(x)/((x+a)(x+b)) = A/(x+a) + B/(x+b)', 'penyebut berfaktor']
+  ]],
+  ['Definite integral (3.4)', [
+    ['\u222B<sub>a</sub><sup>b</sup> f(x) dx', '[F(x)]<sub>a</sub><sup>b</sup> = F(b) \u2212 F(a)', 'tiada + C'],
+    ['\u222B<sub>a</sub><sup>a</sup> f(x) dx', '0', 'had sama'],
+    ['\u222B<sub>a</sub><sup>b</sup> f(x) dx', '\u2212\u222B<sub>b</sub><sup>a</sup> f(x) dx', 'tukar had, tukar tanda']
+  ]]
+];
+
+var SILAP=[
+  'Lupa <b class="konst">+ C</b> pada indefinite integral. Ini kesilapan nombor satu.',
+  'Guna power rule pada \u222B (1/x) dx. Kuasa \u22121 + 1 = 0, jadi pembahagi sifar \u2014 gunakan ln |x|.',
+  'Tanda salah: \u222B sin x dx = <b>\u2212</b>cos x, bukan +cos x.',
+  'Lupa bahagi dengan pekali dalaman: \u222B cos(3x) dx = sin(3x)<b>/3</b>.',
+  'Letak + C pada definite integral. Tak perlu \u2014 ia hapus semasa F(b) \u2212 F(a).',
+  'Lupa tukar balik u kepada x selepas substitution.'
+];
+var TIPS=[
+  'Semak sendiri: <b>differentiate jawapan anda</b>. Kalau dapat soalan asal, jawapan betul.',
+  'Kuasa: <b>tambah satu, bahagi dengan yang baharu</b>. Dua langkah sahaja.',
+  'By parts pilih u guna <b>LIATE</b>: Log, Inverse trig, Algebra, Trig, Exponential.',
+  'Kalau nampak kurungan berkuasa, fikir <b>substitution</b> dahulu.',
+  'Definite integral: kira F(b) dan F(a) berasingan, baru tolak. Kurang silap tanda.'
+];
+
+function renderFormula(){
+  var out='';
+  REF.forEach(function(sec){
+    out+='<details class="card" open><summary style="cursor:pointer;font-weight:800;font-size:17px;font-family:\'Baloo 2\',sans-serif">'+sec[0]+'</summary>'
+      +'<div class="scrollx"><table class="ref"><thead><tr><th>Integral</th><th>Hasil</th><th>Nota</th></tr></thead><tbody>'
+      + sec[1].map(function(r){ return '<tr><td>'+r[0]+'</td><td class="res"><b>'+r[1]+'</b></td><td class="muted">'+r[2]+'</td></tr>'; }).join('')
+      +'</tbody></table></div></details>';
+  });
+  out+='<div class="card" style="background:var(--no-bg)"><h3 style="color:var(--no-fg)">\u26A0 Silap biasa</h3><ul style="margin:0;padding-left:20px;color:var(--no-fg);font-weight:700;font-size:14px;line-height:1.6">'
+    + SILAP.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul></div>';
+  out+='<div class="card" style="background:var(--hint-bg)"><h3 style="color:var(--hint-fg)">\u2605 Tips untuk ingat</h3><ul style="margin:0;padding-left:20px;color:var(--hint-fg);font-weight:700;font-size:14px;line-height:1.6">'
+    + TIPS.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul></div>';
+  out+='<details class="card noprint"><summary style="cursor:pointer;font-weight:800;font-size:17px;font-family:\'Baloo 2\',sans-serif">Cara guna apl ini</summary>'
+    +'<ol class="jk" style="margin-top:10px">'
+    +'<li>Mula di App A. Ikut empat peringkat: Konkrit \u2192 Visual \u2192 Simbol \u2192 Abstrak.</li>'
+    +'<li>Taip jawapan penuh. Kuasa guna <b>^</b> (x^3), pecahan guna <b>/</b> (x^3/3), darab boleh rapat (2x).</li>'
+    +'<li>Sistem terima semua bentuk setara. x\u00B3/3 dan (1/3)x^3 dua-dua betul.</li>'
+    +'<li>Buntu? Tekan <b>Hint</b> \u2014 ada tiga tahap, makin jelas.</li>'
+    +'<li>Masih buntu? Tekan <b>Tunjuk jalan kerja</b> untuk penyelesaian penuh.</li>'
+    +'<li>Tiada had masa dan tiada markah tolak. Cuba sebanyak mana pun.</li></ol></details>';
+  html($('F-body'), out);
+}
+
+/* ======================================================================
+   BAHAGIAN 12 — PROGRES
+   ====================================================================== */
+function renderProgress(){
+  var rows=APPS.map(function(a){
+    var p=appPct(a.id), det='';
+    if(a.id==='A') det=S.A.correct+'/'+S.A.total+' soalan betul \u00B7 '+S.A.done.filter(Boolean).length+'/4 peringkat';
+    if(a.id==='B') det=S.B.correct+'/'+S.B.total+' soalan betul';
+    if(a.id==='D') det=S.D.correct+'/'+S.D.total+' soalan betul \u00B7 '+S.D.done.filter(Boolean).length+'/4 peringkat';
+    if(a.id==='C') det=(S.C.sub[0]+S.C.parts[0]+S.C.pf[0]+S.C.pilih[0]+S.C.silap[0])+'/'+(S.C.sub[1]+S.C.parts[1]+S.C.pf[1]+S.C.pilih[1]+S.C.silap[1])+' soalan betul';
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
+      +'<b style="font-size:16px">App '+a.num+' \u00B7 '+a.name+'</b><b style="color:var(--primary)">'+p+'%</b></div>'
+      +'<div style="height:12px;border-radius:99px;background:var(--ground);overflow:hidden"><div style="height:100%;width:'+p+'%;background:'+a.hue+';border-radius:99px"></div></div>'
+      +'<p class="muted" style="margin:6px 0 0">'+det+'</p></div>';
+  }).join('');
+  rows+='<div class="card"><h3>Teknik dalam App C</h3><div class="g3" style="margin-top:8px">'
+    +[['Substitution',S.C.sub],['By parts',S.C.parts],['Partial fraction',S.C.pf]].map(function(t){
+        return '<div class="cell" style="padding:10px 4px"><span style="display:block;font-size:11px;color:var(--muted)">'+t[0]+'</span>'+t[1][0]+'/'+t[1][1]+'</div>';
+      }).join('')
+    +'</div><div class="g2" style="margin-top:8px">'
+    +[['Pilih teknik',S.C.pilih],['Cari silap',S.C.silap]].map(function(t){
+        return '<div class="cell" style="padding:10px 4px"><span style="display:block;font-size:11px;color:var(--muted)">'+t[0]+'</span>'+t[1][0]+'/'+t[1][1]+'</div>';
+      }).join('')+'</div></div>';
+  rows+='<div class="btnrow"><button class="btn ghost grow" id="P-reset">Set semula semua progres</button></div>';
+  html($('P-body'), rows);
+  $('P-reset').onclick=function(){
+    if(!confirm('Set semula semua progres? Tindakan ini tidak boleh dibatalkan.')) return;
+    S={A:{stage:0,done:[false,false,false,false],correct:0,total:0},
+       B:{correct:0,total:0,level:1,tab:'power'},
+       C:{tab:'intro',lvl:1,sub:[0,0],parts:[0,0],pf:[0,0],pilih:[0,0],silap:[0,0]},
+       D:{stage:0,done:[false,false,false,false],correct:0,total:0},
+       unlockedC:false};
+    save(); renderProgress(); renderHome();
+  };
+}
+
+/* ======================================================================
+   BAHAGIAN 13 — MULAKAN
+   ====================================================================== */
+document.querySelectorAll('[data-go]').forEach(function(b){
+  b.addEventListener('click', function(){ show(b.dataset.go); });
+});
+load();
+renderFormula();
+show('home');
+</script>
+</body>
+</html>
