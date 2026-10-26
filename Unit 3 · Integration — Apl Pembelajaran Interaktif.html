@@ -85,6 +85,12 @@ button,input,select{font-family:inherit}
 .stepdone .num{width:22px;height:22px;flex:0 0 22px;border-radius:50%;background:var(--res);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
 .hl-u{background:rgba(29,95,214,.18);border-radius:6px;padding:0 4px}
 .hl-du{background:rgba(194,65,12,.18);border-radius:6px;padding:0 4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.legend span{font-size:12px;font-weight:800;border-radius:99px;padding:4px 10px;border:2px solid currentColor}
+.legend .pow{background:rgba(29,95,214,.12)} .legend .op{background:rgba(194,65,12,.12)} .legend .res{background:rgba(21,128,61,.12)}
+.stepq{padding-left:12px;border-left:6px solid}
+.formula{display:grid;gap:8px;margin-top:10px}
+.formula div{border-radius:12px;padding:10px 12px;font-size:14px;font-weight:700;background:var(--card);border:2px solid var(--line)}
 .strip button{border:0;border-radius:10px;padding:8px 2px;font-size:12px;font-weight:800;background:rgba(255,255,255,.55);color:#1B1A3A;cursor:pointer;min-height:36px}
 .strip button[aria-current="true"]{background:#1B1A3A;color:#fff}
 .strip button.done{background:#fff}
@@ -1493,8 +1499,10 @@ function sameFn(input, ref, pts){
   return {ok:true};
 }
 
-function stepSolver(mountId, getProb, onDone){
+function stepSolver(mountId, getProb, onDone, theme){
   var prob, cur, hintLvl, shown;
+  theme=theme||{legend:[], col:[]};
+  function colOf(i){ return 'var(--'+(theme.col[i]||'pow')+')'; }
 
   function start(){ prob=getProb(); cur=0; hintLvl=0; shown=false; draw(); }
 
@@ -1506,9 +1514,15 @@ function stepSolver(mountId, getProb, onDone){
     }
     return s+'</div>';
   }
+  function legend(){
+    if(!theme.legend.length) return '';
+    return '<div class="legend" aria-label="Maksud warna">'+theme.legend.map(function(l){
+      return '<span class="'+l[0]+'" style="color:var(--'+l[0]+')">'+l[1]+'</span>';
+    }).join('')+'</div>';
+  }
   function doneList(){
     var s='';
-    for(var i=0;i<cur;i++) s+='<div class="stepdone"><span class="num">'+(i+1)+'</span><span>'+prob.steps[i].done+'</span></div>';
+    for(var i=0;i<cur;i++) s+='<div class="stepdone" style="border-left:6px solid '+colOf(i)+'"><span class="num">'+(i+1)+'</span><span>'+prob.steps[i].done+'</span></div>';
     return s;
   }
   function draw(){
@@ -1517,14 +1531,14 @@ function stepSolver(mountId, getProb, onDone){
     var h='<div class="card">'
       +'<div class="lbl">'+prob.title+'</div>'
       +'<div class="math lg" style="margin:8px 0 12px">'+prob.expr+'</div>'
-      + track() + doneList();
+      + legend() + track() + doneList();
     if(finished){
       h+='<div class="fb ok">'+I_OK+'<div><b>Selesai!</b> Semua '+prob.steps.length+' langkah betul. '+(prob.praise||'')+'</div></div>'
         +'<div class="btnrow"><button class="btn soft grow" id="SS-jk">Lihat jalan kerja penuh</button>'
         +'<button class="btn grow" id="SS-new">Soalan baharu</button></div>'
         +'<ol class="jk hidden" id="SS-jkbox" style="margin-top:10px"></ol>';
     } else {
-      h+='<div style="font-weight:800;font-size:15px;margin:10px 0 6px">Langkah '+(cur+1)+' \u00B7 '+st.q+'</div>';
+      h+='<div class="stepq" style="border-left-color:'+colOf(cur)+';font-weight:800;font-size:15px;margin:10px 0 6px">Langkah '+(cur+1)+' \u00B7 <span style="color:'+colOf(cur)+'">'+st.q+'</span></div>';
       if(st.extra) h+=st.extra;
       if(st.kind==='choice'){
         h+='<div id="SS-opts">'+st.opts.map(function(o,i){return '<button class="opt" data-i="'+i+'">'+o.t+'</button>';}).join('')+'</div>';
@@ -2078,6 +2092,16 @@ function viewIntro(){
    +'<div class="note" style="margin-top:10px">Yang kedua ada <b>dua fungsi didarab</b>. Power rule tidak tahu nak buat apa. Kita perlu alat lain \u2014 itulah tiga teknik dalam 3.3.</div></div>'
 
    +'<div class="card">'
+   +'<div class="lbl">FORMULA · KAD RUJUKAN BERWARNA</div>'
+   +'<h2>Tiga formula, tiga warna</h2>'
+   +'<div class="formula">'
+   +'<div style="border-color:var(--pow)"><span class="pow">Substitution</span> ∫ f(g(x))·g′(x) dx = ∫ f(<span class="pow">u</span>) <span class="op">du</span><br><span style="font-size:12px;color:var(--muted)">dengan u = g(x) dan du = g′(x) dx</span></div>'
+   +'<div style="border-color:var(--op)"><span class="op">By parts</span> ∫ <span class="pow">u</span> <span class="op">dv</span> = <span class="res">uv</span> − ∫ v du<br><span style="font-size:12px;color:var(--muted)">pilih u ikut LIATE (Log, Inv trig, Algebra, Trig, Exp)</span></div>'
+   +'<div style="border-color:var(--res)"><span class="res">Partial fraction</span> P(x)/((x+a)(x+b)) = <span class="pow">A</span>/(x+a) + <span class="op">B</span>/(x+b)<br><span style="font-size:12px;color:var(--muted)">cari A dan B, kemudian setiap pecahan jadi ln</span></div>'
+   +'</div>'
+   +'<p class="muted" style="margin:10px 0 0">Warna yang sama muncul dalam penyelesai langkah: <b class="pow">biru</b> = u, <b class="op">jingga</b> = du atau dv, <b class="res">hijau</b> = hasil.</p></div>'
+
+   +'<div class="card">'
    +'<h2>Peta keputusan</h2>'
    +'<p class="muted" style="margin:0 0 10px">Tanya empat soalan ini mengikut turutan. Berhenti pada yang pertama menjawab "ya".</p>'
    +'<ol class="jk">'
@@ -2137,7 +2161,9 @@ function viewSub(){
    +'<li>Lupa tukar balik u kepada x di akhir</li>'
    +'<li>Pilih u sampai termasuk kuasa, contoh u = (x\u00B2+1)\u00B3</li></ul></div>';
   bindLevel('L-sub', viewSub);
-  stepSolver('mount-step', function(){ return genSub(S.C.lvl); });
+  stepSolver('mount-step', function(){ return genSub(S.C.lvl); }, null, {
+    legend:[['pow','u (biru)'],['op','du (jingga)'],['res','hasil (hijau)']],
+    col:['pow','op','op','pow','res']});
   freeSolver('mount-free', function(){ return freeSub(S.C.lvl); }, function(ok){
     S.C.sub[1]++; if(ok) S.C.sub[0]++; save();
   });
@@ -2178,7 +2204,9 @@ function viewParts(){
    +'<li>Pilih u yang salah sehingga integral baki jadi lebih susah</li>'
    +'<li>Lupa bahagi pekali dalaman semasa cari v</li></ul></div>';
   bindLevel('L-parts', viewParts);
-  stepSolver('mount-step', function(){ return genParts(S.C.lvl); });
+  stepSolver('mount-step', function(){ return genParts(S.C.lvl); }, null, {
+    legend:[['pow','u (biru)'],['op','dv / v (jingga)'],['res','uv − ∫ v du (hijau)']],
+    col:['pow','pow','op','res','res']});
   freeSolver('mount-free', function(){ return freeParts(S.C.lvl); }, function(ok){
     S.C.parts[1]++; if(ok) S.C.parts[0]++; save();
   });
@@ -2216,7 +2244,9 @@ function viewPF(){
    +'<li>Tukar A dan B antara satu sama lain</li>'
    +'<li>Lupa penyebut perlu difaktorkan dahulu sebelum dipecahkan</li></ul></div>';
   bindLevel('L-pf', viewPF);
-  stepSolver('mount-step', function(){ return genPF(S.C.lvl); });
+  stepSolver('mount-step', function(){ return genPF(S.C.lvl); }, null, {
+    legend:[['op','pecahan kecil (jingga)'],['pow','A, B (biru)'],['res','hasil ln (hijau)']],
+    col:['op','pow','pow','op','res']});
   freeSolver('mount-free', function(){ return freePF(S.C.lvl); }, function(ok){
     S.C.pf[1]++; if(ok) S.C.pf[0]++; save();
   });
