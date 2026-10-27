@@ -1659,14 +1659,23 @@ function valEq(t,tol){ return function(s){ return sameVal(s,t,tol||1e-6); }; }
 /* ======================================================================
    5 — SUBSTITUTION
    ====================================================================== */
+/* Pecahan dan kuasa dalam teks soalan dan penyelesai dipaparkan sebagai matematik sebenar. */
+function ratioHTML(v){
+  var d=1; while(d<=12 && Math.abs(v*d-Math.round(v*d))>1e-9) d++;
+  var n=Math.round(v*d), s=n<0?'−':'';
+  n=Math.abs(n);
+  return d===1 ? s+n : s+freeFrac(n,d);
+}
+function dxdu(b){ return 'dx = '+freeFrac('du',''+b); }
+
 function genSub(lvl){
   if(lvl===1){
     var a=ri(2,5), b=ri(2,4), c=ri(1,5), n=ri(2,4);
     var F=function(x){ return a*Math.pow(b*x+c,n+1)/(b*(n+1)); };
     var Fu=function(u){ return a/b*Math.pow(u,n+1)/(n+1); };
     return {
-      title:'SUBSTITUTION \u00B7 ARAS 1', Fx:F, ptsX:P_POS,
-      expr:'\u222B '+a+'('+b+'x + '+c+')'+sup(n)+' dx',
+      title:'SUBSTITUTION · ARAS 1', Fx:F, ptsX:P_POS,
+      expr:'∫ '+a+'('+b+'x + '+c+')'+sup(n)+' dx',
       praise:'Anda sudah boleh guna substitution asas.',
       steps:[
         {q:'Pilih u. Bahagian mana yang paling sesuai?', kind:'choice',
@@ -1678,30 +1687,30 @@ function genSub(lvl){
         {q:'Cari du/dx.', kind:'text', ph:'contoh: 3',
          check:fnEq(function(){return b;},P_ANY),
          hint:['Differentiate u = '+b+'x + '+c+' terhadap x.','Derivative '+b+'x ialah '+b+', derivative '+c+' ialah 0.','du/dx = '+b],
-         ans:'du/dx = '+b, done:'du/dx = '+b+' \u2192 dx = du/'+b},
+         ans:freeFrac('du','dx')+' = '+b, done:freeFrac('du','dx')+' = '+b+' → '+dxdu(b)},
         {q:'Tukar integral kepada bentuk u.', kind:'choice',
-         opts:[{t:'('+a+'/'+b+') \u222B u'+sup(n)+' du',ok:true,why:'Betul! dx = du/'+b+', jadi '+a+' dibahagi '+b+'.'},
-               {t:a+' \u222B u'+sup(n)+' du',ok:false,why:'Anda terlupa dx = du/'+b+'. Perlu bahagi dengan '+b+'.'},
-               {t:'('+(a*b)+') \u222B u'+sup(n)+' du',ok:false,why:'Darab, bukan bahagi. dx = du/'+b+' bermakna <b>bahagi</b>.'}],
-         hint:['Ganti ('+b+'x + '+c+')'+sup(n)+' dengan u'+sup(n)+', dan dx dengan du/'+b+'.',
-               'Pemalar '+a+' dan 1/'+b+' boleh digabung di luar.','Jawapan: ('+a+'/'+b+') \u222B u'+sup(n)+' du'],
-         ans:'('+a+'/'+b+') \u222B u'+sup(n)+' du', done:'('+a+'/'+b+') \u222B u'+sup(n)+' du'},
+         opts:[{t:freeFrac(a,''+b)+' ∫ u'+sup(n)+' du',ok:true,why:'Betul! '+dxdu(b)+', jadi '+a+' dibahagi '+b+'.'},
+               {t:a+' ∫ u'+sup(n)+' du',ok:false,why:'Anda terlupa '+dxdu(b)+'. Perlu bahagi dengan '+b+'.'},
+               {t:'('+(a*b)+') ∫ u'+sup(n)+' du',ok:false,why:'Darab, bukan bahagi. '+dxdu(b)+' bermakna <b>bahagi</b>.'}],
+         hint:['Ganti ('+b+'x + '+c+')'+sup(n)+' dengan u'+sup(n)+', dan dx dengan '+freeFrac('du',''+b)+'.',
+               'Pemalar '+a+' dan '+freeFrac('1',''+b)+' boleh digabung di luar.', 'Jawapan: '+freeFrac(a,''+b)+' ∫ u'+sup(n)+' du'],
+         ans:freeFrac(a,''+b)+' ∫ u'+sup(n)+' du', done:freeFrac(a,''+b)+' ∫ u'+sup(n)+' du'},
         {q:'Integratekan dalam bentuk u. (tulis guna huruf u)', kind:'text', ph:'contoh: u^4/4',
          check:intNoC(Fu,P_POS),
          hint:['Guna power rule pada u'+sup(n)+'.','Kuasa baharu '+(n+1)+', bahagi dengan '+(n+1)+'.',
-               '('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1)],
-         ans:'('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1), done:'('+a+'/'+b+')u'+sup(n+1)+'/'+(n+1)},
+               freeFrac(a+'u'+sup(n+1),''+(b*(n+1)))],
+         ans:freeFrac(a+'u'+sup(n+1),''+(b*(n+1))), done:freeFrac(a+'u'+sup(n+1),''+(b*(n+1)))},
         {q:'Tukar balik kepada x dan tambah pemalar.', kind:'text', ph:'contoh: (x+2)^4/4 + C',
          check:intC(F,P_POS),
          hint:['Ganti semula u dengan '+b+'x + '+c+'.','Jangan lupa + C.',
-               a+'('+b+'x + '+c+')'+sup(n+1)+' / '+(b*(n+1))+' + C'],
-         ans:a+'('+b+'x + '+c+')'+sup(n+1)+'/'+(b*(n+1))+' + C', done:'Jawapan akhir diperoleh'}
+               freeFrac(a+'('+b+'x + '+c+')'+sup(n+1),''+(b*(n+1)))+' + C'],
+         ans:freeFrac(a+'('+b+'x + '+c+')'+sup(n+1),''+(b*(n+1)))+' + C', done:'Jawapan akhir diperoleh'}
       ],
       jk:['Pilih <b class="pow">u = '+b+'x + '+c+'</b>.',
-          'du/dx = '+b+' \u2192 dx = du/'+b+'.',
-          'Ganti: '+a+' \u222B u'+sup(n)+' \u00B7 du/'+b+' = ('+a+'/'+b+') \u222B u'+sup(n)+' du.',
-          'Power rule: ('+a+'/'+b+') \u00B7 u'+sup(n+1)+'/'+(n+1)+'.',
-          'Tukar balik: <b class="res">'+a+'('+b+'x + '+c+')'+sup(n+1)+' / '+(b*(n+1))+'</b> <span class="konst">+ C</span>.']
+          freeFrac('du','dx')+' = '+b+' → '+dxdu(b)+'.',
+          'Ganti: '+a+' ∫ u'+sup(n)+' · '+freeFrac('du',''+b)+' = '+freeFrac(a,''+b)+' ∫ u'+sup(n)+' du.',
+          'Power rule: '+freeFrac(a+'u'+sup(n+1),''+(b*(n+1)))+'.',
+          'Tukar balik: <b class="res">'+freeFrac(a+'('+b+'x + '+c+')'+sup(n+1),''+(b*(n+1)))+'</b> <span class="konst">+ C</span>.']
     };
   }
   if(lvl===2){
@@ -1709,41 +1718,41 @@ function genSub(lvl){
     var F2=function(x){ return p/2*Math.pow(x*x+k,m+1)/(m+1); };
     var Fu2=function(u){ return p/2*Math.pow(u,m+1)/(m+1); };
     return {
-      title:'SUBSTITUTION \u00B7 ARAS 2', Fx:F2, ptsX:P_POS,
-      expr:'\u222B '+p+'x(x\u00B2 + '+k+')'+sup(m)+' dx',
+      title:'SUBSTITUTION · ARAS 2', Fx:F2, ptsX:P_POS,
+      expr:'∫ '+p+'x(x'+sup(2)+' + '+k+')'+sup(m)+' dx',
       praise:'Anda nampak du tersembunyi dalam soalan.',
       steps:[
         {q:'Pilih u.', kind:'choice',
-         opts:[{t:'u = x\u00B2 + '+k,ok:true,why:'Betul! Isi kurungan yang berkuasa.'},
+         opts:[{t:'u = x'+sup(2)+' + '+k,ok:true,why:'Betul! Isi kurungan yang berkuasa.'},
                {t:'u = '+p+'x',ok:false,why:'Bukan. Bahagian '+p+'x ialah yang akan jadi du.'},
-               {t:'u = (x\u00B2 + '+k+')'+sup(m),ok:false,why:'Jangan ambil kuasa sekali.'}],
-         hint:['Cari fungsi dalam fungsi.','Isi kurungan: x\u00B2 + '+k+'.','u = x\u00B2 + '+k],
-         ans:'u = x\u00B2 + '+k, done:'u = x\u00B2 + '+k},
+               {t:'u = (x'+sup(2)+' + '+k+')'+sup(m),ok:false,why:'Jangan ambil kuasa sekali.'}],
+         hint:['Cari fungsi dalam fungsi.','Isi kurungan: x'+sup(2)+' + '+k+'.','u = x'+sup(2)+' + '+k],
+         ans:'u = x'+sup(2)+' + '+k, done:'u = x'+sup(2)+' + '+k},
         {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x',
          check:fnEq(function(x){return 2*x;},P_ANY),
-         hint:['Differentiate x\u00B2 + '+k+'.','Derivative x\u00B2 ialah 2x; pemalar jadi 0.','du/dx = 2x'],
-         ans:'du/dx = 2x', done:'du/dx = 2x \u2192 x dx = du/2'},
+         hint:['Differentiate x'+sup(2)+' + '+k+'.','Derivative x'+sup(2)+' ialah 2x; pemalar jadi 0.','du/dx = 2x'],
+         ans:freeFrac('du','dx')+' = 2x', done:freeFrac('du','dx')+' = 2x → x dx = '+freeFrac('du','2')},
         {q:'Soalan ada '+p+'x dx. Tukar kepada du.', kind:'choice',
-         opts:[{t:'('+p+'/2) du',ok:true,why:'Betul! 2x dx = du, jadi x dx = du/2.'},
+         opts:[{t:freeFrac(p,'2')+' du',ok:true,why:'Betul! 2x dx = du, jadi x dx = '+freeFrac('du','2')+'.'},
                {t:p+' du',ok:false,why:'Anda terlupa faktor 2 daripada du = 2x dx.'},
-               {t:'('+(2*p)+') du',ok:false,why:'Terbalik. x dx = du/2, jadi perlu <b>bahagi</b> 2.'}],
-         hint:['du = 2x dx, jadi x dx = du/2.','Darab dengan '+p+': '+p+'x dx = ('+p+'/2) du.','Jawapan: ('+p+'/2) du'],
-         ans:'('+p+'/2) du', done:p+'x dx = ('+p+'/2) du'},
-        {q:'Integratekan ('+p+'/2) \u222B u'+sup(m)+' du. (guna huruf u)', kind:'text', ph:'contoh: u^4/4',
+               {t:'('+(2*p)+') du',ok:false,why:'Terbalik. x dx = '+freeFrac('du','2')+', jadi perlu <b>bahagi</b> 2.'}],
+         hint:['du = 2x dx, jadi x dx = '+freeFrac('du','2')+'.','Darab dengan '+p+': '+p+'x dx = '+freeFrac(p,'2')+' du.','Jawapan: '+freeFrac(p,'2')+' du'],
+         ans:freeFrac(p,'2')+' du', done:p+'x dx = '+freeFrac(p,'2')+' du'},
+        {q:'Integratekan '+freeFrac(p,'2')+' ∫ u'+sup(m)+' du. (guna huruf u)', kind:'text', ph:'contoh: u^4/4',
          check:intNoC(Fu2,P_POS),
-         hint:['Power rule pada u'+sup(m)+'.','Kuasa baharu '+(m+1)+'.','('+p+'/2)u'+sup(m+1)+'/'+(m+1)],
-         ans:'('+p+'/2)u'+sup(m+1)+'/'+(m+1), done:'('+p+'/2)u'+sup(m+1)+'/'+(m+1)},
+         hint:['Power rule pada u'+sup(m)+'.','Kuasa baharu '+(m+1)+'.',freeFrac(p+'u'+sup(m+1),''+(2*(m+1)))],
+         ans:freeFrac(p+'u'+sup(m+1),''+(2*(m+1))), done:freeFrac(p+'u'+sup(m+1),''+(2*(m+1)))},
         {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: (x^2+1)^4/4 + C',
          check:intC(F2,P_POS),
-         hint:['Ganti u dengan x\u00B2 + '+k+'.','Jangan lupa + C.',
-               p+'(x\u00B2 + '+k+')'+sup(m+1)+' / '+(2*(m+1))+' + C'],
-         ans:p+'(x\u00B2 + '+k+')'+sup(m+1)+'/'+(2*(m+1))+' + C', done:'Jawapan akhir diperoleh'}
+         hint:['Ganti u dengan x'+sup(2)+' + '+k+'.','Jangan lupa + C.',
+               freeFrac(p+'(x'+sup(2)+' + '+k+')'+sup(m+1),''+(2*(m+1)))+' + C'],
+         ans:freeFrac(p+'(x'+sup(2)+' + '+k+')'+sup(m+1),''+(2*(m+1)))+' + C', done:'Jawapan akhir diperoleh'}
       ],
-      jk:['<b class="pow">u = x\u00B2 + '+k+'</b>, du = 2x dx.',
-          'Maka x dx = du/2, jadi '+p+'x dx = ('+p+'/2) du.',
-          'Integral jadi ('+p+'/2) \u222B u'+sup(m)+' du.',
-          'Power rule: ('+p+'/2) u'+sup(m+1)+'/'+(m+1)+'.',
-          'Tukar balik: <b class="res">'+p+'(x\u00B2 + '+k+')'+sup(m+1)+' / '+(2*(m+1))+'</b> <span class="konst">+ C</span>.']
+      jk:['<b class="pow">u = x'+sup(2)+' + '+k+'</b>, du = 2x dx.',
+          'Maka x dx = '+freeFrac('du','2')+', jadi '+p+'x dx = '+freeFrac(p,'2')+' du.',
+          'Integral jadi '+freeFrac(p,'2')+' ∫ u'+sup(m)+' du.',
+          'Power rule: '+freeFrac(p+'u'+sup(m+1),''+(2*(m+1)))+'.',
+          'Tukar balik: <b class="res">'+freeFrac(p+'(x'+sup(2)+' + '+k+')'+sup(m+1),''+(2*(m+1)))+'</b> <span class="konst">+ C</span>.']
     };
   }
   // Aras 3
@@ -1751,78 +1760,78 @@ function genSub(lvl){
     var q3=ri(2,6);
     var F3=function(x){ return q3/2*Math.exp(x*x); };
     return {
-      title:'SUBSTITUTION \u00B7 ARAS 3', Fx:F3, ptsX:P_SML,
-      expr:'\u222B '+q3+'x e'+sup('x\u00B2')+' dx',
+      title:'SUBSTITUTION · ARAS 3', Fx:F3, ptsX:P_SML,
+      expr:'∫ '+q3+'x e'+sup('x\u00B2')+' dx',
       praise:'Substitusi dalam eksponen pun anda boleh.',
       steps:[
         {q:'Pilih u.', kind:'choice',
-         opts:[{t:'u = x\u00B2',ok:true,why:'Betul! Ambil kuasa e sebagai u.'},
+         opts:[{t:'u = x'+sup(2),ok:true,why:'Betul! Ambil kuasa e sebagai u.'},
                {t:'u = e'+sup('x\u00B2'),ok:false,why:'Terlalu besar. Ambil bahagian dalam kuasa sahaja.'},
                {t:'u = '+q3+'x',ok:false,why:'Itu bakal jadi du, bukan u.'}],
-         hint:['Apa yang berada "di dalam" fungsi e?','Kuasa e ialah x\u00B2.','u = x\u00B2'],
-         ans:'u = x\u00B2', done:'u = x\u00B2'},
+         hint:['Apa yang berada "di dalam" fungsi e?','Kuasa e ialah x'+sup(2)+'.','u = x'+sup(2)],
+         ans:'u = x'+sup(2), done:'u = x'+sup(2)},
         {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x',
          check:fnEq(function(x){return 2*x;},P_ANY),
-         hint:['Differentiate x\u00B2.','Power rule turun: 2x.','du/dx = 2x'],
-         ans:'du/dx = 2x', done:'du = 2x dx \u2192 x dx = du/2'},
+         hint:['Differentiate x'+sup(2)+'.','Power rule turun: 2x.','du/dx = 2x'],
+         ans:freeFrac('du','dx')+' = 2x', done:'du = 2x dx → x dx = '+freeFrac('du','2')},
         {q:'Integral dalam bentuk u ialah?', kind:'choice',
-         opts:[{t:'('+q3+'/2) \u222B e'+sup('u')+' du',ok:true,why:'Betul! x dx = du/2.'},
-               {t:q3+' \u222B e'+sup('u')+' du',ok:false,why:'Terlupa bahagi 2.'},
-               {t:'('+q3+'/2) \u222B u e'+sup('u')+' du',ok:false,why:'x sudah habis digunakan untuk du. Tiada u berlebihan.'}],
-         hint:['Ganti e'+sup('x\u00B2')+' dengan e'+sup('u')+' dan x dx dengan du/2.',
-               'Pemalar '+q3+' dan 1/2 bergabung.','('+q3+'/2) \u222B e'+sup('u')+' du'],
-         ans:'('+q3+'/2) \u222B e'+sup('u')+' du', done:'('+q3+'/2) \u222B e'+sup('u')+' du'},
+         opts:[{t:freeFrac(q3,'2')+' ∫ e'+sup('u')+' du',ok:true,why:'Betul! x dx = '+freeFrac('du','2')+'.'},
+               {t:q3+' ∫ e'+sup('u')+' du',ok:false,why:'Terlupa bahagi 2.'},
+               {t:freeFrac(q3,'2')+' ∫ u e'+sup('u')+' du',ok:false,why:'x sudah habis digunakan untuk du. Tiada u berlebihan.'}],
+         hint:['Ganti e'+sup('x\u00B2')+' dengan e'+sup('u')+' dan x dx dengan '+freeFrac('du','2')+'.',
+               'Pemalar '+q3+' dan '+freeFrac('1','2')+' bergabung.',freeFrac(q3,'2')+' ∫ e'+sup('u')+' du'],
+         ans:freeFrac(q3,'2')+' ∫ e'+sup('u')+' du', done:freeFrac(q3,'2')+' ∫ e'+sup('u')+' du'},
         {q:'Integratekan dalam bentuk u. (guna huruf u)', kind:'text', ph:'contoh: 3e^u',
          check:intNoC(function(u){return q3/2*Math.exp(u);},P_SML),
-         hint:['Integral e'+sup('u')+' ialah e'+sup('u')+'.','Pemalar '+q3+'/2 kekal.','('+q3+'/2)e^u'],
-         ans:'('+q3+'/2)e'+sup('u'), done:'('+q3+'/2)e'+sup('u')},
+         hint:['Integral e'+sup('u')+' ialah e'+sup('u')+'.','Pemalar '+freeFrac(q3,'2')+' kekal.',freeFrac(q3,'2')+'e'+sup('u')],
+         ans:freeFrac(q3,'2')+'e'+sup('u'), done:freeFrac(q3,'2')+'e'+sup('u')},
         {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: 3e^(x^2) + C',
          check:intC(F3,P_SML),
-         hint:['Ganti u dengan x\u00B2.','Tulis e^(x^2) dengan kurungan.','('+q3+'/2)e^(x\u00B2) + C'],
-         ans:'('+q3+'/2)e^(x\u00B2) + C', done:'Jawapan akhir diperoleh'}
+         hint:['Ganti u dengan x'+sup(2)+'.','Tulis e^(x^2) dengan kurungan.',freeFrac(q3,'2')+'e'+sup('x\u00B2')+' + C'],
+         ans:freeFrac(q3,'2')+'e'+sup('x\u00B2')+' + C', done:'Jawapan akhir diperoleh'}
       ],
-      jk:['<b class="pow">u = x\u00B2</b>, du = 2x dx \u2192 x dx = du/2.',
-          'Integral jadi ('+q3+'/2) \u222B e'+sup('u')+' du.',
-          '\u222B e'+sup('u')+' du = e'+sup('u')+'.',
-          'Tukar balik: <b class="res">('+q3+'/2)e'+sup('x\u00B2')+'</b> <span class="konst">+ C</span>.']
+      jk:['<b class="pow">u = x'+sup(2)+'</b>, du = 2x dx → x dx = '+freeFrac('du','2')+'.',
+          'Integral jadi '+freeFrac(q3,'2')+' ∫ e'+sup('u')+' du.',
+          '∫ e'+sup('u')+' du = e'+sup('u')+'.',
+          'Tukar balik: <b class="res">'+freeFrac(q3,'2')+'e'+sup('x\u00B2')+'</b> <span class="konst">+ C</span>.']
     };
   }
   var cc=ri(2,6), aa=ri(2,5);
   var F4=function(x){ return aa*Math.log(Math.abs(x*x+x+cc)); };
   return {
-    title:'SUBSTITUTION \u00B7 ARAS 3', Fx:F4, ptsX:P_POS,
-    expr:'\u222B <span class="frac"><span class="num">'+aa+'(2x + 1)</span><span class="den">x\u00B2 + x + '+cc+'</span></span> dx',
-    praise:'Anda kenal corak f\u2032(x)/f(x).',
+    title:'SUBSTITUTION · ARAS 3', Fx:F4, ptsX:P_POS,
+    expr:'∫ '+freeFrac(aa+'(2x + 1)','x'+sup(2)+' + x + '+cc)+' dx',
+    praise:'Anda kenal corak f′(x)/f(x).',
     steps:[
       {q:'Pilih u.', kind:'choice',
-       opts:[{t:'u = x\u00B2 + x + '+cc,ok:true,why:'Betul! Ambil penyebut sebagai u.'},
+       opts:[{t:'u = x'+sup(2)+' + x + '+cc,ok:true,why:'Betul! Ambil penyebut sebagai u.'},
              {t:'u = 2x + 1',ok:false,why:'Itu pengangka, iaitu du. Ambil penyebut.'},
-             {t:'u = x\u00B2',ok:false,why:'Tidak lengkap. Ambil seluruh penyebut.'}],
-       hint:['Dalam pecahan, cuba u = penyebut.','Penyebut: x\u00B2 + x + '+cc+'.','u = x\u00B2 + x + '+cc],
-       ans:'u = x\u00B2 + x + '+cc, done:'u = x\u00B2 + x + '+cc},
+             {t:'u = x'+sup(2),ok:false,why:'Tidak lengkap. Ambil seluruh penyebut.'}],
+       hint:['Dalam pecahan, cuba u = penyebut.','Penyebut: x'+sup(2)+' + x + '+cc+'.','u = x'+sup(2)+' + x + '+cc],
+       ans:'u = x'+sup(2)+' + x + '+cc, done:'u = x'+sup(2)+' + x + '+cc},
       {q:'Cari du/dx.', kind:'text', ph:'contoh: 2x + 1',
        check:fnEq(function(x){return 2*x+1;},P_ANY),
-       hint:['Differentiate x\u00B2 + x + '+cc+'.','2x daripada x\u00B2, 1 daripada x, 0 daripada '+cc+'.','du/dx = 2x + 1'],
-       ans:'du/dx = 2x + 1', done:'du = (2x + 1) dx \u2014 sama dengan pengangka'},
+       hint:['Differentiate x'+sup(2)+' + x + '+cc+'.','2x daripada x'+sup(2)+', 1 daripada x, 0 daripada '+cc+'.','du/dx = 2x + 1'],
+       ans:freeFrac('du','dx')+' = 2x + 1', done:'du = (2x + 1) dx — sama dengan pengangka'},
       {q:'Integral dalam bentuk u ialah?', kind:'choice',
-       opts:[{t:aa+' \u222B (1/u) du',ok:true,why:'Betul! Pengangka ialah tepat du.'},
-             {t:aa+' \u222B u du',ok:false,why:'u berada di penyebut, jadi 1/u.'},
-             {t:'('+aa+'/2) \u222B (1/u) du',ok:false,why:'Tiada bahagi 2 di sini \u2014 du sudah padan tepat.'}],
-       hint:['Penyebut jadi u, pengangka jadi du.','Bentuknya '+aa+' \u222B du/u.',aa+' \u222B (1/u) du'],
-       ans:aa+' \u222B (1/u) du', done:aa+' \u222B (1/u) du'},
+       opts:[{t:aa+' ∫ '+freeFrac('1','u')+' du',ok:true,why:'Betul! Pengangka ialah tepat du.'},
+             {t:aa+' ∫ u du',ok:false,why:'u berada di penyebut, jadi '+freeFrac('1','u')+'.'},
+             {t:freeFrac(aa,'2')+' ∫ '+freeFrac('1','u')+' du',ok:false,why:'Tiada bahagi 2 di sini — du sudah padan tepat.'}],
+       hint:['Penyebut jadi u, pengangka jadi du.','Bentuknya '+aa+' ∫ '+freeFrac('du','u')+'.',aa+' ∫ '+freeFrac('1','u')+' du'],
+       ans:aa+' ∫ '+freeFrac('1','u')+' du', done:aa+' ∫ '+freeFrac('1','u')+' du'},
       {q:'Integratekan dalam bentuk u. (guna huruf u)', kind:'text', ph:'contoh: 3ln u',
        check:intNoC(function(u){return aa*Math.log(Math.abs(u));},P_POS),
-       hint:['\u222B (1/u) du ialah kes istimewa.','Jawapannya ln |u|.',aa+' ln|u|'],
+       hint:['∫ '+freeFrac('1','u')+' du ialah kes istimewa.','Jawapannya ln |u|.',aa+' ln|u|'],
        ans:aa+' ln|u|', done:aa+' ln|u|'},
       {q:'Tukar balik kepada x dan tambah + C.', kind:'text', ph:'contoh: 3ln(x^2+x+2) + C',
        check:intC(F4,P_POS),
-       hint:['Ganti u dengan x\u00B2 + x + '+cc+'.','Guna kurungan dalam ln.',aa+' ln|x\u00B2 + x + '+cc+'| + C'],
-       ans:aa+' ln|x\u00B2 + x + '+cc+'| + C', done:'Jawapan akhir diperoleh'}
+       hint:['Ganti u dengan x'+sup(2)+' + x + '+cc+'.','Guna kurungan dalam ln.',aa+' ln|x'+sup(2)+' + x + '+cc+'| + C'],
+       ans:aa+' ln|x'+sup(2)+' + x + '+cc+'| + C', done:'Jawapan akhir diperoleh'}
     ],
-    jk:['<b class="pow">u = x\u00B2 + x + '+cc+'</b>, du = (2x + 1) dx.',
-        'Pengangka ialah tepat du, jadi integral jadi '+aa+' \u222B du/u.',
-        '\u222B du/u = ln |u|.',
-        'Tukar balik: <b class="res">'+aa+' ln |x\u00B2 + x + '+cc+'|</b> <span class="konst">+ C</span>.']
+    jk:['<b class="pow">u = x'+sup(2)+' + x + '+cc+'</b>, du = (2x + 1) dx.',
+        'Pengangka ialah tepat du, jadi integral jadi '+aa+' ∫ '+freeFrac('du','u')+'.',
+        '∫ '+freeFrac('du','u')+' = ln |u|.',
+        'Tukar balik: <b class="res">'+aa+' ln |x'+sup(2)+' + x + '+cc+'|</b> <span class="konst">+ C</span>.']
   };
 }
 
@@ -1885,9 +1894,9 @@ function genParts(lvl){
     a=1;
     F=function(x){ return x*Math.exp(x)-Math.exp(x); };
     return {
-      title:'BY PARTS \u00B7 ARAS 1', Fx:F, ptsX:P_SML,
-      expr:'\u222B x e'+sup('x')+' dx',
-      praise:'Formula uv \u2212 \u222Bv du sudah anda kuasai.',
+      title:'BY PARTS · ARAS 1', Fx:F, ptsX:P_SML,
+      expr:'∫ x e'+sup('x')+' dx',
+      praise:'Formula uv − ∫v du sudah anda kuasai.',
       steps:[
         {q:'Guna LIATE. Pilih u.', kind:'choice',
          extra:'<div class="g5" style="margin:8px 0">'+[['L','Log'],['I','Inv trig'],['A','Algebra'],['T','Trig'],['E','Exp']].map(function(l){
@@ -1899,27 +1908,27 @@ function genParts(lvl){
         {q:'Cari du/dx.', kind:'text', ph:'contoh: 1',
          check:fnEq(function(){return 1;},P_ANY),
          hint:['Differentiate u = x.','Derivative x ialah 1.','du/dx = 1, jadi du = dx'],
-         ans:'du/dx = 1', done:'du = dx'},
+         ans:freeFrac('du','dx')+' = 1', done:'du = dx'},
         {q:'Cari v dengan integrate dv = e'+sup('x')+' dx.', kind:'text', ph:'contoh: e^x',
          check:intNoC(Math.exp,P_SML),
-         hint:['v = \u222B dv.','\u222B e'+sup('x')+' dx = e'+sup('x')+'.','v = e^x'],
+         hint:['v = ∫ dv.','∫ e'+sup('x')+' dx = e'+sup('x')+'.','v = e'+sup('x')],
          ans:'v = e'+sup('x'), done:'v = e'+sup('x')},
-        {q:'Masukkan ke dalam uv \u2212 \u222Bv du.', kind:'choice',
-         opts:[{t:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx',ok:true,why:'Betul! uv = x e'+sup('x')+', dan v du = e'+sup('x')+' dx.'},
-               {t:'x e'+sup('x')+' + \u222B e'+sup('x')+' dx',ok:false,why:'Tanda salah. Formula ada <b>tolak</b>.'},
-               {t:'e'+sup('x')+' \u2212 \u222B x e'+sup('x')+' dx',ok:false,why:'u dan v tertukar.'}],
-         hint:['uv = u \u00D7 v = x \u00D7 e'+sup('x')+'.','v du = e'+sup('x')+' \u00D7 dx.','x e^x \u2212 \u222B e^x dx'],
-         ans:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx', done:'x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx'},
+        {q:'Masukkan ke dalam uv − ∫v du.', kind:'choice',
+         opts:[{t:'x e'+sup('x')+' − ∫ e'+sup('x')+' dx',ok:true,why:'Betul! uv = x e'+sup('x')+', dan v du = e'+sup('x')+' dx.'},
+               {t:'x e'+sup('x')+' + ∫ e'+sup('x')+' dx',ok:false,why:'Tanda salah. Formula ada <b>tolak</b>.'},
+               {t:'e'+sup('x')+' − ∫ x e'+sup('x')+' dx',ok:false,why:'u dan v tertukar.'}],
+         hint:['uv = u × v = x × e'+sup('x')+'.','v du = e'+sup('x')+' × dx.','x e'+sup('x')+' − ∫ e'+sup('x')+' dx'],
+         ans:'x e'+sup('x')+' − ∫ e'+sup('x')+' dx', done:'x e'+sup('x')+' − ∫ e'+sup('x')+' dx'},
         {q:'Selesaikan integral yang tinggal dan tambah + C.', kind:'text', ph:'contoh: x e^x - e^x + C',
          check:intC(F,P_SML),
-         hint:['\u222B e'+sup('x')+' dx = e'+sup('x')+'.','Tolakkan daripada x e'+sup('x')+'.','x e^x \u2212 e^x + C'],
-         ans:'x e'+sup('x')+' \u2212 e'+sup('x')+' + C', done:'Jawapan akhir diperoleh'}
+         hint:['∫ e'+sup('x')+' dx = e'+sup('x')+'.','Tolakkan daripada x e'+sup('x')+'.','x e'+sup('x')+' − e'+sup('x')+' + C'],
+         ans:'x e'+sup('x')+' − e'+sup('x')+' + C', done:'Jawapan akhir diperoleh'}
       ],
-      jk:['LIATE \u2192 <b class="pow">u = x</b>, <b class="res">dv = e'+sup('x')+' dx</b>.',
+      jk:['LIATE → <b class="pow">u = x</b>, <b class="res">dv = e'+sup('x')+' dx</b>.',
           'du = dx, v = e'+sup('x')+'.',
-          'Formula: uv \u2212 \u222Bv du = x e'+sup('x')+' \u2212 \u222B e'+sup('x')+' dx.',
-          '\u222B e'+sup('x')+' dx = e'+sup('x')+'.',
-          'Jawapan: <b class="res">x e'+sup('x')+' \u2212 e'+sup('x')+'</b> <span class="konst">+ C</span>.']
+          'Formula: uv − ∫v du = x e'+sup('x')+' − ∫ e'+sup('x')+' dx.',
+          '∫ e'+sup('x')+' dx = e'+sup('x')+'.',
+          'Jawapan: <b class="res">x e'+sup('x')+' − e'+sup('x')+'</b> <span class="konst">+ C</span>.']
     };
   }
   if(lvl===2){
@@ -1927,36 +1936,40 @@ function genParts(lvl){
     var kind=pick(['sin','cos','e']);
     if(kind==='e'){
       F=function(x){ return x*Math.exp(a*x)/a - Math.exp(a*x)/(a*a); };
-      return partsTemplate({a:a, dvTxt:'e'+sup(a+'x')+' dx', vTxt:'e'+sup(a+'x')+'/'+a,
-        vFn:function(x){return Math.exp(a*x)/a;}, vPts:P_SML,
-        expr:'\u222B x e'+sup(a+'x')+' dx', F:F, pts:P_SML,
-        uvTxt:'x e'+sup(a+'x')+'/'+a, remTxt:'\u222B e'+sup(a+'x')+'/'+a+' dx',
-        ansTxt:'x e'+sup(a+'x')+'/'+a+' \u2212 e'+sup(a+'x')+'/'+(a*a),
+      return partsTemplate({a:a, dvTxt:'e'+sup(a+'x')+' dx',
+        vTxt:freeFrac('e'+sup(a+'x'),''+a), vFn:function(x){return Math.exp(a*x)/a;}, vPts:P_SML,
+        expr:'∫ x e'+sup(a+'x')+' dx', F:F, pts:P_SML,
+        uvTxt:freeFrac('x e'+sup(a+'x'),''+a), remTxt:'∫ '+freeFrac('e'+sup(a+'x'),''+a)+' dx',
+        ansTxt:freeFrac('x e'+sup(a+'x'),''+a)+' − '+freeFrac('e'+sup(a+'x'),''+(a*a)),
         ph:'contoh: x e^(2x)/2 - e^(2x)/4 + C', other:'e'+sup(a+'x')});
     }
     if(kind==='sin'){
       F=function(x){ return -x*Math.cos(a*x)/a + Math.sin(a*x)/(a*a); };
-      return partsTemplate({a:a, dvTxt:'sin('+a+'x) dx', vTxt:'\u2212cos('+a+'x)/'+a,
-        vFn:function(x){return -Math.cos(a*x)/a;}, vPts:P_ANY,
-        expr:'\u222B x sin('+a+'x) dx', F:F, pts:P_ANY,
-        uvTxt:'\u2212x cos('+a+'x)/'+a, remTxt:'\u222B \u2212cos('+a+'x)/'+a+' dx',
-        ansTxt:'\u2212x cos('+a+'x)/'+a+' + sin('+a+'x)/'+(a*a),
+      return partsTemplate({a:a, dvTxt:'sin('+a+'x) dx',
+        vTxt:freeFrac('−cos('+a+'x)',''+a), vFn:function(x){return -Math.cos(a*x)/a;}, vPts:P_ANY,
+        expr:'∫ x sin('+a+'x) dx', F:F, pts:P_ANY,
+        uvTxt:freeFrac('−x cos('+a+'x)',''+a), remTxt:'∫ '+freeFrac('−cos('+a+'x)',''+a)+' dx',
+        ansTxt:freeFrac('−x cos('+a+'x)',''+a)+' + '+freeFrac('sin('+a+'x)',''+(a*a)),
         ph:'contoh: -x cos(2x)/2 + sin(2x)/4 + C', other:'sin('+a+'x)'});
     }
     F=function(x){ return x*Math.sin(a*x)/a + Math.cos(a*x)/(a*a); };
-    return partsTemplate({a:a, dvTxt:'cos('+a+'x) dx', vTxt:'sin('+a+'x)/'+a,
-      vFn:function(x){return Math.sin(a*x)/a;}, vPts:P_ANY,
-      expr:'\u222B x cos('+a+'x) dx', F:F, pts:P_ANY,
-      uvTxt:'x sin('+a+'x)/'+a, remTxt:'\u222B sin('+a+'x)/'+a+' dx',
-      ansTxt:'x sin('+a+'x)/'+a+' + cos('+a+'x)/'+(a*a),
+    return partsTemplate({a:a, dvTxt:'cos('+a+'x) dx',
+      vTxt:freeFrac('sin('+a+'x)',''+a), vFn:function(x){return Math.sin(a*x)/a;}, vPts:P_ANY,
+      expr:'∫ x cos('+a+'x) dx', F:F, pts:P_ANY,
+      uvTxt:freeFrac('x sin('+a+'x)',''+a), remTxt:'∫ '+freeFrac('sin('+a+'x)',''+a)+' dx',
+      ansTxt:freeFrac('x sin('+a+'x)',''+a)+' + '+freeFrac('cos('+a+'x)',''+(a*a)),
       ph:'contoh: x sin(2x)/2 + cos(2x)/4 + C', other:'cos('+a+'x)'});
   }
   // Aras 3 — u = ln x (L datang sebelum A)
   var n3=ri(1,3);
   F=function(x){ return Math.pow(x,n3+1)/(n3+1)*Math.log(x) - Math.pow(x,n3+1)/Math.pow(n3+1,2); };
+  var vH=freeFrac('x'+sup(n3+1),''+(n3+1));
+  var remH=freeFrac('x'+sup(n3),''+(n3+1));
+  var uvH=freeFrac('x'+sup(n3+1)+' ln x',''+(n3+1));
+  var remAnsH=freeFrac('x'+sup(n3+1),''+((n3+1)*(n3+1)));
   return {
-    title:'BY PARTS \u00B7 ARAS 3', Fx:F, ptsX:P_POS,
-    expr:'\u222B x'+sup(n3)+' ln x dx',
+    title:'BY PARTS · ARAS 3', Fx:F, ptsX:P_POS,
+    expr:'∫ x'+sup(n3)+' ln x dx',
     praise:'Kes ln ialah yang paling kerap keluar dalam exam.',
     steps:[
       {q:'Guna LIATE. Pilih u.', kind:'choice',
@@ -1967,36 +1980,35 @@ function genParts(lvl){
       {q:'Cari du/dx.', kind:'text', ph:'contoh: 1/x',
        check:fnEq(function(x){return 1/x;},P_POS),
        hint:['Differentiate ln x.','Derivative ln x ialah 1/x.','du/dx = 1/x'],
-       ans:'du/dx = 1/x', done:'du = dx/x'},
+       ans:freeFrac('du','dx')+' = '+freeFrac('1','x'), done:'du = '+freeFrac('dx','x')},
       {q:'Cari v dengan integrate dv = x'+sup(n3)+' dx.', kind:'text', ph:'contoh: x^2/2',
        check:intNoC(function(x){return Math.pow(x,n3+1)/(n3+1);},P_POS),
-       hint:['Power rule pada x'+sup(n3)+'.','Kuasa baharu '+(n3+1)+'.','v = x^'+(n3+1)+'/'+(n3+1)],
-       ans:'v = x'+sup(n3+1)+'/'+(n3+1), done:'v = x'+sup(n3+1)+'/'+(n3+1)},
-      {q:'Integral yang tinggal, \u222Bv du, jadi apa?', kind:'choice',
-       opts:[{t:'\u222B x'+sup(n3)+'/'+(n3+1)+' dx',ok:true,why:'Betul! v \u00D7 (1/x) memendekkan satu kuasa.'},
-             {t:'\u222B x'+sup(n3+1)+'/'+(n3+1)+' dx',ok:false,why:'Anda terlupa darab dengan du = dx/x.'},
-             {t:'\u222B ln x dx',ok:false,why:'ln x ialah u, bukan v.'}],
-       hint:['v du = (x'+sup(n3+1)+'/'+(n3+1)+') \u00D7 (1/x) dx.','Bahagi x menurunkan kuasa satu tingkat.',
-             '\u222B x'+sup(n3)+'/'+(n3+1)+' dx'],
-       ans:'\u222B x'+sup(n3)+'/'+(n3+1)+' dx', done:'\u222Bv du = \u222B x'+sup(n3)+'/'+(n3+1)+' dx'},
+       hint:['Power rule pada x'+sup(n3)+'.','Kuasa baharu '+(n3+1)+'.','v = '+vH],
+       ans:'v = '+vH, done:'v = '+vH},
+      {q:'Integral yang tinggal, ∫v du, jadi apa?', kind:'choice',
+       opts:[{t:'∫ '+remH+' dx',ok:true,why:'Betul! v × (1/x) memendekkan satu kuasa.'},
+             {t:'∫ '+freeFrac('x'+sup(n3+1),''+(n3+1))+' dx',ok:false,why:'Anda terlupa darab dengan du = dx/x.'},
+             {t:'∫ ln x dx',ok:false,why:'ln x ialah u, bukan v.'}],
+       hint:['v du = '+vH+' × '+freeFrac('1','x')+' dx.','Bahagi x menurunkan kuasa satu tingkat.','∫ '+remH+' dx'],
+       ans:'∫ '+remH+' dx', done:'∫v du = ∫ '+remH+' dx'},
       {q:'Siapkan jawapan penuh dengan + C.', kind:'text', ph:'contoh: x^2 ln x/2 - x^2/4 + C',
        check:intC(F,P_POS),
-       hint:['uv = x'+sup(n3+1)+' ln x/'+(n3+1)+'.',
-             '\u222Bv du = x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'.',
-             'x^'+(n3+1)+' ln x/'+(n3+1)+' \u2212 x^'+(n3+1)+'/'+((n3+1)*(n3+1))+' + C'],
-       ans:'x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+' + C', done:'Jawapan akhir diperoleh'}
+       hint:['uv = '+uvH+'.',
+             '∫v du = '+remAnsH+'.',
+             uvH+' − '+remAnsH+' + C'],
+       ans:uvH+' − '+remAnsH+' + C', done:'Jawapan akhir diperoleh'}
     ],
-    jk:['LIATE \u2192 <b class="pow">u = ln x</b>, <b class="res">dv = x'+sup(n3)+' dx</b>.',
-        'du = dx/x, v = x'+sup(n3+1)+'/'+(n3+1)+'.',
-        'uv \u2212 \u222Bv du = x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 \u222B x'+sup(n3)+'/'+(n3+1)+' dx.',
-        'Integral baki = x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'.',
-        'Jawapan: <b class="res">x'+sup(n3+1)+' ln x/'+(n3+1)+' \u2212 x'+sup(n3+1)+'/'+((n3+1)*(n3+1))+'</b> <span class="konst">+ C</span>.']
+    jk:['LIATE → <b class="pow">u = ln x</b>, <b class="res">dv = x'+sup(n3)+' dx</b>.',
+        'du = '+freeFrac('dx','x')+', v = '+vH+'.',
+        'uv − ∫v du = '+uvH+' − ∫ '+remH+' dx.',
+        'Integral baki = '+remAnsH+'.',
+        'Jawapan: <b class="res">'+uvH+' − '+remAnsH+'</b> <span class="konst">+ C</span>.']
   };
 }
 
 function partsTemplate(o){
   return {
-    title:'BY PARTS \u00B7 ARAS 2', Fx:o.F, ptsX:o.pts,
+    title:'BY PARTS · ARAS 2', Fx:o.F, ptsX:o.pts,
     expr:o.expr,
     praise:'Pekali dalaman pun anda jaga dengan betul.',
     steps:[
@@ -2008,30 +2020,31 @@ function partsTemplate(o){
       {q:'Cari du/dx.', kind:'text', ph:'contoh: 1',
        check:fnEq(function(){return 1;},P_ANY),
        hint:['Differentiate x.','Jawapannya 1.','du/dx = 1'],
-       ans:'du/dx = 1', done:'du = dx'},
+       ans:freeFrac('du','dx')+' = 1', done:'du = dx'},
       {q:'Cari v dengan integrate dv = '+o.dvTxt+'.', kind:'text', ph:'tulis v',
        check:intNoC(o.vFn,o.vPts),
-       hint:['v = \u222B dv. Jangan lupa pekali dalaman '+o.a+'.',
+       hint:['v = ∫ dv. Jangan lupa pekali dalaman '+o.a+'.',
              'Bahagi dengan '+o.a+' kerana dalaman ialah '+o.a+'x.','v = '+o.vTxt],
        ans:'v = '+o.vTxt, done:'v = '+o.vTxt},
-      {q:'Tulis uv \u2212 \u222Bv du.', kind:'choice',
-       opts:[{t:o.uvTxt+' \u2212 '+o.remTxt,ok:true,why:'Betul!'},
+      {q:'Tulis uv − ∫v du.', kind:'choice',
+       opts:[{t:o.uvTxt+' − '+o.remTxt,ok:true,why:'Betul!'},
              {t:o.uvTxt+' + '+o.remTxt,ok:false,why:'Formula menggunakan <b>tolak</b>, bukan tambah.'},
-             {t:o.vTxt+' \u2212 \u222B x dx',ok:false,why:'u dan v tertukar.'}],
-       hint:['uv = x \u00D7 v.','v du = v \u00D7 dx.',o.uvTxt+' \u2212 '+o.remTxt],
-       ans:o.uvTxt+' \u2212 '+o.remTxt, done:o.uvTxt+' \u2212 '+o.remTxt},
+             {t:o.vTxt+' − ∫ x dx',ok:false,why:'u dan v tertukar.'}],
+       hint:['uv = x × v.','v du = v × dx.',o.uvTxt+' − '+o.remTxt],
+       ans:o.uvTxt+' − '+o.remTxt, done:o.uvTxt+' − '+o.remTxt},
       {q:'Siapkan jawapan penuh dengan + C.', kind:'text', ph:o.ph,
        check:intC(o.F,o.pts),
-       hint:['Integratekan baki sekali lagi.','Ingat bahagi '+o.a+' sekali lagi \u2192 penyebut '+(o.a*o.a)+'.',o.ansTxt+' + C'],
+       hint:['Integratekan baki sekali lagi.','Ingat bahagi '+o.a+' sekali lagi → penyebut '+(o.a*o.a)+'.',o.ansTxt+' + C'],
        ans:o.ansTxt+' + C', done:'Jawapan akhir diperoleh'}
     ],
-    jk:['LIATE \u2192 <b class="pow">u = x</b>, <b class="res">dv = '+o.dvTxt+'</b>.',
+    jk:['LIATE → <b class="pow">u = x</b>, <b class="res">dv = '+o.dvTxt+'</b>.',
         'du = dx, v = '+o.vTxt+'.',
-        'uv \u2212 \u222Bv du = '+o.uvTxt+' \u2212 '+o.remTxt+'.',
+        'uv − ∫v du = '+o.uvTxt+' − '+o.remTxt+'.',
         'Selesaikan integral baki.',
         'Jawapan: <b class="res">'+o.ansTxt+'</b> <span class="konst">+ C</span>.']
   };
 }
+
 var FREE_PARTS={
   1:[
     {expr:'∫ x e'+sup('−x')+' dx', Fref:function(x){return -(x+1)*Math.exp(-x);}, pts:P_ANY, ph:'contoh: -(x+1)e^(-x) + C',
@@ -2081,53 +2094,57 @@ function genPF(lvl){
 function pfTemplate(o){
   var a=o.a,b=o.b,A=o.A,B=o.B;
   var nA=o.numAt(-a), nB=o.numAt(-b);
+  var Ah=ratioHTML(A), Bh=ratioHTML(B), Babs=ratioHTML(Math.abs(B));
+  var bSign=B<0?'− ':'+ ';
+  var fracAB=freeFrac(o.numTxt,'(x + '+a+')(x + '+b+')');
   return {
-    title:'PARTIAL FRACTION \u00B7 ARAS '+o.lvl, Fx:o.F, ptsX:P_POS,
-    expr:'\u222B <span class="frac"><span class="num">'+o.numTxt+'</span><span class="den">(x + '+a+')(x + '+b+')</span></span> dx',
+    title:'PARTIAL FRACTION · ARAS '+o.lvl, Fx:o.F, ptsX:P_POS,
+    expr:'∫ '+fracAB+' dx',
     praise:'Kaedah tutup memang cepat.',
     steps:[
       {q:'Tulis bentuk pecahan separa yang betul.', kind:'choice',
-       opts:[{t:'A/(x + '+a+') + B/(x + '+b+')',ok:true,why:'Betul! Setiap faktor linear dapat satu pemalar.'},
-             {t:'(Ax + B)/(x + '+a+')',ok:false,why:'Setiap faktor perlu pecahan sendiri.'},
-             {t:'A/(x + '+a+') \u00D7 B/(x + '+b+')',ok:false,why:'Tambah, bukan darab.'}],
+       opts:[{t:freeFrac('A','x + '+a)+' + '+freeFrac('B','x + '+b),ok:true,why:'Betul! Setiap faktor linear dapat satu pemalar.'},
+             {t:freeFrac('Ax + B','x + '+a),ok:false,why:'Setiap faktor perlu pecahan sendiri.'},
+             {t:freeFrac('A','x + '+a)+' × '+freeFrac('B','x + '+b),ok:false,why:'Tambah, bukan darab.'}],
        hint:['Penyebut ada dua faktor linear.','Setiap faktor linear dapat satu pemalar di atasnya.',
-             'A/(x + '+a+') + B/(x + '+b+')'],
-       ans:'A/(x + '+a+') + B/(x + '+b+')', done:'Bentuk: A/(x + '+a+') + B/(x + '+b+')'},
-      {q:'Darab silang, kemudian letak x = \u2212'+a+'. Berapa nilai A?', kind:'text', ph:'contoh: 2',
+             freeFrac('A','x + '+a)+' + '+freeFrac('B','x + '+b)],
+       ans:freeFrac('A','x + '+a)+' + '+freeFrac('B','x + '+b), done:'Bentuk: '+freeFrac('A','x + '+a)+' + '+freeFrac('B','x + '+b)},
+      {q:'Darab silang, kemudian letak x = −'+a+'. Berapa nilai A?', kind:'text', ph:'contoh: 2',
        extra:'<div class="note" style="margin-bottom:8px">'+o.numTxt+' = A(x + '+b+') + B(x + '+a+')</div>',
        check:valEq(A,1e-6),
-       hint:['Letak x = \u2212'+a+' supaya sebutan B hilang.',
+       hint:['Letak x = −'+a+' supaya sebutan B hilang.',
              'Sebelah kiri jadi '+nA+'; sebelah kanan jadi A('+(b-a)+').',
-             'A = '+nA+' \u00F7 '+(b-a)+' = '+A],
-       ans:'A = '+A, done:'A = '+A},
-      {q:'Sekarang letak x = \u2212'+b+'. Berapa nilai B?', kind:'text', ph:'contoh: 3',
+             'A = '+freeFrac(nA,''+(b-a))+' = '+Ah],
+       ans:'A = '+Ah, done:'A = '+Ah},
+      {q:'Sekarang letak x = −'+b+'. Berapa nilai B?', kind:'text', ph:'contoh: 3',
        check:valEq(B,1e-6),
-       hint:['Letak x = \u2212'+b+' supaya sebutan A pula hilang.',
+       hint:['Letak x = −'+b+' supaya sebutan A pula hilang.',
              'Sebelah kiri jadi '+nB+'; sebelah kanan jadi B('+(a-b)+').',
-             'B = '+nB+' \u00F7 '+(a-b)+' = '+B],
-       ans:'B = '+B, done:'B = '+B},
+             'B = '+freeFrac(nB,''+(a-b))+' = '+Bh],
+       ans:'B = '+Bh, done:'B = '+Bh},
       {q:'Integratekan kedua-dua pecahan. Bentuk hasilnya apa?', kind:'choice',
        opts:[{t:'A ln|x + '+a+'| + B ln|x + '+b+'|',ok:true,why:'Betul! Setiap 1/(x + k) jadi ln|x + k|.'},
-             {t:'A/(x + '+a+')\u00B2 + B/(x + '+b+')\u00B2',ok:false,why:'Itu kalau kita differentiate, bukan integrate.'},
+             {t:freeFrac('A','(x + '+a+')'+sup(2))+' + '+freeFrac('B','(x + '+b+')'+sup(2)),ok:false,why:'Itu kalau kita differentiate, bukan integrate.'},
              {t:'A(x + '+a+') + B(x + '+b+')',ok:false,why:'Itu bentuk sebelum dipecahkan.'}],
-       hint:['\u222B 1/(x + k) dx ialah kes ln.','Setiap pecahan jadi satu ln.',
+       hint:['∫ '+freeFrac('1','x + k')+' dx ialah kes ln.','Setiap pecahan jadi satu ln.',
              'A ln|x + '+a+'| + B ln|x + '+b+'|'],
        ans:'A ln|x + '+a+'| + B ln|x + '+b+'|', done:'Hasil berbentuk ln'},
       {q:'Tulis jawapan penuh dengan nilai A dan B, serta + C.', kind:'text',
        ph:'contoh: 2ln(x+1) + 3ln(x+2) + C',
        check:intC(o.F,P_POS),
-       hint:['Masukkan A = '+A+' dan B = '+B+'.','Guna kurungan: ln(x+'+a+').',
-             A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'| + C'],
-       ans:A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'| + C',
+       hint:['Masukkan A = '+Ah+' dan B = '+Bh+'.','Guna kurungan: ln(x+'+a+').',
+             Ah+' ln|x + '+a+'| '+bSign+Babs+' ln|x + '+b+'| + C'],
+       ans:Ah+' ln|x + '+a+'| '+bSign+Babs+' ln|x + '+b+'| + C',
        done:'Jawapan akhir diperoleh'}
     ],
-    jk:['Bentuk: ('+o.numTxt+')/((x+'+a+')(x+'+b+')) = A/(x+'+a+') + B/(x+'+b+').',
+    jk:['Bentuk: '+fracAB+' = '+freeFrac('A','x + '+a)+' + '+freeFrac('B','x + '+b)+'.',
         'Darab silang: '+o.numTxt+' = A(x + '+b+') + B(x + '+a+').',
-        'x = \u2212'+a+': '+nA+' = A('+(b-a)+') \u2192 <b class="pow">A = '+A+'</b>.',
-        'x = \u2212'+b+': '+nB+' = B('+(a-b)+') \u2192 <b class="pow">B = '+B+'</b>.',
-        'Integrate: <b class="res">'+A+' ln|x + '+a+'| '+(B<0?'\u2212 '+Math.abs(B):'+ '+B)+' ln|x + '+b+'|</b> <span class="konst">+ C</span>.']
+        'x = −'+a+': '+nA+' = A('+(b-a)+') → <b class="pow">A = '+Ah+'</b>.',
+        'x = −'+b+': '+nB+' = B('+(a-b)+') → <b class="pow">B = '+Bh+'</b>.',
+        'Integrate: <b class="res">'+Ah+' ln|x + '+a+'| '+bSign+Babs+' ln|x + '+b+'|</b> <span class="konst">+ C</span>.']
   };
 }
+
 var FREE_PF={
   1:[
     {expr:'∫ '+freeFrac('1','(x + 1)(x + 3)')+' dx', Fref:function(x){return 0.5*Math.log(Math.abs(x+1))-0.5*Math.log(Math.abs(x+3));}, pts:P_POS, ph:'contoh: (1/2)ln|x+1| - (1/2)ln|x+3| + C',
