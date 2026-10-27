@@ -1832,45 +1832,49 @@ function freeFromSteps(p){
     hints:[p.steps[0].ans, p.steps[2].ans, last.ans]};
 }
 /* Bank tambahan latihan bebas. Setiap soalan ada Fref (antiderivative rujukan),
-   jadi jawapan setara tetap diterima. Dipilih rawak bersama soalan terjana. */
+   jadi jawapan setara tetap diterima. Dipilih rawak bersama soalan terjana.
+   Pecahan dan kuasa dipaparkan sebagai matematik sebenar (frac dan sup). */
 function pickFree(bank, gen){ var k=ri(0,bank.length); return k<bank.length ? bank[k] : gen(); }
+function freeFrac(n,d){ return '<span class="frac"><span class="num">'+n+'</span><span class="den">'+d+'</span></span>'; }
+
 var FREE_SUB={
   1:[
-    {expr:'∫ 3x²(x³ + 2)⁴ dx', Fref:function(x){return Math.pow(x*x*x+2,5)/5;}, pts:P_ANY, ph:'contoh: (x^3+2)^5/5 + C',
+    {expr:'∫ 3x'+sup(2)+'(x'+sup(3)+' + 2)'+sup(4)+' dx', Fref:function(x){return Math.pow(x*x*x+2,5)/5;}, pts:P_ANY, ph:'contoh: (x^3+2)^5/5 + C',
      praise:'Anda nampak bahagian dalam kurungan.',
-     hints:['Bahagian dalam kurungan: u = x³ + 2.','du = 3x² dx. Faktor 3x² sudah ada dalam soalan.','∫ u⁴ du = u⁵/5. Tukar balik.'],
-     jk:['u = x³ + 2, du = 3x² dx.','Integral jadi ∫ u⁴ du.','Power rule: u⁵/5.','Tukar balik: <b class="res">(x³ + 2)⁵/5</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ 2x cos(x²) dx', Fref:function(x){return Math.sin(x*x);}, pts:P_ANY, ph:'contoh: sin(x^2) + C',
+     hints:['Bahagian dalam kurungan: u = x'+sup(3)+' + 2.','du = 3x'+sup(2)+' dx. Faktor 3x'+sup(2)+' sudah ada dalam soalan.','∫ u'+sup(4)+' du = '+freeFrac('u'+sup(5),'5')+'. Tukar balik.'],
+     jk:['u = x'+sup(3)+' + 2, du = 3x'+sup(2)+' dx.','Integral jadi ∫ u'+sup(4)+' du.','Power rule: '+freeFrac('u'+sup(5),'5')+'.','Tukar balik: <b class="res">'+freeFrac('(x'+sup(3)+' + 2)'+sup(5),'5')+'</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ 2x cos(x'+sup(2)+') dx', Fref:function(x){return Math.sin(x*x);}, pts:P_ANY, ph:'contoh: sin(x^2) + C',
      praise:'Du tersembunyi sudah nampak.',
-     hints:['Bahagian dalam ialah x². Biar u = x².','du = 2x dx, dan 2x sudah ada dalam soalan.','∫ cos u du = sin u. Tukar balik.'],
-     jk:['u = x², du = 2x dx.','Integral jadi ∫ cos u du.','∫ cos u du = sin u.','Tukar balik: <b class="res">sin(x²)</b> <span class="konst">+ C</span>.']}
+     hints:['Bahagian dalam ialah x'+sup(2)+'. Biar u = x'+sup(2)+'.','du = 2x dx, dan 2x sudah ada dalam soalan.','∫ cos u du = sin u. Tukar balik.'],
+     jk:['u = x'+sup(2)+', du = 2x dx.','Integral jadi ∫ cos u du.','∫ cos u du = sin u.','Tukar balik: <b class="res">sin(x'+sup(2)+')</b> <span class="konst">+ C</span>.']}
   ],
   2:[
-    {expr:'∫ x / √(x² + 4) dx', Fref:function(x){return Math.sqrt(x*x+4);}, pts:P_ANY, ph:'contoh: sqrt(x^2+4) + C',
+    {expr:'∫ '+freeFrac('x','√(x'+sup(2)+' + 4)')+' dx', Fref:function(x){return Math.sqrt(x*x+4);}, pts:P_ANY, ph:'contoh: sqrt(x^2+4) + C',
      praise:'Akar dalam penyebut pun boleh diselesaikan dengan u.',
-     hints:['u = x² + 4, maka du = 2x dx.','x dx = du/2, jadi integral = (1/2)∫ u^(−1/2) du.','Power rule: (1/2) · 2u^(1/2) = √u. Tukar balik.'],
-     jk:['u = x² + 4, du = 2x dx → x dx = du/2.','Integral jadi (1/2)∫ u^(−1/2) du.','Power rule: (1/2) · 2u^(1/2) = u^(1/2).','Tukar balik: <b class="res">√(x² + 4)</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ sin³x cos x dx', Fref:function(x){return Math.pow(Math.sin(x),4)/4;}, pts:P_ANY, ph:'contoh: sin(x)^4/4 + C',
-     praise:'Satu fungsi trig sudah jadi du, satu lagi jadi u.',
-     hints:['Biar u = sin x.','du = cos x dx. Cos x sudah ada di luar.','∫ u³ du = u⁴/4. Tukar balik.'],
-     jk:['u = sin x, du = cos x dx.','Integral jadi ∫ u³ du.','Power rule: u⁴/4.','Tukar balik: <b class="res">sin⁴x / 4</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ e^x/(1 + e^x) dx', Fref:function(x){return Math.log(1+Math.exp(x));}, pts:P_ANY, ph:'contoh: ln(1+e^x) + C',
+     hints:['u = x'+sup(2)+' + 4, maka du = 2x dx.','x dx = '+freeFrac('du','2')+', jadi integral = '+freeFrac('1','2')+'∫ u'+sup('−1/2')+' du.','Power rule: '+freeFrac('1','2')+' · 2u'+sup('1/2')+' = u'+sup('1/2')+'. Tukar balik.'],
+     jk:['u = x'+sup(2)+' + 4, du = 2x dx → x dx = '+freeFrac('du','2')+'.','Integral jadi '+freeFrac('1','2')+'∫ u'+sup('−1/2')+' du.','Power rule: '+freeFrac('1','2')+' · 2u'+sup('1/2')+' = u'+sup('1/2')+'.','Tukar balik: <b class="res">√(x'+sup(2)+' + 4)</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ sin'+sup(3)+'x cos x dx', Fref:function(x){return Math.pow(Math.sin(x),4)/4;}, pts:P_ANY, ph:'contoh: sin(x)^4/4 + C',
+     praise:'Satu fungsi trig jadi du, satu lagi jadi u.',
+     hints:['Biar u = sin x.','du = cos x dx. Cos x sudah ada di luar.','∫ u'+sup(3)+' du = '+freeFrac('u'+sup(4),'4')+'. Tukar balik.'],
+     jk:['u = sin x, du = cos x dx.','Integral jadi ∫ u'+sup(3)+' du.','Power rule: '+freeFrac('u'+sup(4),'4')+'.','Tukar balik: <b class="res">'+freeFrac('sin'+sup(4)+'x','4')+'</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ '+freeFrac('e'+sup('x'),'1 + e'+sup('x'))+' dx', Fref:function(x){return Math.log(1+Math.exp(x));}, pts:P_ANY, ph:'contoh: ln(1+e^x) + C',
      praise:'Penyebut ialah u, pengangka ialah du.',
-     hints:['Penyebut: u = 1 + e^x.','du = e^x dx, dan e^x dx sudah ada dalam pengangka.','∫ du/u = ln|u|. Tukar balik.'],
-     jk:['u = 1 + e^x, du = e^x dx.','Integral jadi ∫ du/u.','∫ du/u = ln|u|.','Tukar balik: <b class="res">ln(1 + e^x)</b> <span class="konst">+ C</span>.']}
+     hints:['Penyebut: u = 1 + e'+sup('x')+'.','du = e'+sup('x')+' dx, dan itu sudah ada dalam pengangka.','∫ '+freeFrac('du','u')+' = ln|u|. Tukar balik.'],
+     jk:['u = 1 + e'+sup('x')+', du = e'+sup('x')+' dx.','Integral jadi ∫ '+freeFrac('du','u')+'.','∫ '+freeFrac('du','u')+' = ln|u|.','Tukar balik: <b class="res">ln(1 + e'+sup('x')+')</b> <span class="konst">+ C</span>.']}
   ],
   3:[
-    {expr:'∫ e^(2x)/(1 + e^(2x)) dx', Fref:function(x){return Math.log(1+Math.exp(2*x))/2;}, pts:P_ANY, ph:'contoh: (1/2)ln(1+e^(2x)) + C',
+    {expr:'∫ '+freeFrac('e'+sup('2x'),'1 + e'+sup('2x'))+' dx', Fref:function(x){return Math.log(1+Math.exp(2*x))/2;}, pts:P_ANY, ph:'contoh: (1/2)ln(1+e^(2x)) + C',
      praise:'Faktor 2 dalam eksponen perlu diambil kira.',
-     hints:['u = 1 + e^(2x), maka du = 2e^(2x) dx.','Pengangka hanya e^(2x) dx, jadi tinggal faktor 1/2.','(1/2)∫ du/u = (1/2)ln|u|. Tukar balik.'],
-     jk:['u = 1 + e^(2x), du = 2e^(2x) dx → e^(2x) dx = du/2.','Integral jadi (1/2)∫ du/u.','(1/2)∫ du/u = (1/2)ln|u|.','Tukar balik: <b class="res">(1/2)ln(1 + e^(2x))</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ ln x / x dx', Fref:function(x){return Math.pow(Math.log(x),2)/2;}, pts:P_POS, ph:'contoh: (ln(x))^2/2 + C',
-     praise:'Ln dalam u, dan 1/x ialah du.',
-     hints:['Biar u = ln x.','du = dx/x. Itu sudah ada dalam soalan.','∫ u du = u²/2. Tukar balik.'],
-     jk:['u = ln x, du = dx/x.','Integral jadi ∫ u du.','Power rule: u²/2.','Tukar balik: <b class="res">(ln x)² / 2</b> <span class="konst">+ C</span>.']}
+     hints:['u = 1 + e'+sup('2x')+', maka du = 2e'+sup('2x')+' dx.','Pengangka hanya e'+sup('2x')+' dx, jadi tinggal faktor '+freeFrac('1','2')+'.',freeFrac('1','2')+'∫ '+freeFrac('du','u')+' = '+freeFrac('1','2')+'ln|u|. Tukar balik.'],
+     jk:['u = 1 + e'+sup('2x')+', du = 2e'+sup('2x')+' dx → e'+sup('2x')+' dx = '+freeFrac('du','2')+'.','Integral jadi '+freeFrac('1','2')+'∫ '+freeFrac('du','u')+'.','∫ '+freeFrac('du','u')+' = ln|u|.','Tukar balik: <b class="res">'+freeFrac('1','2')+'ln(1 + e'+sup('2x')+')</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ '+freeFrac('ln x','x')+' dx', Fref:function(x){return Math.pow(Math.log(x),2)/2;}, pts:P_POS, ph:'contoh: (ln(x))^2/2 + C',
+     praise:'Ln dalam u, dan dx/x ialah du.',
+     hints:['Biar u = ln x.','du = '+freeFrac('dx','x')+'. Itu sudah ada dalam soalan.','∫ u du = '+freeFrac('u'+sup(2),'2')+'. Tukar balik.'],
+     jk:['u = ln x, du = '+freeFrac('dx','x')+'.','Integral jadi ∫ u du.','Power rule: '+freeFrac('u'+sup(2),'2')+'.','Tukar balik: <b class="res">'+freeFrac('(ln x)'+sup(2),'2')+'</b> <span class="konst">+ C</span>.']}
   ]
 };
 function freeSub(lvl){ return pickFree(FREE_SUB[lvl], function(){ return freeFromSteps(genSub(lvl)); }); }
+
 
 /* ======================================================================
    6 — INTEGRATION BY PARTS
@@ -2030,29 +2034,30 @@ function partsTemplate(o){
 }
 var FREE_PARTS={
   1:[
-    {expr:'∫ x e^(−x) dx', Fref:function(x){return -(x+1)*Math.exp(-x);}, pts:P_ANY, ph:'contoh: -(x+1)e^(-x) + C',
+    {expr:'∫ x e'+sup('−x')+' dx', Fref:function(x){return -(x+1)*Math.exp(-x);}, pts:P_ANY, ph:'contoh: -(x+1)e^(-x) + C',
      praise:'LIATE dan tanda tolak sudah betul.',
-     hints:['LIATE: u = x, dv = e^(−x) dx.','v = −e^(−x).','uv − ∫v du = −x e^(−x) − e^(−x). Tulis dalam bentuk ringkas.'],
-     jk:['LIATE → <b class="pow">u = x</b>, <b class="res">dv = e^(−x) dx</b>.','du = dx, v = −e^(−x).','uv − ∫v du = −x e^(−x) − ∫ e^(−x) dx.','∫ e^(−x) dx = −e^(−x).','Jawapan: <b class="res">−(x + 1)e^(−x)</b> <span class="konst">+ C</span>.']}
+     hints:['LIATE: u = x, dv = e'+sup('−x')+' dx.','v = −e'+sup('−x')+'.','uv − ∫v du = −x e'+sup('−x')+' − e'+sup('−x')+'. Tulis dalam bentuk ringkas.'],
+     jk:['LIATE → <b class="pow">u = x</b>, <b class="res">dv = e'+sup('−x')+' dx</b>.','du = dx, v = −e'+sup('−x')+'.','uv − ∫v du = −x e'+sup('−x')+' − ∫ e'+sup('−x')+' dx.','∫ e'+sup('−x')+' dx = −e'+sup('−x')+'.','Jawapan: <b class="res">−(x + 1)e'+sup('−x')+'</b> <span class="konst">+ C</span>.']}
   ],
   2:[
     {expr:'∫ ln x dx', Fref:function(x){return x*Math.log(x)-x;}, pts:P_POS, ph:'contoh: x ln x - x + C',
      praise:'Satu fungsi sahaja pun boleh guna parts, dengan dv = dx.',
-     hints:['Biar u = ln x dan dv = dx.','du = dx/x, v = x.','uv − ∫v du = x ln x − ∫ 1 dx.'],
-     jk:['LIATE → <b class="pow">u = ln x</b>, <b class="res">dv = dx</b>.','du = dx/x, v = x.','uv − ∫v du = x ln x − ∫ x · (1/x) dx = x ln x − ∫ 1 dx.','∫ 1 dx = x.','Jawapan: <b class="res">x ln x − x</b> <span class="konst">+ C</span>.']}
+     hints:['Biar u = ln x dan dv = dx.','du = '+freeFrac('dx','x')+', v = x.','uv − ∫v du = x ln x − ∫ 1 dx.'],
+     jk:['LIATE → <b class="pow">u = ln x</b>, <b class="res">dv = dx</b>.','du = '+freeFrac('dx','x')+', v = x.','uv − ∫v du = x ln x − ∫ x · '+freeFrac('1','x')+' dx = x ln x − ∫ 1 dx.','∫ 1 dx = x.','Jawapan: <b class="res">x ln x − x</b> <span class="konst">+ C</span>.']}
   ],
   3:[
-    {expr:'∫ x² e^x dx', Fref:function(x){return (x*x-2*x+2)*Math.exp(x);}, pts:P_SML, ph:'contoh: (x^2-2x+2)e^x + C',
+    {expr:'∫ x'+sup(2)+' e'+sup('x')+' dx', Fref:function(x){return (x*x-2*x+2)*Math.exp(x);}, pts:P_SML, ph:'contoh: (x^2-2x+2)e^x + C',
      praise:'Parts dua kali, dan setiap kali x berkurang satu kuasa.',
-     hints:['Kali pertama: u = x², dv = e^x dx. Masih ada x dalam baki.','Kali kedua: ∫ x e^x dx = x e^x − e^x, guna parts lagi.','Gabung: x²e^x − 2(x e^x − e^x). Tulis dalam bentuk ringkas.'],
-     jk:['Kali pertama: u = x², dv = e^x dx → uv − ∫v du = x²e^x − 2∫ x e^x dx.','Kali kedua: ∫ x e^x dx = x e^x − e^x.','Gabung: x²e^x − 2(x e^x − e^x).','Jawapan: <b class="res">(x² − 2x + 2)e^x</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ e^x sin x dx', Fref:function(x){return Math.exp(x)*(Math.sin(x)-Math.cos(x))/2;}, pts:P_ANY, ph:'contoh: e^x(sin(x) - cos(x))/2 + C',
+     hints:['Kali pertama: u = x'+sup(2)+', dv = e'+sup('x')+' dx. Masih ada x dalam baki.','Kali kedua: ∫ x e'+sup('x')+' dx = x e'+sup('x')+' − e'+sup('x')+', guna parts lagi.','Gabung: x'+sup(2)+'e'+sup('x')+' − 2(x e'+sup('x')+' − e'+sup('x')+').'],
+     jk:['Kali pertama: u = x'+sup(2)+', dv = e'+sup('x')+' dx → uv − ∫v du = x'+sup(2)+'e'+sup('x')+' − 2∫ x e'+sup('x')+' dx.','Kali kedua: ∫ x e'+sup('x')+' dx = x e'+sup('x')+' − e'+sup('x')+'.','Gabung: x'+sup(2)+'e'+sup('x')+' − 2(x e'+sup('x')+' − e'+sup('x')+').','Jawapan: <b class="res">(x'+sup(2)+' − 2x + 2)e'+sup('x')+'</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ e'+sup('x')+' sin x dx', Fref:function(x){return Math.exp(x)*(Math.sin(x)-Math.cos(x))/2;}, pts:P_ANY, ph:'contoh: e^x(sin(x) - cos(x))/2 + C',
      praise:'Integral asal muncul semula, jadi boleh selesaikan persamaan.',
-     hints:['Biar u = sin x, dv = e^x dx. Kemudian parts sekali lagi.','Integral asal akan muncul semula di sebelah kanan.','Selesaikan untuk I. Tambah + C di akhir.'],
-     jk:['u = sin x, dv = e^x dx → du = cos x dx, v = e^x.','I = e^x sin x − ∫ e^x cos x dx.','Sekali lagi: ∫ e^x cos x dx = e^x cos x + I.','Gabung: I = e^x sin x − e^x cos x − I.','2I = e^x(sin x − cos x), jadi <b class="res">I = e^x(sin x − cos x)/2</b> <span class="konst">+ C</span>.']}
+     hints:['Biar u = sin x, dv = e'+sup('x')+' dx. Kemudian parts sekali lagi.','Integral asal akan muncul semula di sebelah kanan.','Selesaikan untuk I, lalu tambah + C.'],
+     jk:['u = sin x, dv = e'+sup('x')+' dx → du = cos x dx, v = e'+sup('x')+'.','I = e'+sup('x')+' sin x − ∫ e'+sup('x')+' cos x dx.','Sekali lagi: ∫ e'+sup('x')+' cos x dx = e'+sup('x')+' cos x + I.','Gabung: I = e'+sup('x')+' sin x − e'+sup('x')+' cos x − I.','2I = e'+sup('x')+'(sin x − cos x), jadi <b class="res">I = '+freeFrac('e'+sup('x')+'(sin x − cos x)','2')+'</b> <span class="konst">+ C</span>.']}
   ]
 };
 function freeParts(lvl){ return pickFree(FREE_PARTS[lvl], function(){ return freeFromSteps(genParts(lvl)); }); }
+
 
 /* ======================================================================
    7 — PARTIAL FRACTIONS
@@ -2125,26 +2130,26 @@ function pfTemplate(o){
 }
 var FREE_PF={
   1:[
-    {expr:'∫ 1/((x + 1)(x + 3)) dx', Fref:function(x){return 0.5*Math.log(Math.abs(x+1))-0.5*Math.log(Math.abs(x+3));}, pts:P_POS, ph:'contoh: (1/2)ln|x+1| - (1/2)ln|x+3| + C',
+    {expr:'∫ '+freeFrac('1','(x + 1)(x + 3)')+' dx', Fref:function(x){return 0.5*Math.log(Math.abs(x+1))-0.5*Math.log(Math.abs(x+3));}, pts:P_POS, ph:'contoh: (1/2)ln|x+1| - (1/2)ln|x+3| + C',
      praise:'Dua faktor linear, dua nilai A dan B.',
-     hints:['Bentuk: A/(x + 1) + B/(x + 3).','Letak x = −1 untuk A, dan x = −3 untuk B.','A = 1/2, B = −1/2. Integrate setiap pecahan.'],
-     jk:['Bentuk: 1/((x+1)(x+3)) = A/(x+1) + B/(x+3).','Darab silang: 1 = A(x + 3) + B(x + 1).','x = −1: 1 = 2A → <b class="pow">A = 1/2</b>.','x = −3: 1 = −2B → <b class="pow">B = −1/2</b>.','Integrate: <b class="res">(1/2)ln|x + 1| − (1/2)ln|x + 3|</b> <span class="konst">+ C</span>.']}
+     hints:['Bentuk: '+freeFrac('A','x + 1')+' + '+freeFrac('B','x + 3')+'.','Letak x = −1 untuk A, dan x = −3 untuk B.','A = '+freeFrac('1','2')+', B = −'+freeFrac('1','2')+'. Integrate setiap pecahan.'],
+     jk:['Bentuk: '+freeFrac('1','(x + 1)(x + 3)')+' = '+freeFrac('A','x + 1')+' + '+freeFrac('B','x + 3')+'.','Darab silang: 1 = A(x + 3) + B(x + 1).','x = −1: 1 = 2A → <b class="pow">A = '+freeFrac('1','2')+'</b>.','x = −3: 1 = −2B → <b class="pow">B = −'+freeFrac('1','2')+'</b>.','Integrate: <b class="res">'+freeFrac('1','2')+'ln|x + 1| − '+freeFrac('1','2')+'ln|x + 3|</b> <span class="konst">+ C</span>.']}
   ],
   2:[
-    {expr:'∫ (x + 5)/((x − 1)(x + 2)) dx', Fref:function(x){return 2*Math.log(Math.abs(x-1))-Math.log(Math.abs(x+2));}, pts:P_POS, ph:'contoh: 2ln|x-1| - ln|x+2| + C',
+    {expr:'∫ '+freeFrac('x + 5','(x − 1)(x + 2)')+' dx', Fref:function(x){return 2*Math.log(Math.abs(x-1))-Math.log(Math.abs(x+2));}, pts:P_POS, ph:'contoh: 2ln|x-1| - ln|x+2| + C',
      praise:'Pengangka tidak sama dengan penyebut, tapi kaedah tutup tetap cepat.',
-     hints:['Bentuk: A/(x − 1) + B/(x + 2).','x = 1: 6 = 3A → A = 2. x = −2: 3 = −3B → B = −1.','Integrate: 2ln|x − 1| − ln|x + 2| + C.'],
-     jk:['Bentuk: A/(x − 1) + B/(x + 2).','Darab silang: x + 5 = A(x + 2) + B(x − 1).','x = 1: 6 = 3A → <b class="pow">A = 2</b>.','x = −2: 3 = −3B → <b class="pow">B = −1</b>.','Integrate: <b class="res">2ln|x − 1| − ln|x + 2|</b> <span class="konst">+ C</span>.']},
-    {expr:'∫ 1/(x² − 4) dx', Fref:function(x){return 0.25*Math.log(Math.abs((x-2)/(x+2)));}, pts:P_POS, ph:'contoh: (1/4)ln|(x-2)/(x+2)| + C',
+     hints:['Bentuk: '+freeFrac('A','x − 1')+' + '+freeFrac('B','x + 2')+'.','x = 1: 6 = 3A → A = 2. x = −2: 3 = −3B → B = −1.','Integrate: 2ln|x − 1| − ln|x + 2| + C.'],
+     jk:['Bentuk: '+freeFrac('x + 5','(x − 1)(x + 2)')+' = '+freeFrac('A','x − 1')+' + '+freeFrac('B','x + 2')+'.','Darab silang: x + 5 = A(x + 2) + B(x − 1).','x = 1: 6 = 3A → <b class="pow">A = 2</b>.','x = −2: 3 = −3B → <b class="pow">B = −1</b>.','Integrate: <b class="res">2ln|x − 1| − ln|x + 2|</b> <span class="konst">+ C</span>.']},
+    {expr:'∫ '+freeFrac('1','x'+sup(2)+' − 4')+' dx', Fref:function(x){return 0.25*Math.log(Math.abs((x-2)/(x+2)));}, pts:P_POS, ph:'contoh: (1/4)ln|(x-2)/(x+2)| + C',
      praise:'Beza dua kuasa dua ialah (x − 2)(x + 2).',
-     hints:['x² − 4 = (x − 2)(x + 2). Bentuk: A/(x − 2) + B/(x + 2).','A = 1/4 dan B = −1/4.','Integrate: (1/4)ln|x − 2| − (1/4)ln|x + 2| + C.'],
-     jk:['x² − 4 = (x − 2)(x + 2).','Bentuk: 1/((x−2)(x+2)) = A/(x−2) + B/(x+2).','<b class="pow">A = 1/4</b>, <b class="pow">B = −1/4</b>.','Integrate: <b class="res">(1/4)ln|x − 2| − (1/4)ln|x + 2|</b> <span class="konst">+ C</span>.']}
+     hints:['x'+sup(2)+' − 4 = (x − 2)(x + 2). Bentuk: '+freeFrac('A','x − 2')+' + '+freeFrac('B','x + 2')+'.','A = '+freeFrac('1','4')+' dan B = −'+freeFrac('1','4')+'.','Integrate: '+freeFrac('1','4')+'ln|x − 2| − '+freeFrac('1','4')+'ln|x + 2| + C.'],
+     jk:['x'+sup(2)+' − 4 = (x − 2)(x + 2).','Bentuk: '+freeFrac('1','(x − 2)(x + 2)')+' = '+freeFrac('A','x − 2')+' + '+freeFrac('B','x + 2')+'.','<b class="pow">A = '+freeFrac('1','4')+'</b>, <b class="pow">B = −'+freeFrac('1','4')+'</b>.','Integrate: <b class="res">'+freeFrac('1','4')+'ln|'+freeFrac('x − 2','x + 2')+'|</b> <span class="konst">+ C</span>.']}
   ],
   3:[
-    {expr:'∫ 1/(x(x + 1)(x + 2)) dx', Fref:function(x){return 0.5*Math.log(Math.abs(x))-Math.log(Math.abs(x+1))+0.5*Math.log(Math.abs(x+2));}, pts:P_POS, ph:'contoh: (1/2)ln|x| - ln|x+1| + (1/2)ln|x+2| + C',
+    {expr:'∫ '+freeFrac('1','x(x + 1)(x + 2)')+' dx', Fref:function(x){return 0.5*Math.log(Math.abs(x))-Math.log(Math.abs(x+1))+0.5*Math.log(Math.abs(x+2));}, pts:P_POS, ph:'contoh: (1/2)ln|x| - ln|x+1| + (1/2)ln|x+2| + C',
      praise:'Tiga faktor linear, tiga pemalar. Kaedah tutup sama.',
-     hints:['Bentuk: A/x + B/(x + 1) + D/(x + 2).','x = 0: A = 1/2. x = −1: B = −1. x = −2: D = 1/2.','Integrate setiap pecahan, jadi ln untuk tiap satu.'],
-     jk:['Bentuk: A/x + B/(x+1) + D/(x+2).','A: letak x = 0 → <b class="pow">A = 1/2</b>.','B: letak x = −1 → <b class="pow">B = −1</b>.','D: letak x = −2 → <b class="pow">D = 1/2</b>.','Integrate: <b class="res">(1/2)ln|x| − ln|x + 1| + (1/2)ln|x + 2|</b> <span class="konst">+ C</span>.']}
+     hints:['Bentuk: '+freeFrac('A','x')+' + '+freeFrac('B','x + 1')+' + '+freeFrac('D','x + 2')+'.','x = 0: A = '+freeFrac('1','2')+'. x = −1: B = −1. x = −2: D = '+freeFrac('1','2')+'.','Integrate setiap pecahan, jadi ln untuk tiap satu.'],
+     jk:['Bentuk: '+freeFrac('1','x(x + 1)(x + 2)')+' = '+freeFrac('A','x')+' + '+freeFrac('B','x + 1')+' + '+freeFrac('D','x + 2')+'.','A: letak x = 0 → <b class="pow">A = '+freeFrac('1','2')+'</b>.','B: letak x = −1 → <b class="pow">B = −1</b>.','D: letak x = −2 → <b class="pow">D = '+freeFrac('1','2')+'</b>.','Integrate: <b class="res">'+freeFrac('1','2')+'ln|x| − ln|x + 1| + '+freeFrac('1','2')+'ln|x + 2|</b> <span class="konst">+ C</span>.']}
   ]
 };
 function freePF(lvl){ return pickFree(FREE_PF[lvl], function(){ return freeFromSteps(genPF(lvl)); }); }
