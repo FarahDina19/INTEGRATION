@@ -218,6 +218,43 @@ table.ref th{font-size:12px;letter-spacing:.05em;color:var(--muted)}
   .screen#s-formula{display:block !important}
   .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
 }
+
+/* ============ GRAF & DIAGRAM (visual, bonus) ============ */
+#s-graph .hidden{display:none !important}
+#s-graph .gd-int{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 3px}
+#s-graph .gd-int .sym{font-size:1.7em;line-height:.9}
+#s-graph .gd-int .up,#s-graph .gd-int .dn{font-size:.68em;line-height:1.15}
+#s-graph .gd-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 3px}
+#s-graph .gd-frac>span:first-child{border-bottom:1px solid currentColor;padding:0 4px}
+#s-graph .gd-frac>span:last-child{padding:0 4px}
+#s-graph .gd-math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif}
+#s-graph .gd-svg{display:block;width:100%;height:auto}
+#s-graph .gd-svg text{fill:var(--muted);font-size:13px}
+#s-graph .gd-grid{stroke:var(--line);stroke-width:1}
+#s-graph .gd-axis{stroke:var(--ink);stroke-width:1.6}
+#s-graph .gd-curve{fill:none;stroke:var(--primary);stroke-width:3;stroke-linejoin:round}
+#s-graph .gd-area{fill:var(--b);opacity:.5}
+#s-graph .gd-rect{fill:var(--d);opacity:.6;stroke:var(--d-deep);stroke-width:1}
+#s-graph .gd-bound{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:5 4;opacity:.7}
+#s-graph .gd-lbl{fill:var(--ink);font-weight:800;font-size:15px;font-style:italic}
+#s-graph .gd-ax{fill:var(--ink);font-size:15px;font-style:italic}
+#s-graph .gd-mini{display:block;width:100%;height:auto}
+#s-graph .gd-mini .area{fill:var(--b);opacity:.5}
+#s-graph .gd-mini .curve{fill:none;stroke:var(--primary);stroke-width:3;stroke-linejoin:round}
+#s-graph .gd-mini .axis{stroke:var(--ink);stroke-width:1.6}
+#s-graph .gd-mini .bound{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:5 4;opacity:.7}
+#s-graph .gd-mini text{fill:var(--muted);font-size:13px}
+#s-graph .gd-mini .inside{fill:var(--ink);font-size:15px;font-weight:800}
+#s-graph .gd-mini .block{fill:var(--d);opacity:.6;stroke:var(--d-deep);stroke-width:1.5}
+#s-graph .gd-pair{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+#s-graph .gd-tbl{width:100%;border-collapse:collapse;font-size:15px}
+#s-graph .gd-tbl th,#s-graph .gd-tbl td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+#s-graph .gd-tbl th{font-size:12px;letter-spacing:.05em;color:var(--muted)}
+#s-graph .gd-tbl .num{text-align:right;font-weight:800;color:var(--primary);font-size:17px}
+#s-graph .gd-range{width:100%;accent-color:var(--primary)}
+#s-graph .gd-ans{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:26px;font-weight:700;color:var(--primary)}
+#s-graph .gd-step{background:var(--ground);border-radius:12px;padding:10px 12px;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:17px;line-height:1.6;overflow-x:auto}
+#s-graph .gd-step small{display:block;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -246,6 +283,13 @@ table.ref th{font-size:12px;letter-spacing:.05em;color:var(--muted)}
   </div>
 
   <div class="path" id="pathlist"></div>
+  <div class="path" style="margin-top:10px">
+    <button class="pathcard" style="--hue:var(--b)" data-go="graph">
+      <span class="badge">+</span>
+      <span style="flex:1"><span style="display:block;font-weight:800;font-size:16px">Graf &amp; Diagram</span><span style="display:block;font-size:12px;font-weight:700">Visual: luas di bawah lengkung</span></span>
+      <span class="pct">Visual</span>
+    </button>
+  </div>
 
   <div class="card" style="margin-top:14px">
     <h3>Apa itu integration?</h3>
@@ -315,6 +359,21 @@ table.ref th{font-size:12px;letter-spacing:.05em;color:var(--muted)}
     <div class="strip three" id="C-strip" role="tablist"></div>
   </div>
   <div id="C-body"></div>
+</section>
+
+<!-- ================= GRAF & DIAGRAM (bonus visual) ================= -->
+<section class="screen" id="s-graph" aria-label="Graf dan Diagram" style="--hue:var(--primary)">
+  <div class="apphead">
+    <div class="row">
+      <button class="iconbtn" data-go="home" aria-label="Balik ke laman utama">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="ttl"><div class="kicker">BONUS · VISUAL</div><h2>Graf &amp; Diagram</h2></div>
+      <span class="chip">Visual</span>
+    </div>
+    <div class="strip" id="G-strip" role="tablist"></div>
+  </div>
+  <div id="G-body"></div>
 </section>
 
 <!-- ================= KAD FORMULA ================= -->
@@ -594,7 +653,7 @@ function feedback(node, type, msg){
 }
 
 function show(screen){
-  ['home','A','B','C','D','formula','progress'].forEach(function(k){
+  ['home','A','B','C','D','formula','progress','graph'].forEach(function(k){
     var el=$('s-'+k); if(el) el.classList.toggle('on', k===screen);
   });
   document.querySelectorAll('.nav button').forEach(function(b){
@@ -607,6 +666,7 @@ function show(screen){
   if(screen==='C') renderC();
   if(screen==='D') renderD();
   if(screen==='progress') renderProgress();
+  if(screen==='graph') GD.open();
 }
 
 /* ======================================================================
@@ -2587,6 +2647,255 @@ function renderProgress(){
 /* ======================================================================
    BAHAGIAN 13 — MULAKAN
    ====================================================================== */
+/* ======================================================================
+   BONUS — GRAF & DIAGRAM (luas di bawah lengkung, kamiran tentu)
+   Modul sendiri: tiada kongsian keadaan dengan App A–D.
+   ====================================================================== */
+var GD = (function () {
+  function FR(num, den) { return '<span class="gd-frac"><span>' + num + '</span><span>' + den + '</span></span>'; }
+  function INT(lo, hi) { return '<span class="gd-int"><span class="up">' + hi + '</span><span class="sym">∫</span><span class="dn">' + lo + '</span></span>'; }
+  function fmt(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+  function q(id) { return document.getElementById(id); }
+
+  var FN = {
+    c4: { f: function (x) { return 4; }, F: function (x) { return 4 * x; },
+          fH: '<i>f</i>(<i>x</i>) = 4', integrand: '4', Fbody: '4<i>x</i>', FH: '<i>F</i>(<i>x</i>) = 4<i>x</i>' },
+    lin: { f: function (x) { return x + 1; }, F: function (x) { return x * x / 2 + x; },
+           fH: '<i>f</i>(<i>x</i>) = <i>x</i> + 1', integrand: '<i>x</i> + 1',
+           Fbody: FR('<i>x</i><sup>2</sup>', '2') + ' + <i>x</i>' },
+    quad: { f: function (x) { return x * x / 4; }, F: function (x) { return Math.pow(x, 3) / 12; },
+            fH: '<i>f</i>(<i>x</i>) = ' + FR('<i>x</i><sup>2</sup>', '4'), integrand: FR('<i>x</i><sup>2</sup>', '4'),
+            Fbody: FR('<i>x</i><sup>3</sup>', '12') }
+  };
+  FN.lin.FH = '<i>F</i>(<i>x</i>) = ' + FN.lin.Fbody;
+  FN.quad.FH = '<i>F</i>(<i>x</i>) = ' + FN.quad.Fbody;
+
+  // Plot area inside the 640 x 420 viewBox: left 52, top 20, width 568, height 358
+  var PL = 52, PT = 20, PW = 568, PH = 358;
+  var X0 = -1, X1 = 7, Y0 = -1, Y1 = 10;
+  function sx(x) { return PL + (x - X0) / (X1 - X0) * PW; }
+  function sy(y) { return PT + (Y1 - y) / (Y1 - Y0) * PH; }
+
+  var st = { fn: 'c4', a: 1, b: 3, n: 6, tab: 'graph', built: false };
+
+  function gridSvg() {
+    var g = '', x, y;
+    for (x = -1; x <= 7; x++) g += '<line class="gd-grid" x1="' + sx(x) + '" y1="' + PT + '" x2="' + sx(x) + '" y2="' + (PT + PH) + '"/>';
+    for (y = 0; y <= 10; y += 2) g += '<line class="gd-grid" x1="' + PL + '" y1="' + sy(y) + '" x2="' + (PL + PW) + '" y2="' + sy(y) + '"/>';
+    g += '<line class="gd-axis" x1="' + PL + '" y1="' + sy(0) + '" x2="' + (PL + PW) + '" y2="' + sy(0) + '"/>';
+    g += '<line class="gd-axis" x1="' + sx(0) + '" y1="' + PT + '" x2="' + sx(0) + '" y2="' + (PT + PH) + '"/>';
+    for (x = -1; x <= 7; x++) if (x !== 0) g += '<text x="' + sx(x) + '" y="' + (sy(0) + 16) + '" text-anchor="middle">' + x + '</text>';
+    for (y = 2; y <= 10; y += 2) g += '<text x="' + (sx(0) - 8) + '" y="' + (sy(y) + 4) + '" text-anchor="end">' + y + '</text>';
+    g += '<text class="gd-ax" x="' + (PL + PW) + '" y="' + (sy(0) - 6) + '" text-anchor="end">x</text>';
+    g += '<text class="gd-ax" x="' + (sx(0) + 6) + '" y="' + (PT + 14) + '">y</text>';
+    return g;
+  }
+
+  function plotSvg(c, a, b, n) {
+    var out = '', i, j, k, x, x0, h, curve = '', area, dx, riemann = 0;
+    for (i = 0; i <= 160; i++) {
+      x = X0 + (X1 - X0) * i / 160;
+      curve += (i ? ' L' : 'M') + sx(x).toFixed(1) + ' ' + sy(c.f(x)).toFixed(1);
+    }
+    area = 'M' + sx(a).toFixed(1) + ' ' + sy(0).toFixed(1);
+    for (j = 0; j <= 120; j++) {
+      x = a + (b - a) * j / 120;
+      area += ' L' + sx(x).toFixed(1) + ' ' + sy(c.f(x)).toFixed(1);
+    }
+    area += ' L' + sx(b).toFixed(1) + ' ' + sy(0).toFixed(1) + ' Z';
+    out += '<path class="gd-area" d="' + area + '"/>';
+    dx = (b - a) / n;
+    for (k = 0; k < n; k++) {
+      x0 = a + k * dx;
+      h = c.f(x0 + dx / 2);
+      riemann += h * dx;
+      out += '<rect class="gd-rect" x="' + sx(x0).toFixed(1) + '" y="' + sy(h).toFixed(1) +
+             '" width="' + (sx(x0 + dx) - sx(x0)).toFixed(1) + '" height="' + (sy(0) - sy(h)).toFixed(1) + '"/>';
+    }
+    out += '<path class="gd-curve" d="' + curve + '"/>';
+    out += '<line class="gd-bound" x1="' + sx(a) + '" y1="' + PT + '" x2="' + sx(a) + '" y2="' + (PT + PH) + '"/>';
+    out += '<text class="gd-lbl" x="' + sx(a) + '" y="' + (PT + 16) + '" text-anchor="middle">a</text>';
+    out += '<line class="gd-bound" x1="' + sx(b) + '" y1="' + PT + '" x2="' + sx(b) + '" y2="' + (PT + PH) + '"/>';
+    out += '<text class="gd-lbl" x="' + sx(b) + '" y="' + (PT + 16) + '" text-anchor="middle">b</text>';
+    return { svg: out, riemann: riemann };
+  }
+
+  // Kaedah 1: kamiran, dilukis dalam graf kecil x dari -0.5 hingga 6.5, y dari 0 hingga 10
+  function intSvg(c, a, b, I) {
+    var mx = function (x) { return 30 + (x + 0.5) / 7 * 255; };
+    var my = function (y) { return 190 - y / 10 * 160; };
+    var out = '', j, i, x, area, curve = '';
+    out += '<line class="axis" x1="30" y1="' + my(0) + '" x2="285" y2="' + my(0) + '"/>';
+    out += '<line class="axis" x1="' + mx(0) + '" y1="30" x2="' + mx(0) + '" y2="190"/>';
+    area = 'M' + mx(a).toFixed(1) + ' ' + my(0).toFixed(1);
+    for (j = 0; j <= 60; j++) {
+      x = a + (b - a) * j / 60;
+      area += ' L' + mx(x).toFixed(1) + ' ' + my(Math.min(c.f(x), 10)).toFixed(1);
+    }
+    area += ' L' + mx(b).toFixed(1) + ' ' + my(0).toFixed(1) + ' Z';
+    out += '<path class="area" d="' + area + '"/>';
+    for (i = 0; i <= 140; i++) {
+      x = -0.5 + i * 0.05;
+      curve += (i ? ' L' : 'M') + mx(x).toFixed(1) + ' ' + my(Math.min(c.f(x), 10)).toFixed(1);
+    }
+    out += '<path class="curve" d="' + curve + '"/>';
+    out += '<line class="bound" x1="' + mx(a) + '" y1="30" x2="' + mx(a) + '" y2="190"/>';
+    out += '<text x="' + mx(a) + '" y="206" text-anchor="middle" style="font-weight:800;font-style:italic;fill:var(--ink)">a</text>';
+    out += '<line class="bound" x1="' + mx(b) + '" y1="30" x2="' + mx(b) + '" y2="190"/>';
+    out += '<text x="' + mx(b) + '" y="206" text-anchor="middle" style="font-weight:800;font-style:italic;fill:var(--ink)">b</text>';
+    out += '<text x="40" y="22" style="fill:var(--ink);font-size:14px">∫ₐᵇ f(x) dx = ' + fmt(I) + '</text>';
+    return out;
+  }
+
+  // Kaedah 2: segi empat panjang × lebar, dilukis mengikut skala (L = b − a, B = purata ketinggian)
+  function rectSvg(L, B) {
+    var sc = Math.min(230 / L, 150 / B);
+    var w = L * sc, h = B * sc;
+    var x0 = (300 - w) / 2, base = 180;
+    var out = '';
+    out += '<rect class="block" x="' + x0.toFixed(1) + '" y="' + (base - h).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '"/>';
+    out += '<text class="inside" x="150" y="' + (base - h / 2 + 5).toFixed(1) + '" text-anchor="middle">' +
+           '<tspan font-style="italic">B</tspan> = ' + fmt(B) + '</text>';
+    out += '<line class="axis" x1="' + (x0 - 6).toFixed(1) + '" y1="' + (base + 6) + '" x2="' + (x0 + w + 6).toFixed(1) + '" y2="' + (base + 6) + '"/>';
+    out += '<text x="150" y="214" text-anchor="middle">' +
+           '<tspan font-style="italic">L</tspan> = <tspan font-style="italic">b</tspan> − <tspan font-style="italic">a</tspan> = ' + fmt(L) + '</text>';
+    return out;
+  }
+
+  function markup() {
+    return '' +
+      '<p class="note" style="margin:0 0 12px">Luas di bawah graf dari <i>a</i> ke <i>b</i> ialah kamiran tentu. Tukar fungsi dan had untuk lihat ia berubah.</p>' +
+      '<div id="G-panel-graph" class="card">' +
+        '<svg id="G-plot" class="gd-svg" viewBox="0 0 640 420" role="img" aria-label="Graf fungsi dengan luas antara a dan b diarsir">' +
+          '<defs><clipPath id="G-clip"><rect x="52" y="20" width="568" height="358"></rect></clipPath></defs>' +
+          '<g id="G-grid"></g><g clip-path="url(#G-clip)"><g id="G-dyn"></g></g>' +
+        '</svg>' +
+        '<div class="note" style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px">' +
+          '<span><i style="display:inline-block;width:12px;height:12px;background:var(--primary);border-radius:3px"></i>&nbsp;f(x)</span>' +
+          '<span><i style="display:inline-block;width:12px;height:12px;background:var(--b);border-radius:3px"></i>&nbsp;luas ' + INT('<i>a</i>', '<i>b</i>') + ' <i>f</i>(<i>x</i>) d<i>x</i></span>' +
+          '<span><i style="display:inline-block;width:12px;height:12px;background:var(--d);border-radius:3px"></i>&nbsp;segi empat (titik tengah)</span>' +
+        '</div>' +
+      '</div>' +
+      '<div id="G-panel-diagram" class="hidden">' +
+        '<div class="gd-pair">' +
+          '<div class="card"><div style="font-weight:800;margin-bottom:8px">Kaedah 1 · Kamiran</div>' +
+            '<svg id="G-int" class="gd-mini" viewBox="0 0 300 230" role="img" aria-label="Luas di bawah f antara a dan b, dengan kamiran"></svg>' +
+            '<p class="note" id="G-intcap" style="margin:8px 0 0"></p></div>' +
+          '<div class="card"><div style="font-weight:800;margin-bottom:8px">Kaedah 2 · Panjang × lebar</div>' +
+            '<svg id="G-rect" class="gd-mini" viewBox="0 0 300 230" role="img" aria-label="Segi empat dengan panjang b tolak a dan lebar purata ketinggian"></svg>' +
+            '<p class="note" id="G-rectcap" style="margin:8px 0 0"></p></div>' +
+        '</div>' +
+        '<div class="card" style="margin-top:14px">' +
+          '<div style="font-weight:800;font-size:17px;margin-bottom:8px">Bandingkan dua kaedah</div>' +
+          '<div style="overflow-x:auto"><table class="gd-tbl"><thead><tr><th>Kaedah</th><th>Kerja</th><th class="num">Luas</th></tr></thead><tbody>' +
+            '<tr><td>Kamiran</td><td class="gd-math" id="G-cmpIntWork"></td><td class="num" id="G-cmpIntVal"></td></tr>' +
+            '<tr><td>Panjang × lebar</td><td class="gd-math" id="G-cmpRectWork"></td><td class="num" id="G-cmpRectVal"></td></tr>' +
+          '</tbody></table></div>' +
+          '<p id="G-verdict" style="margin:12px 0 0;font-weight:800;color:var(--primary)" aria-live="polite"></p>' +
+          '<p class="note" style="margin:10px 0 0">Untuk <i>f</i>(<i>x</i>) = 4, lebar tepat 4 di setiap titik, jadi bentuknya segi empat sama. Untuk lengkung, lebar ialah purata ketinggian <i>B</i> = ' +
+            FR('∫ <i>f</i>(<i>x</i>) d<i>x</i>', '<i>b</i> − <i>a</i>') + ', maka luasnya tetap sama.</p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card" style="margin-top:14px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">' +
+        '<div><label style="display:block;font-weight:800;margin-bottom:4px" for="G-fn">Fungsi</label>' +
+          '<select id="G-fn" style="width:100%;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--ground);color:var(--ink)">' +
+            '<option value="c4" selected>f(x) = 4</option><option value="lin">f(x) = x + 1</option><option value="quad">f(x) = x²/4</option>' +
+          '</select></div>' +
+        '<div><label style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:4px" for="G-a">Had bawah <i>a</i> <output id="G-aOut"></output></label>' +
+          '<input id="G-a" class="gd-range" type="range" min="0" max="5.9" step="0.1"></div>' +
+        '<div><label style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:4px" for="G-b">Had atas <i>b</i> <output id="G-bOut"></output></label>' +
+          '<input id="G-b" class="gd-range" type="range" min="0.5" max="6" step="0.1"></div>' +
+        '<div><label style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:4px" for="G-n">Bilangan segi empat <i>n</i> <output id="G-nOut"></output></label>' +
+          '<input id="G-n" class="gd-range" type="range" min="1" max="60" step="1"></div>' +
+      '</div>' +
+      '<div class="card" style="margin-top:14px">' +
+        '<div style="font-weight:800;font-size:17px;margin-bottom:10px">Langkah demi langkah</div>' +
+        '<div style="display:grid;gap:8px">' +
+          '<div class="gd-step"><small>Langkah 1 · Fungsi</small><span id="G-s1"></span></div>' +
+          '<div class="gd-step"><small>Langkah 2 · Kamiran dan antiterbitan</small><span id="G-s2"></span></div>' +
+          '<div class="gd-step"><small>Langkah 3 · Teorem asas: <i>F</i>(<i>b</i>) − <i>F</i>(<i>a</i>)</small><span id="G-s3"></span></div>' +
+          '<div class="gd-step"><small>Langkah 4 · Semak dengan segi empat</small><span id="G-s4"></span></div>' +
+        '</div>' +
+        '<div style="margin-top:14px;padding:14px;border-radius:14px;border:2px solid var(--primary);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between">' +
+          '<span class="gd-math" style="font-weight:800" id="G-ansLabel" aria-live="polite"></span>' +
+          '<span class="gd-ans" id="G-ansValue"></span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function selectTab(name) {
+    st.tab = name;
+    q('G-panel-graph').classList.toggle('hidden', name !== 'graph');
+    q('G-panel-diagram').classList.toggle('hidden', name !== 'diagram');
+    document.querySelectorAll('#G-strip button').forEach(function (b) {
+      b.setAttribute('aria-current', String(b.dataset.t === name));
+    });
+  }
+
+  function update() {
+    var c = FN[st.fn], a = st.a, b = st.b, n = st.n;
+    var I = c.F(b) - c.F(a), L = b - a, B = I / L;
+    var p = plotSvg(c, a, b, n);
+    q('G-dyn').innerHTML = p.svg;
+    q('G-aOut').textContent = fmt(a);
+    q('G-bOut').textContent = fmt(b);
+    q('G-nOut').textContent = n;
+    q('G-s1').innerHTML = c.fH;
+    q('G-s2').innerHTML = '∫ ' + c.integrand + ' d<i>x</i> = ' + c.Fbody + ' + <i>C</i>,&ensp;maka&ensp;' + c.FH;
+    q('G-s3').innerHTML = '<i>F</i>(' + fmt(b) + ') − <i>F</i>(' + fmt(a) + ') = ' + fmt(c.F(b)) + ' − ' + fmt(c.F(a)) + ' = ' + fmt(I);
+    q('G-s4').innerHTML = 'Σ<sub>i</sub> <i>f</i>(<i>m</i><sub>i</sub>) Δ<i>x</i> = ' + fmt(p.riemann) +
+                          '&emsp;(beza daripada tepat: ' + fmt(Math.abs(I - p.riemann)) + ')';
+    q('G-ansLabel').innerHTML = 'Kamiran tentu ' + INT('<i>a</i>', '<i>b</i>') + ' <i>f</i>(<i>x</i>) d<i>x</i> =';
+    q('G-ansValue').textContent = fmt(I);
+
+    q('G-int').innerHTML = intSvg(c, a, b, I);
+    q('G-rect').innerHTML = rectSvg(L, B);
+    q('G-intcap').innerHTML = 'Luas = ' + INT('<i>a</i>', '<i>b</i>') + ' <i>f</i>(<i>x</i>) d<i>x</i> = ' + fmt(I);
+    q('G-rectcap').innerHTML = 'Luas = <i>L</i> × <i>B</i> = ' + fmt(L) + ' × ' + fmt(B) + ' = ' + fmt(L * B);
+    q('G-cmpIntWork').innerHTML = INT('<i>a</i>', '<i>b</i>') + ' ' + c.integrand + ' d<i>x</i>';
+    q('G-cmpIntVal').textContent = fmt(I);
+    q('G-cmpRectWork').innerHTML = '<i>L</i> = ' + fmt(L) + ', <i>B</i> = ' + fmt(B) + ', <i>L</i> × <i>B</i> = ' + fmt(L * B);
+    q('G-cmpRectVal').textContent = fmt(L * B);
+    q('G-verdict').textContent = Math.abs(L * B - I) < 1e-9
+      ? 'Luas sama: kedua-dua kaedah beri ' + fmt(I) + ' unit persegi.'
+      : 'Nilai berbeza. Semak had dan fungsi.';
+  }
+
+  function build() {
+    q('G-body').innerHTML = markup();
+    q('G-grid').innerHTML = gridSvg();
+    q('G-strip').innerHTML = '<button role="tab" data-t="graph">Graf</button><button role="tab" data-t="diagram">Diagram</button>';
+    document.querySelectorAll('#G-strip button').forEach(function (b) {
+      b.addEventListener('click', function () { selectTab(b.dataset.t); });
+    });
+    q('G-fn').value = st.fn;
+    q('G-fn').addEventListener('change', function (e) { st.fn = e.target.value; update(); });
+    q('G-a').value = st.a;
+    q('G-a').addEventListener('input', function (e) {
+      st.a = Math.min(+e.target.value, st.b - 0.1);
+      e.target.value = st.a.toFixed(1);
+      update();
+    });
+    q('G-b').value = st.b;
+    q('G-b').addEventListener('input', function (e) {
+      st.b = Math.max(+e.target.value, st.a + 0.1);
+      e.target.value = st.b.toFixed(1);
+      update();
+    });
+    q('G-n').value = st.n;
+    q('G-n').addEventListener('input', function (e) { st.n = +e.target.value; update(); });
+    st.built = true;
+  }
+
+  function open() {
+    if (!st.built) build();
+    selectTab(st.tab);
+    update();
+  }
+
+  return { open: open };
+})();
+
 document.querySelectorAll('[data-go]').forEach(function(b){
   b.addEventListener('click', function(){ show(b.dataset.go); });
 });
