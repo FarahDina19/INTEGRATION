@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "title": "Integral Buddy",
+  "description": "Raise a fluffy companion by solving integration challenges — earn snacks and toys, play calculus mini-games, and grow your buddy from Sprout to Scholar.",
+  "defaultCaptions": {
+    "x": "I'm raising an Integral Buddy 🌱 Solve integrals, earn snacks, and help your buddy grow from Sprout to Scholar!",
+    "facebook": "Integral Buddy turns Unit 3 Integration practice into a cozy virtual-pet game. Solve integrals to feed and grow your companion!",
+    "reddit": "Integral Buddy: a cozy virtual-pet game where solving integrals feeds and grows your companion",
+    "discord": "Come raise an Integral Buddy with me — every integral you solve helps it grow!"
+  },
+  "assets": {
+    "og": "assets/share/og.png",
+    "favicon": "assets/share/favicon.png"
+  }
+}
